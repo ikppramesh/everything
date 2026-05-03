@@ -63,6 +63,9 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
+  /* Extended container */
+  --container-xl: 1680px;
+
   /* Borders */
   --radius-sm:  0.25rem;
   --radius-md:  0.5rem;

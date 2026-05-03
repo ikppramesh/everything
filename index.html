@@ -5,215 +5,173 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Everything — Enterprise Solution Catalog</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="_shared/css/design-system.css"/>
 <style>
-/* Portal-specific styles */
-.portal-hero {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #7c3aed 100%);
-  padding: 80px 0 60px;
-  text-align: center;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
-}
-.portal-hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-}
-.portal-hero > * { position: relative; z-index: 1; }
-.portal-hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; }
-.portal-hero h1 span { color: #93c5fd; }
-.portal-hero p { font-size: 1.25rem; opacity: .85; max-width: 560px; margin: 0 auto 2rem; padding: 0 1rem; }
-.hero-search {
-  display: flex;
-  max-width: 520px;
-  margin: 0 auto;
-  background: #fff;
-  border-radius: 999px;
-  box-shadow: 0 20px 40px rgba(0,0,0,.25);
-  overflow: hidden;
-}
-.hero-search input {
-  flex: 1;
-  border: none;
-  outline: none;
-  padding: 14px 20px;
-  font-size: 1rem;
-  color: #1f2937;
-  background: transparent;
-  min-width: 0;
-}
-.hero-search button {
-  background: #2563eb;
-  border: none;
-  padding: 0 24px;
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: .95rem;
-  transition: background .15s;
-  white-space: nowrap;
-}
-.hero-search button:hover { background: #1d4ed8; }
-.hero-stats {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  margin-top: 3rem;
-  flex-wrap: wrap;
-}
-.hero-stat { text-align: center; }
-.hero-stat .num { font-size: 2.25rem; font-weight: 900; color: #93c5fd; }
-.hero-stat .lbl { font-size: .85rem; opacity: .75; margin-top: 2px; }
-
-/* Catalog section */
-.catalog-section { padding: 60px 0; }
-.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
-.section-title { font-size: 1.5rem; font-weight: 700; color: #111827; }
-.filter-bar {
-  display: flex;
-  gap: .75rem;
-  flex-wrap: wrap;
-  margin-bottom: 2.5rem;
-  padding: 1.25rem 1.5rem;
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 3px rgba(0,0,0,.06);
-}
-.filter-btn {
-  padding: 6px 16px;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  color: #4b5563;
-  font-size: .85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.filter-btn:hover, .filter-btn.active {
-  background: #2563eb;
-  color: #fff;
-  border-color: #2563eb;
+/* ════════════════════════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════════════════════════ */
+:root {
+  --ev-bg:          #0A0A0A;
+  --ev-bg-2:        #111111;
+  --ev-bg-3:        #1A1A1A;
+  --ev-bg-4:        #242424;
+  --ev-text-1:      #F5F5F0;
+  --ev-text-2:      #A0A09A;
+  --ev-text-3:      #5A5A55;
+  --ev-accent:      #FA5D29;
+  --ev-accent-dim:  rgba(250,93,41,0.12);
+  --ev-accent-glow: rgba(250,93,41,0.3);
+  --ev-border:      rgba(255,255,255,0.07);
+  --ev-border-h:    rgba(255,255,255,0.14);
+  --ev-max-w:       1680px;
+  --ev-gutter:      clamp(.875rem, 1.5vw, 1.25rem);
+  --ev-pad-x:       clamp(1.25rem, 4vw, 3.5rem);
+  --ev-nav-h:       64px;
+  --ev-type-display: clamp(2.75rem, 7vw + .5rem, 8.5rem);
+  --ev-type-heading: clamp(1.125rem, 1.5vw + .4rem, 1.75rem);
+  --ev-type-body-lg: clamp(.9375rem, .8vw + .5rem, 1.1875rem);
+  --ev-type-body:    clamp(.8125rem, .4vw + .45rem, .9375rem);
+  --ev-type-label:   clamp(.6875rem, .3vw + .35rem, .8125rem);
 }
 
-/* Solution Card */
-.solution-card {
-  background: #fff;
-  border-radius: 16px;
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-  transition: all .2s;
-  display: flex;
-  flex-direction: column;
+/* ════════════════════════════════════════════════════════════
+   KEYFRAMES
+════════════════════════════════════════════════════════════ */
+@keyframes ev-fade-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-.solution-card:hover { box-shadow: 0 12px 30px rgba(0,0,0,.12); transform: translateY(-3px); }
-.card-banner {
-  height: 8px;
-  background: linear-gradient(90deg, var(--cat-color, #2563eb), var(--cat-color2, #7c3aed));
+@keyframes ev-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-.card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
-.card-icon {
-  width: 48px; height: 48px;
-  border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  background: var(--color-primary-light);
+@keyframes ev-ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
-.card-name { font-size: 1.05rem; font-weight: 700; color: #111827; margin-bottom: .3rem; }
-.card-desc { font-size: .85rem; color: #6b7280; line-height: 1.5; flex: 1; }
-.card-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 1.25rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid #f3f4f6;
-  gap: .5rem;
+@keyframes ev-nav-in {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
-.card-actions { display: flex; gap: .5rem; flex-shrink: 0; }
-.tier-dot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; display: inline-block; margin-right: 4px; }
-.tier-label { font-size: .75rem; color: #6b7280; font-weight: 500; }
-
-/* Category ribbon */
-.cat-section { margin-bottom: 3rem; }
-.cat-header {
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f3f4f6;
+@keyframes ev-pulse {
+  from { opacity: .25; transform: translateX(-50%) scale(.8); }
+  to   { opacity: .6;  transform: translateX(-50%) scale(1.25); }
 }
-.cat-icon { font-size: 1.75rem; }
-.cat-title { font-size: 1.25rem; font-weight: 700; color: #111827; }
-.cat-count { background: #f3f4f6; color: #6b7280; font-size: .75rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
-.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
-
-/* Footer */
-.portal-footer {
-  background: #111827;
-  color: rgba(255,255,255,.6);
-  font-size: .875rem;
-  overflow: hidden;
-}
-.footer-content {
-  text-align: center;
-  padding: 1.5rem 2rem 2rem;
-}
-.portal-footer a { color: #93c5fd; }
-
-/* Dot field */
-.dot-field-wrap {
-  position: relative;
-  width: 100%;
-  height: 180px;
-  overflow: hidden;
-  cursor: crosshair;
-}
-.dot-field-wrap .dot {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.12);
-  transform-origin: center;
-  pointer-events: none;
-  will-change: transform, background;
+@keyframes ev-tile-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
 }
 
-/* Topnav */
+/* ════════════════════════════════════════════════════════════
+   BASE
+════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--ev-bg);
+  color: var(--ev-text-2);
+  padding-top: var(--ev-nav-h);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ════════════════════════════════════════════════════════════
+   NAVIGATION
+════════════════════════════════════════════════════════════ */
 .portal-nav {
-  background: rgba(255,255,255,.95);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1rem 2rem;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: var(--ev-nav-h);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 200;
+  gap: 2rem;
+  padding: 0 var(--ev-pad-x);
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background 350ms ease, border-color 350ms ease, backdrop-filter 350ms ease;
+  animation: ev-nav-in 600ms ease both;
+}
+.portal-nav.is-scrolled {
+  background: rgba(11,11,11,.96);
+  backdrop-filter: blur(16px);
+  border-bottom-color: var(--ev-border);
 }
 .nav-brand {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 900;
-  color: #111827;
+  color: var(--ev-text-1);
   text-decoration: none;
+  letter-spacing: -.03em;
+  flex-shrink: 0;
 }
-.nav-brand span { color: #2563eb; }
-.nav-links { display: flex; gap: 1.5rem; align-items: center; }
-.nav-links a { font-size: .9rem; font-weight: 500; color: #4b5563; text-decoration: none; transition: color .15s; }
-.nav-links a:hover { color: #2563eb; }
+.nav-brand span { color: var(--ev-accent); }
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  flex: 1;
+  justify-content: center;
+}
+.nav-links a {
+  font-size: var(--ev-type-label);
+  font-weight: 500;
+  color: var(--ev-text-3);
+  text-decoration: none;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  position: relative;
+  transition: color 200ms ease;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0;
+  height: 1px;
+  background: var(--ev-accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 250ms ease;
+}
+.nav-links a:hover { color: var(--ev-text-1); }
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-actions {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+.nav-cta {
+  background: var(--ev-accent);
+  border: 1px solid var(--ev-accent);
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .4rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 200ms ease, transform 200ms ease;
+}
+.nav-cta:hover { background: #e8511f; transform: translateY(-1px); }
+.nav-theme {
+  background: transparent;
+  border: 1px solid var(--ev-border-h);
+  color: var(--ev-text-3);
+  font-size: .8rem;
+  padding: .4rem .5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 200ms ease, color 200ms ease;
+}
+.nav-theme:hover { border-color: var(--ev-accent); color: var(--ev-accent); }
 
-/* Hamburger button */
+/* Hamburger */
 .hamburger {
   display: none;
   background: none;
@@ -227,197 +185,888 @@
 }
 .hamburger span {
   display: block;
-  width: 22px;
-  height: 2px;
-  background: #111827;
+  width: 22px; height: 2px;
+  background: var(--ev-text-1);
   border-radius: 2px;
   transition: transform .25s ease, opacity .25s ease;
 }
-.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
 .hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
 
-/* Stats bar */
-.stats-bar {
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 1rem 2rem;
-  display: flex;
-  gap: 3rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-.stats-bar::-webkit-scrollbar { display: none; }
-.stats-bar-item { display: flex; align-items: center; gap: .75rem; white-space: nowrap; }
-.stats-bar-item .icon { font-size: 1.5rem; }
-.stats-bar-item .info .val { font-size: 1.1rem; font-weight: 700; color: #111827; }
-.stats-bar-item .info .lbl { font-size: .75rem; color: #9ca3af; }
-
-/* No results */
-.no-results { text-align: center; padding: 4rem 2rem; color: #9ca3af; }
-.no-results .big { font-size: 3rem; margin-bottom: 1rem; }
-
-/* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
-  .cat-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-}
-
-@media (max-width: 768px) {
-  /* Nav */
-  .portal-nav { padding: .75rem 1rem; position: relative; }
+  .portal-nav { padding: 0 1.25rem; }
   .hamburger { display: flex; }
   .nav-links {
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+    position: fixed;
+    top: var(--ev-nav-h); left: 0; right: 0;
     flex-direction: column;
     align-items: flex-start;
-    background: rgba(255,255,255,.98);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid #e5e7eb;
-    padding: 1rem 1.5rem 1.5rem;
-    gap: .75rem;
-    box-shadow: 0 8px 24px rgba(0,0,0,.1);
+    background: rgba(11,11,11,.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--ev-border);
+    padding: 1.5rem 1.5rem 2rem;
+    gap: 1rem;
     z-index: 199;
+    box-shadow: 0 20px 40px rgba(0,0,0,.8);
+    flex: none;
+    justify-content: flex-start;
   }
   .nav-links.open { display: flex; }
-  .nav-links a { font-size: 1rem; padding: .25rem 0; width: 100%; }
-
-  /* Hero */
-  .portal-hero { padding: 50px 1.25rem 40px; }
-  .portal-hero h1 { font-size: 2.25rem; }
-  .portal-hero p { font-size: 1rem; }
-  .hero-stats { gap: 1.5rem; margin-top: 2rem; }
-  .hero-stat .num { font-size: 1.75rem; }
-  .hero-search { margin: 0 .5rem; max-width: none; }
-
-  /* Filter bar — horizontal scroll on mobile */
-  .filter-bar {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    padding: .75rem 1rem;
-    gap: .5rem;
-    border-radius: 0;
-    margin-left: calc(-1 * var(--container-pad, 1rem));
-    margin-right: calc(-1 * var(--container-pad, 1rem));
-    margin-bottom: 1.5rem;
-    border-left: none;
-    border-right: none;
+  .nav-links a {
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ev-text-1);
+    width: 100%;
+    padding: .5rem 0;
+    border-bottom: 1px solid var(--ev-border);
   }
-  .filter-bar::-webkit-scrollbar { display: none; }
-  .filter-bar > span { display: none; }
-
-  /* Cards */
-  .catalog-section { padding: 30px 0; }
-  .cat-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-  /* Stats bar */
-  .stats-bar { padding: .75rem 1rem; gap: 1.5rem; }
-
-  /* Dot field */
-  .dot-field-wrap { height: 130px; }
+  .nav-actions { display: none; }
 }
 
+/* ════════════════════════════════════════════════════════════
+   HERO
+════════════════════════════════════════════════════════════ */
+.portal-hero {
+  min-height: 100svh;
+  background: var(--ev-bg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+/* Dot texture */
+.portal-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.055) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+/* Bottom fade */
+.portal-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 280px;
+  background: linear-gradient(to bottom, transparent, var(--ev-bg));
+  pointer-events: none;
+  z-index: 1;
+}
+.hero-inner {
+  max-width: var(--ev-max-w);
+  margin: 0 auto;
+  padding: clamp(5rem,10vw,9rem) var(--ev-pad-x) clamp(6rem,12vw,10rem);
+  display: grid;
+  grid-template-columns: 55fr 45fr;
+  gap: clamp(2rem,5vw,6rem);
+  align-items: center;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+.hero-left { animation: ev-fade-up 800ms ease 200ms both; }
+
+.hero-eyebrow {
+  font-size: var(--ev-type-label);
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ev-accent);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 36px; height: 1px;
+  background: var(--ev-accent);
+  flex-shrink: 0;
+}
+.hero-title {
+  font-size: var(--ev-type-display);
+  font-weight: 900;
+  line-height: .9;
+  letter-spacing: -.04em;
+  color: var(--ev-text-1);
+  margin-bottom: 2rem;
+}
+.hero-title span { color: var(--ev-accent); }
+.hero-sub {
+  font-size: var(--ev-type-body-lg);
+  color: var(--ev-text-2);
+  line-height: 1.7;
+  max-width: 500px;
+  margin-bottom: 2.5rem;
+}
+
+/* Search */
+.hero-search {
+  display: flex;
+  align-items: center;
+  background: var(--ev-bg-3);
+  border: 1px solid var(--ev-border);
+  border-radius: 6px;
+  max-width: 500px;
+  height: 52px;
+  padding: 0 6px 0 16px;
+  gap: .5rem;
+  transition: border-color 250ms ease, box-shadow 250ms ease;
+}
+.hero-search:focus-within {
+  border-color: var(--ev-accent);
+  box-shadow: 0 0 0 3px var(--ev-accent-dim);
+}
+.hero-search-icon { color: var(--ev-text-3); flex-shrink: 0; }
+.hero-search input {
+  flex: 1;
+  background: transparent;
+  border: none; outline: none;
+  font-size: var(--ev-type-body);
+  font-family: inherit;
+  color: var(--ev-text-1);
+  min-width: 0;
+}
+.hero-search input::placeholder { color: var(--ev-text-3); }
+.hero-search button {
+  width: 36px; height: 36px;
+  border-radius: 4px; border: none;
+  background: var(--ev-accent);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 200ms ease, transform 200ms ease;
+}
+.hero-search button:hover { background: #e8511f; transform: scale(1.06); }
+
+/* Stats */
+.hero-stats {
+  display: flex;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+  gap: 0;
+}
+.hero-stat {
+  position: relative;
+  padding-right: 2rem;
+  margin-right: 2rem;
+}
+.hero-stat::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 6px;
+  width: 1px; height: 38px;
+  background: var(--ev-border);
+}
+.hero-stat:last-child { padding-right: 0; margin-right: 0; }
+.hero-stat:last-child::after { display: none; }
+.hero-stat .num {
+  font-size: clamp(1.625rem,2.5vw + .4rem,2.75rem);
+  font-weight: 900;
+  color: var(--ev-text-1);
+  letter-spacing: -.04em;
+  line-height: 1;
+}
+.hero-stat .lbl {
+  font-size: var(--ev-type-label);
+  color: var(--ev-text-3);
+  margin-top: 5px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* Hero right — decorative art grid */
+.hero-right { animation: ev-fade-in 1200ms ease 450ms both; }
+.hero-grid-art {
+  aspect-ratio: 1;
+  max-width: 480px;
+  margin-left: auto;
+  border: 1px solid var(--ev-border);
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  background: var(--ev-bg-2);
+  background-image:
+    linear-gradient(var(--ev-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ev-border) 1px, transparent 1px);
+  background-size: 25% 25%;
+}
+.hero-grid-art::before {
+  content: '';
+  position: absolute;
+  top: 15%; left: 50%;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, var(--ev-accent-glow), transparent 70%);
+  transform: translateX(-50%);
+  animation: ev-pulse 4s ease-in-out infinite alternate;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.grid-art-tiles {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 1px;
+  padding: 1px;
+  z-index: 1;
+}
+.grid-tile {
+  background: var(--ev-bg-3);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(.875rem,1.5vw,1.375rem);
+  transition: background 400ms ease, transform 400ms ease;
+  cursor: default;
+}
+.grid-tile.lit    { background: var(--ev-bg-4); }
+.grid-tile.accent { background: var(--ev-accent-dim); border: 1px solid rgba(250,93,41,.25); }
+.grid-tile:hover  { background: var(--ev-accent-dim); animation: ev-tile-pop .3s ease; }
+
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; padding-top: clamp(5rem,15vw,8rem); }
+  .hero-right { display: none; }
+  .hero-sub { max-width: 100%; }
+  .hero-search { max-width: 100%; }
+  .hero-stats { gap: 0; }
+}
 @media (max-width: 480px) {
-  .portal-hero h1 { font-size: 1.85rem; }
-  .hero-stats { gap: 1rem; }
-  .hero-stat .num { font-size: 1.5rem; }
-  .cat-grid { grid-template-columns: 1fr; }
-  .dot-field-wrap { height: 100px; }
+  .hero-stat { padding-right: 1.25rem; margin-right: 1.25rem; }
+  .hero-stat::after { height: 28px; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   TICKER (industry marquee)
+════════════════════════════════════════════════════════════ */
+.ev-ticker-wrap {
+  background: var(--ev-bg-3);
+  border-top: 1px solid var(--ev-border);
+  border-bottom: 1px solid var(--ev-border);
+  overflow: hidden;
+  height: 46px;
+  display: flex;
+  align-items: center;
+}
+.ev-ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  animation: ev-ticker 55s linear infinite;
+}
+.ev-ticker-wrap:hover .ev-ticker-track { animation-play-state: paused; }
+.ev-ticker-item {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ev-text-3);
+  padding: 0 1.25rem;
+}
+.ev-ticker-num {
+  color: var(--ev-accent);
+  font-weight: 800;
+  margin-right: .3rem;
+}
+.ev-ticker-sep {
+  color: var(--ev-border-h);
+  font-size: .6rem;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CATALOG
+════════════════════════════════════════════════════════════ */
+.catalog-section {
+  padding: clamp(3rem,6vw,5rem) 0 clamp(4rem,8vw,7rem);
+}
+.catalog-inner {
+  max-width: var(--ev-max-w);
+  margin: 0 auto;
+  padding: 0 var(--ev-pad-x);
+}
+
+/* ════════════════════════════════════════════════════════════
+   FILTER BAR (animated tab strip)
+════════════════════════════════════════════════════════════ */
+.ev-filter-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: clamp(2.5rem,5vw,4rem);
+  border-bottom: 1px solid var(--ev-border);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ev-filter-bar::-webkit-scrollbar { display: none; }
+.ev-filter-tab {
+  background: none;
+  border: none;
+  padding: .875rem clamp(.625rem,1.2vw,1.125rem);
+  font-size: var(--ev-type-label);
+  font-weight: 500;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ev-text-3);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color 200ms ease;
+  margin-bottom: -1px;
+  font-family: inherit;
+}
+.ev-filter-tab:hover { color: var(--ev-text-2); }
+.ev-filter-tab.active { color: var(--ev-text-1); }
+.ev-filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--ev-accent-dim);
+  color: var(--ev-accent);
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 800;
+  margin-left: 4px;
+  vertical-align: middle;
+  letter-spacing: 0;
+}
+.ev-filter-indicator {
+  position: absolute;
+  bottom: 0;
+  height: 2px;
+  background: var(--ev-accent);
+  border-radius: 1px 1px 0 0;
+  transition: left 320ms cubic-bezier(.25,.46,.45,.94),
+              width 320ms cubic-bezier(.25,.46,.45,.94);
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CATEGORY SECTION
+════════════════════════════════════════════════════════════ */
+.cat-section { margin-bottom: clamp(3rem,6vw,5rem); }
+.cat-header {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: clamp(1.5rem,3vw,2.5rem);
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--ev-border);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 500ms ease, transform 500ms ease;
+}
+.cat-header.ev-visible { opacity: 1; transform: translateY(0); }
+/* Large ordinal watermark */
+.cat-header::before {
+  content: attr(data-n);
+  position: absolute;
+  right: 0; bottom: -.15em;
+  font-size: clamp(4rem,8vw,8rem);
+  font-weight: 900;
+  letter-spacing: -.05em;
+  color: var(--ev-bg-4);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+}
+.cat-icon { display: none; }
+.cat-title {
+  font-size: var(--ev-type-heading);
+  font-weight: 800;
+  color: var(--ev-text-1);
+  letter-spacing: -.03em;
+  position: relative;
+  z-index: 1;
+}
+.cat-count {
+  background: var(--ev-accent-dim);
+  color: var(--ev-accent);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Grid */
+.cat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--ev-gutter);
+}
+@media (max-width: 1400px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 960px)  { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 540px)  { .cat-grid { grid-template-columns: 1fr; } }
+
+/* ════════════════════════════════════════════════════════════
+   SOLUTION CARD
+════════════════════════════════════════════════════════════ */
+.ev-card {
+  position: relative;
+  background: var(--ev-bg-2);
+  border: 1px solid var(--ev-border);
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  /* entrance animation state */
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity   500ms ease,
+    transform 500ms ease,
+    border-color 280ms ease,
+    box-shadow   280ms ease;
+  transition-delay: calc(var(--si, 0) * 65ms);
+}
+.ev-card.ev-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.ev-card:hover {
+  border-color: var(--ev-border-h);
+  transform: translateY(-5px) !important;
+  box-shadow: 0 28px 56px rgba(0,0,0,.7), 0 0 0 1px var(--ev-border-h);
+  transition-delay: 0ms !important;
+}
+
+/* Left accent stripe */
+.ev-card-accent {
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--c,#FA5D29), var(--c2,#7c3aed));
+  opacity: .65;
+  transition: opacity 280ms ease;
+  z-index: 3;
+}
+.ev-card:hover .ev-card-accent { opacity: 1; }
+
+/* Resting body */
+.ev-card-body {
+  flex: 1;
+  padding: 1.5rem 1.5rem 1.5rem 1.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  position: relative;
+  z-index: 1;
+  transition: opacity 230ms ease 40ms;
+}
+.ev-card:hover .ev-card-body { opacity: 0; }
+
+.ev-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .5rem;
+}
+.ev-card-icon { font-size: 1.75rem; line-height: 1; flex-shrink: 0; }
+.ev-card-cat {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ev-text-3);
+  background: var(--ev-bg-3);
+  padding: 3px 7px;
+  border-radius: 3px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+.ev-card-name {
+  font-size: clamp(.9375rem,.8vw + .5rem,1.125rem);
+  font-weight: 700;
+  color: var(--ev-text-1);
+  letter-spacing: -.02em;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ev-card-desc {
+  font-size: var(--ev-type-body);
+  color: var(--ev-text-2);
+  line-height: 1.65;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ev-card-tags {
+  display: flex;
+  gap: .35rem;
+  flex-wrap: wrap;
+  margin-top: auto;
+  padding-top: .5rem;
+}
+.ev-tag {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--ev-text-3);
+  border: 1px solid var(--ev-border);
+  border-radius: 3px;
+  padding: 2px 6px;
+}
+
+/* Hover overlay */
+.ev-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10,10,10,.98) 0%,
+    rgba(10,10,10,.88) 52%,
+    rgba(10,10,10,.45) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.875rem 1.875rem 1.875rem 2.125rem;
+  opacity: 0;
+  transition: opacity 260ms ease;
+  z-index: 2;
+}
+.ev-card:hover .ev-card-overlay { opacity: 1; }
+
+.ev-card-overlay-name {
+  font-size: clamp(1rem,1.2vw + .4rem,1.375rem);
+  font-weight: 800;
+  color: var(--ev-text-1);
+  letter-spacing: -.025em;
+  line-height: 1.15;
+  margin-bottom: 1.25rem;
+  transform: translateY(10px);
+  transition: transform 280ms ease 60ms;
+}
+.ev-card:hover .ev-card-overlay-name { transform: translateY(0); }
+
+.ev-card-overlay-actions {
+  display: flex;
+  gap: .625rem;
+  align-items: center;
+  flex-wrap: wrap;
+  transform: translateY(10px);
+  transition: transform 280ms ease 100ms;
+}
+.ev-card:hover .ev-card-overlay-actions { transform: translateY(0); }
+
+.ev-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  background: var(--ev-accent);
+  color: #fff;
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .55rem 1.1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: background 180ms ease, transform 180ms ease;
+  white-space: nowrap;
+}
+.ev-card-cta:hover { background: #e8511f; transform: scale(1.03); text-decoration: none; }
+
+.ev-card-cta-outline {
+  display: inline-flex;
+  align-items: center;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ev-text-2);
+  padding: .55rem .875rem;
+  border: 1px solid var(--ev-border-h);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: color 180ms ease, border-color 180ms ease;
+  white-space: nowrap;
+}
+.ev-card-cta-outline:hover { color: var(--ev-text-1); border-color: var(--ev-text-2); text-decoration: none; }
+
+/* Mobile: release aspect-ratio, always show body */
+@media (max-width: 768px) {
+  .ev-card { aspect-ratio: auto; min-height: 180px; }
+  .ev-card-body { opacity: 1 !important; }
+  .ev-card-overlay { display: none; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   NO RESULTS
+════════════════════════════════════════════════════════════ */
+.no-results {
+  text-align: center;
+  padding: clamp(4rem,10vw,8rem) 2rem;
+  color: var(--ev-text-3);
+}
+.no-results .big { font-size: clamp(3rem,6vw,5rem); margin-bottom: 1.5rem; opacity: .3; }
+.no-results p { font-size: var(--ev-type-body-lg); }
+
+/* ════════════════════════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════════════════════════ */
+.portal-footer {
+  background: var(--ev-bg-2);
+  border-top: 1px solid var(--ev-border);
+}
+.footer-editorial {
+  max-width: var(--ev-max-w);
+  margin: 0 auto;
+  padding: clamp(3rem,6vw,5rem) var(--ev-pad-x);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+.footer-brand {
+  font-size: clamp(1.75rem,3vw,2.75rem);
+  font-weight: 900;
+  color: var(--ev-text-1);
+  letter-spacing: -.04em;
+  margin-bottom: 1rem;
+  line-height: 1;
+}
+.footer-brand span { color: var(--ev-accent); }
+.footer-tagline {
+  font-size: var(--ev-type-body-lg);
+  color: var(--ev-text-3);
+  line-height: 1.65;
+}
+.footer-right {
+  display: flex;
+  gap: 4rem;
+  justify-content: flex-end;
+}
+.footer-links-group {
+  display: flex;
+  flex-direction: column;
+  gap: .875rem;
+}
+.footer-links-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ev-text-3);
+  margin-bottom: .25rem;
+}
+.footer-links-group a {
+  font-size: var(--ev-type-body);
+  color: var(--ev-text-2);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+.footer-links-group a:hover { color: var(--ev-text-1); text-decoration: none; }
+
+/* Dot field */
+.dot-field-wrap {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  overflow: hidden;
+  cursor: crosshair;
+  border-top: 1px solid var(--ev-border);
+  border-bottom: 1px solid var(--ev-border);
+}
+.dot-field-wrap .dot {
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.05);
+  transform-origin: center;
+  pointer-events: none;
+  will-change: transform, background;
+}
+
+.footer-bar {
+  max-width: var(--ev-max-w);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem var(--ev-pad-x);
+  font-size: var(--ev-type-label);
+  color: var(--ev-text-3);
+  letter-spacing: .04em;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.footer-bar a { color: var(--ev-text-2); text-decoration: none; transition: color 200ms ease; }
+.footer-bar a:hover { color: var(--ev-text-1); text-decoration: none; }
+
+@media (max-width: 700px) {
+  .footer-editorial { grid-template-columns: 1fr; gap: 2.5rem; }
+  .footer-right { justify-content: flex-start; gap: 2.5rem; }
+  .dot-field-wrap { height: 160px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<nav class="portal-nav">
+<!-- ── Navigation ─────────────────────────────────────────── -->
+<nav class="portal-nav" data-nav>
   <a href="https://ikppramesh.github.io/everything/" class="nav-brand">Every<span>thing</span></a>
   <button class="hamburger" id="menuToggle" aria-label="Toggle menu" onclick="toggleNav()">
     <span></span><span></span><span></span>
   </button>
   <div class="nav-links" id="navLinks">
     <a href="#catalog" onclick="closeNav()">Catalog</a>
-    <a href="CATALOG.md">Full Index</a>
+    <a href="CATALOG.md">Index</a>
     <a href="README.md">Docs</a>
     <a href="https://github.com/ikppramesh/everything" target="_blank">GitHub</a>
-    <button class="btn btn-primary btn-sm" onclick="EV.toast('Contribution guide coming soon!','info');closeNav()">+ Contribute</button>
-    <button class="btn btn-outline btn-sm" data-theme-toggle>🌙 Theme</button>
+  </div>
+  <div class="nav-actions">
+    <button class="nav-cta" onclick="EV.toast('Contribution guide coming soon!','info')">+ Contribute</button>
+    <button class="nav-theme" data-theme-toggle title="Toggle theme">🌙</button>
   </div>
 </nav>
 
-<!-- Hero -->
-<section class="portal-hero">
-  <h1>Every<span>thing</span> Platform</h1>
-  <p>Enterprise-ready solution templates for every business sector. Browse, demo, and pitch — all in one place.</p>
-  <div class="hero-search">
-    <input type="text" id="heroSearch" placeholder="Search solutions, sectors, use-cases…" oninput="filterCards()"/>
-    <button onclick="filterCards()">Search</button>
-  </div>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="num">30+</div><div class="lbl">Solutions</div></div>
-    <div class="hero-stat"><div class="num">11</div><div class="lbl">Industries</div></div>
-    <div class="hero-stat"><div class="num">100%</div><div class="lbl">Open Source</div></div>
-    <div class="hero-stat"><div class="num">0</div><div class="lbl">Dependencies</div></div>
+<!-- ── Hero ──────────────────────────────────────────────── -->
+<section class="portal-hero" id="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Enterprise Solution Catalog</div>
+      <h1 class="hero-title">Every<span>thing</span><br>Platform</h1>
+      <p class="hero-sub">37 enterprise-ready templates across 11 industries. Browse, demo, and pitch — zero dependencies required.</p>
+      <div class="hero-search">
+        <svg class="hero-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="heroSearch" placeholder="Search solutions, sectors, industries…" oninput="filterCards()"/>
+        <button onclick="filterCards()" aria-label="Search">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">37</div><div class="lbl">Solutions</div></div>
+        <div class="hero-stat"><div class="num">11</div><div class="lbl">Industries</div></div>
+        <div class="hero-stat"><div class="num">100%</div><div class="lbl">Open Source</div></div>
+        <div class="hero-stat"><div class="num">0</div><div class="lbl">Dependencies</div></div>
+      </div>
+    </div>
+    <div class="hero-right" aria-hidden="true">
+      <div class="hero-grid-art">
+        <div class="grid-art-tiles" id="gridTiles"></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- Stats Bar -->
-<div class="stats-bar container">
-  <div class="stats-bar-item"><span class="icon">🎓</span><div class="info"><div class="val">4</div><div class="lbl">Education</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🚗</span><div class="info"><div class="val">4</div><div class="lbl">Automotive</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🏥</span><div class="info"><div class="val">4</div><div class="lbl">Healthcare</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🛒</span><div class="info"><div class="val">4</div><div class="lbl">Retail</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🏠</span><div class="info"><div class="val">3</div><div class="lbl">Real Estate</div></div></div>
-  <div class="stats-bar-item"><span class="icon">💰</span><div class="info"><div class="val">4</div><div class="lbl">Finance</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🏨</span><div class="info"><div class="val">3</div><div class="lbl">Hospitality</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🚚</span><div class="info"><div class="val">3</div><div class="lbl">Logistics</div></div></div>
-  <div class="stats-bar-item"><span class="icon">👥</span><div class="info"><div class="val">3</div><div class="lbl">HR</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🏛️</span><div class="info"><div class="val">3</div><div class="lbl">Government</div></div></div>
-  <div class="stats-bar-item"><span class="icon">🌾</span><div class="info"><div class="val">3</div><div class="lbl">Agriculture</div></div></div>
-</div>
-
-<!-- Catalog -->
-<div class="catalog-section container" id="catalog">
-
-  <!-- Filter Bar -->
-  <div class="filter-bar">
-    <span style="font-size:.85rem;font-weight:600;color:#374151;margin-right:.5rem">Filter:</span>
-    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-    <button class="filter-btn" onclick="setFilter('education',this)">🎓 Education</button>
-    <button class="filter-btn" onclick="setFilter('automotive',this)">🚗 Automotive</button>
-    <button class="filter-btn" onclick="setFilter('healthcare',this)">🏥 Healthcare</button>
-    <button class="filter-btn" onclick="setFilter('retail',this)">🛒 Retail</button>
-    <button class="filter-btn" onclick="setFilter('real-estate',this)">🏠 Real Estate</button>
-    <button class="filter-btn" onclick="setFilter('finance',this)">💰 Finance</button>
-    <button class="filter-btn" onclick="setFilter('hospitality',this)">🏨 Hospitality</button>
-    <button class="filter-btn" onclick="setFilter('logistics',this)">🚚 Logistics</button>
-    <button class="filter-btn" onclick="setFilter('hr',this)">👥 HR</button>
-    <button class="filter-btn" onclick="setFilter('government',this)">🏛️ Govt</button>
-    <button class="filter-btn" onclick="setFilter('agriculture',this)">🌾 Agriculture</button>
-  </div>
-
-  <!-- Cards Container -->
-  <div id="catalogContainer"></div>
-  <div id="noResults" class="no-results hidden">
-    <div class="big">🔍</div>
-    <p>No solutions match your search. Try a different keyword.</p>
+<!-- ── Industry Ticker ───────────────────────────────────── -->
+<div class="ev-ticker-wrap" aria-hidden="true">
+  <div class="ev-ticker-track">
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Education</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Automotive</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Healthcare</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Retail</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Real Estate</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Finance</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Hospitality</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Logistics</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>HR</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Government</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
+    <!-- duplicated for seamless CSS loop -->
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Education</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Automotive</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Healthcare</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Retail</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Real Estate</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Finance</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Hospitality</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Logistics</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>HR</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Government</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
   </div>
 </div>
 
-<!-- Footer -->
+<!-- ── Catalog ───────────────────────────────────────────── -->
+<section class="catalog-section" id="catalog">
+  <div class="catalog-inner">
+
+    <!-- Filter tab strip -->
+    <div class="ev-filter-bar" role="tablist" aria-label="Filter by industry">
+      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">37</span></button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('education',this)">Education</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('automotive',this)">Automotive</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('healthcare',this)">Healthcare</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('retail',this)">Retail</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('real-estate',this)">Real Estate</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('finance',this)">Finance</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('hospitality',this)">Hospitality</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('logistics',this)">Logistics</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('hr',this)">HR</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('government',this)">Govt</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('agriculture',this)">Agriculture</button>
+      <span class="ev-filter-indicator" aria-hidden="true"></span>
+    </div>
+
+    <!-- Cards -->
+    <div id="catalogContainer"></div>
+    <div id="noResults" class="no-results hidden">
+      <div class="big">🔍</div>
+      <p>No solutions match your search. Try a different keyword.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────── -->
 <footer class="portal-footer">
+  <div class="footer-editorial">
+    <div class="footer-left">
+      <div class="footer-brand">Every<span>thing</span></div>
+      <p class="footer-tagline">Open-source enterprise templates.<br>Built for scale, from zero.</p>
+    </div>
+    <div class="footer-right">
+      <div class="footer-links-group">
+        <div class="footer-links-label">Platform</div>
+        <a href="#catalog">Catalog</a>
+        <a href="CATALOG.md">Full Index</a>
+        <a href="README.md">Documentation</a>
+      </div>
+      <div class="footer-links-group">
+        <div class="footer-links-label">Community</div>
+        <a href="https://github.com/ikppramesh/everything" target="_blank">GitHub</a>
+        <a href="README.md">Contribute</a>
+      </div>
+    </div>
+  </div>
   <div class="dot-field-wrap" id="dotField"></div>
-  <div class="footer-content">
-    <p>Built with ❤️ · <a href="https://github.com/ikppramesh/everything" target="_blank">github.com/ikppramesh/everything</a> · Open Source &amp; Free</p>
+  <div class="footer-bar">
+    <span>Built with care · <a href="https://github.com/ikppramesh/everything" target="_blank">github.com/ikppramesh/everything</a> · MIT License</span>
+    <span>© 2025 Everything Platform</span>
   </div>
 </footer>
 
 <script src="_shared/js/demo-utils.js"></script>
 <script>
+/* ── Data ─────────────────────────────────────────────────── */
 const SOLUTIONS = [
   // EDUCATION
   { category:'education', icon:'📚', name:'Library Management', path:'education/library-management/index.html', desc:'Book inventory, borrow/return tracking, overdue alerts, student portal for any college or school.', tags:['college','books','inventory'], color:'#2563eb', color2:'#0891b2' },
@@ -425,48 +1074,48 @@ const SOLUTIONS = [
   { category:'education', icon:'📝', name:'Online Exam Portal', path:'education/online-exam-portal/index.html', desc:'MCQ & subjective exams, auto-grading, timer, result publishing, certificate generation.', tags:['exam','quiz','certificate'], color:'#7c3aed', color2:'#2563eb' },
   { category:'education', icon:'🖥️', name:'Learning Management System', path:'education/learning-management-system/index.html', desc:'Course builder, video lessons, quizzes, progress tracking, instructor dashboard.', tags:['lms','course','elearning'], color:'#16a34a', color2:'#2563eb' },
   // AUTOMOTIVE
-  { category:'automotive', icon:'🚗', name:'Car Dealer Service', path:'automotive/car-dealer-service/index.html', desc:'End-to-end dealer process: lead capture → test drive → sale → delivery → post-sale service.', tags:['car','dealer','sales','crm'], color:'#dc2626', color2:'#d97706' },
+  { category:'automotive', icon:'🚗', name:'Car Dealer Service', path:'automotive/car-dealer-service/index.html', desc:'End-to-end dealer process: lead capture → test drive → sale → delivery → post-sale service.', tags:['car','dealer','sales'], color:'#dc2626', color2:'#d97706' },
   { category:'automotive', icon:'🚛', name:'Fleet Management', path:'automotive/fleet-management/index.html', desc:'Vehicle tracking, maintenance scheduling, fuel logs, driver management, expense reports.', tags:['fleet','vehicles','tracking'], color:'#d97706', color2:'#dc2626' },
   { category:'automotive', icon:'🔧', name:'Auto Repair Workshop', path:'automotive/auto-repair-workshop/index.html', desc:'Job card management, spare parts inventory, mechanic assignment, billing, customer SMS.', tags:['workshop','repair','billing'], color:'#4b5563', color2:'#d97706' },
   { category:'automotive', icon:'🔑', name:'Vehicle Rental System', path:'automotive/vehicle-rental/index.html', desc:'Booking calendar, contract generation, damage tracking, fleet availability, invoicing.', tags:['rental','booking','contract'], color:'#0891b2', color2:'#7c3aed' },
   // HEALTHCARE
-  { category:'healthcare', icon:'🏥', name:'Hospital Management', path:'healthcare/hospital-management/index.html', desc:'OPD, IPD, billing, pharmacy integration, lab reports, ward management, doctor schedules.', tags:['hospital','opd','billing','ward'], color:'#dc2626', color2:'#7c3aed' },
+  { category:'healthcare', icon:'🏥', name:'Hospital Management', path:'healthcare/hospital-management/index.html', desc:'OPD, IPD, billing, pharmacy integration, lab reports, ward management, doctor schedules.', tags:['hospital','opd','billing'], color:'#dc2626', color2:'#7c3aed' },
   { category:'healthcare', icon:'📅', name:'Clinic Appointment', path:'healthcare/clinic-appointment/index.html', desc:'Online booking, doctor availability calendar, patient records, SMS reminders, billing.', tags:['clinic','appointment','doctor'], color:'#16a34a', color2:'#0891b2' },
   { category:'healthcare', icon:'💊', name:'Pharmacy Management', path:'healthcare/pharmacy-management/index.html', desc:'Drug inventory, expiry tracking, prescription management, GST billing, reorder alerts.', tags:['pharmacy','drugs','inventory'], color:'#7c3aed', color2:'#16a34a' },
   { category:'healthcare', icon:'🧪', name:'Lab Reports Portal', path:'healthcare/lab-reports-portal/index.html', desc:'Sample collection, test assignment, result entry, digital report delivery, billing.', tags:['lab','pathology','reports'], color:'#0891b2', color2:'#dc2626' },
   // RETAIL
-  { category:'retail', icon:'🛒', name:'Inventory & POS', path:'retail/inventory-pos/index.html', desc:'Multi-store inventory, barcode scanning, point-of-sale billing, daily sales reports.', tags:['pos','inventory','barcode','shop'], color:'#d97706', color2:'#16a34a' },
+  { category:'retail', icon:'🛒', name:'Inventory & POS', path:'retail/inventory-pos/index.html', desc:'Multi-store inventory, barcode scanning, point-of-sale billing, daily sales reports.', tags:['pos','inventory','barcode'], color:'#d97706', color2:'#16a34a' },
   { category:'retail', icon:'🏪', name:'E-Commerce Dashboard', path:'retail/ecommerce-dashboard/index.html', desc:'Product catalogue, orders, returns management, seller analytics, coupon engine.', tags:['ecommerce','orders','sellers'], color:'#2563eb', color2:'#d97706' },
   { category:'retail', icon:'🎁', name:'Loyalty Program', path:'retail/loyalty-program/index.html', desc:'Points engine, tier management, reward redemption, customer segments, campaign builder.', tags:['loyalty','rewards','crm'], color:'#7c3aed', color2:'#dc2626' },
   { category:'retail', icon:'📦', name:'Supplier Portal', path:'retail/supplier-portal/index.html', desc:'Purchase orders, goods receipt, vendor management, payment tracking, quality checks.', tags:['supplier','purchase','vendor'], color:'#16a34a', color2:'#2563eb' },
   // REAL ESTATE
-  { category:'real-estate', icon:'🏠', name:'Property Management', path:'real-estate/property-management/index.html', desc:'Property listings, tenant management, rent collection, maintenance requests, lease tracking.', tags:['property','tenant','rent','lease'], color:'#d97706', color2:'#0891b2' },
+  { category:'real-estate', icon:'🏠', name:'Property Management', path:'real-estate/property-management/index.html', desc:'Property listings, tenant management, rent collection, maintenance requests, lease tracking.', tags:['property','tenant','rent'], color:'#d97706', color2:'#0891b2' },
   { category:'real-estate', icon:'🏗️', name:'Construction Tracker', path:'real-estate/construction-tracker/index.html', desc:'Project milestones, BOQ management, contractor payments, material tracking, site reports.', tags:['construction','boq','contractor'], color:'#4b5563', color2:'#d97706' },
   { category:'real-estate', icon:'🔑', name:'Rental Portal', path:'real-estate/rental-portal/index.html', desc:'Owner & tenant portals, online agreement, maintenance tickets, payment history.', tags:['rental','tenant','agreement'], color:'#2563eb', color2:'#16a34a' },
   // FINANCE
-  { category:'finance', icon:'🧾', name:'Invoice & Billing', path:'finance/invoice-billing/index.html', desc:'Quotation to invoice workflow, GST computation, payment tracking, aging reports, PDF export.', tags:['invoice','billing','gst','payment'], color:'#16a34a', color2:'#2563eb' },
+  { category:'finance', icon:'🧾', name:'Invoice & Billing', path:'finance/invoice-billing/index.html', desc:'Quotation to invoice workflow, GST computation, payment tracking, aging reports, PDF export.', tags:['invoice','billing','gst'], color:'#16a34a', color2:'#2563eb' },
   { category:'finance', icon:'💳', name:'Expense Tracker', path:'finance/expense-tracker/index.html', desc:'Employee expense claims, approval workflow, budget vs actual, category analysis, export.', tags:['expense','budget','claims'], color:'#d97706', color2:'#dc2626' },
-  { category:'finance', icon:'👔', name:'Payroll Management', path:'finance/payroll-management/index.html', desc:'Salary computation, PF/ESI/TDS, payslip generation, bank transfer file, Form 16.', tags:['payroll','salary','tax','hr'], color:'#2563eb', color2:'#7c3aed' },
+  { category:'finance', icon:'👔', name:'Payroll Management', path:'finance/payroll-management/index.html', desc:'Salary computation, PF/ESI/TDS, payslip generation, bank transfer file, Form 16.', tags:['payroll','salary','tax'], color:'#2563eb', color2:'#7c3aed' },
   { category:'finance', icon:'📊', name:'Budget Planner', path:'finance/budget-planner/index.html', desc:'Annual budget creation, department allocation, variance tracking, forecast, approval workflow.', tags:['budget','forecast','planning'], color:'#7c3aed', color2:'#16a34a' },
   // HOSPITALITY
   { category:'hospitality', icon:'🏨', name:'Hotel Management', path:'hospitality/hotel-management/index.html', desc:'Reservations, check-in/out, housekeeping, F&B, front desk dashboard, billing, night audit.', tags:['hotel','reservation','rooms'], color:'#d97706', color2:'#7c3aed' },
-  { category:'hospitality', icon:'🍽️', name:'Restaurant POS', path:'hospitality/restaurant-pos/index.html', desc:'Table management, KOT, menu builder, billing, daily reports, kitchen display.', tags:['restaurant','kot','billing','food'], color:'#dc2626', color2:'#d97706' },
+  { category:'hospitality', icon:'🍽️', name:'Restaurant POS', path:'hospitality/restaurant-pos/index.html', desc:'Table management, KOT, menu builder, billing, daily reports, kitchen display.', tags:['restaurant','kot','billing'], color:'#dc2626', color2:'#d97706' },
   { category:'hospitality', icon:'🎉', name:'Event Management', path:'hospitality/event-management/index.html', desc:'Venue booking, catering management, guest lists, vendor coordination, budget tracking.', tags:['events','venue','catering'], color:'#7c3aed', color2:'#dc2626' },
   // LOGISTICS
   { category:'logistics', icon:'🚚', name:'Delivery Tracker', path:'logistics/delivery-tracker/index.html', desc:'Order to delivery workflow, driver assignment, GPS status, POD capture, customer notifications.', tags:['delivery','tracking','logistics'], color:'#0891b2', color2:'#2563eb' },
   { category:'logistics', icon:'🏭', name:'Warehouse Management', path:'logistics/warehouse-management/index.html', desc:'Bin locations, inbound/outbound, pick-pack-ship, cycle count, putaway rules.', tags:['warehouse','wms','inventory'], color:'#4b5563', color2:'#0891b2' },
   { category:'logistics', icon:'🔗', name:'Supply Chain Portal', path:'logistics/supply-chain-portal/index.html', desc:'Vendor onboarding, PO lifecycle, shipment tracking, compliance docs, analytics dashboard.', tags:['supply chain','vendor','procurement'], color:'#2563eb', color2:'#4b5563' },
   // HR
-  { category:'hr', icon:'🤝', name:'Recruitment ATS', path:'hr/recruitment-ats/index.html', desc:'Job postings, applicant tracking, interview scheduling, offer letters, onboarding pipeline.', tags:['recruitment','ats','hiring','hr'], color:'#7c3aed', color2:'#2563eb' },
+  { category:'hr', icon:'🤝', name:'Recruitment ATS', path:'hr/recruitment-ats/index.html', desc:'Job postings, applicant tracking, interview scheduling, offer letters, onboarding pipeline.', tags:['recruitment','ats','hiring'], color:'#7c3aed', color2:'#2563eb' },
   { category:'hr', icon:'📅', name:'Leave Management', path:'hr/leave-management/index.html', desc:'Leave policy engine, approval workflow, balance tracking, team calendar, compliance reports.', tags:['leave','attendance','hr'], color:'#16a34a', color2:'#0891b2' },
-  { category:'hr', icon:'⭐', name:'Performance Review', path:'hr/performance-review/index.html', desc:'Goal setting, 360° feedback, appraisal cycles, rating normalization, increment planning.', tags:['performance','appraisal','goals','hr'], color:'#d97706', color2:'#7c3aed' },
+  { category:'hr', icon:'⭐', name:'Performance Review', path:'hr/performance-review/index.html', desc:'Goal setting, 360° feedback, appraisal cycles, rating normalization, increment planning.', tags:['performance','appraisal','goals'], color:'#d97706', color2:'#7c3aed' },
   // GOVERNMENT
   { category:'government', icon:'🏛️', name:'Citizen Services Portal', path:'government/citizen-services/index.html', desc:'Online form submission, document upload, application status tracking, payment gateway.', tags:['government','citizen','services'], color:'#1d4ed8', color2:'#16a34a' },
   { category:'government', icon:'📋', name:'Document Management', path:'government/document-management/index.html', desc:'Document classification, version control, access permissions, audit trail, search.', tags:['documents','dms','records'], color:'#4b5563', color2:'#1d4ed8' },
   { category:'government', icon:'📢', name:'Municipal Grievance', path:'government/municipal-grievance/index.html', desc:'Citizen complaint submission, department routing, SLA tracking, escalation, resolution.', tags:['grievance','complaint','municipal'], color:'#dc2626', color2:'#1d4ed8' },
   // AGRICULTURE
   { category:'agriculture', icon:'🌾', name:'Farm Management', path:'agriculture/farm-management/index.html', desc:'Plot tracking, crop cycle management, input cost logging, yield recording, soil health.', tags:['farm','crops','agriculture'], color:'#16a34a', color2:'#d97706' },
-  { category:'agriculture', icon:'📈', name:'Agri Market Portal', path:'agriculture/agri-market-portal/index.html', desc:'Farmer listings, buyer discovery, mandi rates, trade matching, payment settlement.', tags:['market','mandi','farmer','buyer'], color:'#d97706', color2:'#16a34a' },
+  { category:'agriculture', icon:'📈', name:'Agri Market Portal', path:'agriculture/agri-market-portal/index.html', desc:'Farmer listings, buyer discovery, mandi rates, trade matching, payment settlement.', tags:['market','mandi','farmer'], color:'#d97706', color2:'#16a34a' },
   { category:'agriculture', icon:'💧', name:'Crop Tracking', path:'agriculture/crop-tracking/index.html', desc:'Season-wise tracking, pesticide schedules, irrigation logs, harvest prediction, alerts.', tags:['crops','irrigation','harvest'], color:'#0891b2', color2:'#16a34a' },
 ];
 
@@ -484,34 +1133,67 @@ const CAT_META = {
   agriculture:  { icon:'🌾', label:'Agriculture' },
 };
 
+/* ── State ────────────────────────────────────────────────── */
 let activeFilter = 'all';
 let searchQuery  = '';
 
+/* ── setFilter ───────────────────────────────────────────── */
 function setFilter(cat, btn) {
   activeFilter = cat;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.ev-filter-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   render();
 }
 
+/* ── filterCards ─────────────────────────────────────────── */
 function filterCards() {
   searchQuery = document.getElementById('heroSearch').value.toLowerCase();
   render();
 }
 
+/* ── cardHTML ────────────────────────────────────────────── */
+function cardHTML(s) {
+  const catLabel = (CAT_META[s.category] || {}).label || s.category;
+  const docsPath = s.path.replace('index.html','README.md');
+  return `
+    <article class="ev-card" data-category="${s.category}" style="--c:${s.color};--c2:${s.color2}">
+      <div class="ev-card-accent"></div>
+      <div class="ev-card-body">
+        <div class="ev-card-top">
+          <div class="ev-card-icon">${s.icon}</div>
+          <div class="ev-card-cat">${catLabel}</div>
+        </div>
+        <div class="ev-card-name">${s.name}</div>
+        <div class="ev-card-desc">${s.desc}</div>
+        <div class="ev-card-tags">
+          ${s.tags.slice(0,3).map(t => `<span class="ev-tag">${t}</span>`).join('')}
+        </div>
+      </div>
+      <div class="ev-card-overlay">
+        <div class="ev-card-overlay-name">${s.name}</div>
+        <div class="ev-card-overlay-actions">
+          <a href="${s.path}" class="ev-card-cta">Live Demo ↗</a>
+          <a href="${docsPath}" class="ev-card-cta-outline">Docs</a>
+        </div>
+      </div>
+    </article>`;
+}
+
+/* ── render ──────────────────────────────────────────────── */
 function render() {
   const container = document.getElementById('catalogContainer');
   const noResults = document.getElementById('noResults');
 
   const filtered = SOLUTIONS.filter(s => {
     const matchCat   = activeFilter === 'all' || s.category === activeFilter;
-    const matchQuery = !searchQuery || s.name.toLowerCase().includes(searchQuery)
+    const matchQuery = !searchQuery
+      || s.name.toLowerCase().includes(searchQuery)
       || s.desc.toLowerCase().includes(searchQuery)
       || s.tags.some(t => t.includes(searchQuery));
     return matchCat && matchQuery;
   });
 
-  if (filtered.length === 0) {
+  if (!filtered.length) {
     container.innerHTML = '';
     noResults.classList.remove('hidden');
     return;
@@ -519,164 +1201,238 @@ function render() {
   noResults.classList.add('hidden');
 
   if (activeFilter !== 'all') {
-    container.innerHTML = `<div class="cat-grid">${filtered.map(cardHTML).join('')}</div>`;
+    const meta = CAT_META[activeFilter] || {};
+    container.innerHTML = `
+      <div class="cat-section" data-cat="${activeFilter}">
+        <div class="cat-header ev-visible" data-n="01">
+          <span class="cat-title">${meta.label || activeFilter}</span>
+          <span class="cat-count">${filtered.length} solution${filtered.length > 1 ? 's' : ''}</span>
+        </div>
+        <div class="cat-grid">${filtered.map(cardHTML).join('')}</div>
+      </div>`;
     return;
   }
 
-  // Group by category
+  // All categories
   const cats = [...new Set(SOLUTIONS.map(s => s.category))];
-  container.innerHTML = cats.map(cat => {
+  let n = 0;
+  let html = '';
+  cats.forEach(cat => {
     const items = filtered.filter(s => s.category === cat);
-    if (!items.length) return '';
+    if (!items.length) return;
+    n++;
     const meta = CAT_META[cat];
-    return `
+    const ordinal = String(n).padStart(2, '0');
+    html += `
       <div class="cat-section" data-cat="${cat}">
-        <div class="cat-header">
-          <span class="cat-icon">${meta.icon}</span>
+        <div class="cat-header" data-n="${ordinal}">
           <span class="cat-title">${meta.label}</span>
           <span class="cat-count">${items.length} solution${items.length > 1 ? 's' : ''}</span>
         </div>
         <div class="cat-grid">${items.map(cardHTML).join('')}</div>
       </div>`;
-  }).join('');
-}
-
-function cardHTML(s) {
-  return `
-    <div class="solution-card" data-category="${s.category}">
-      <div class="card-banner" style="--cat-color:${s.color};--cat-color2:${s.color2}"></div>
-      <div class="card-body">
-        <div class="card-icon" style="background:${s.color}18">${s.icon}</div>
-        <div class="card-name">${s.name}</div>
-        <div class="card-desc">${s.desc}</div>
-        <div style="margin-top:.75rem;display:flex;gap:.4rem;flex-wrap:wrap">
-          ${s.tags.map(t => `<span class="badge badge-gray">${t}</span>`).join('')}
-        </div>
-        <div class="card-meta">
-          <div><span class="tier-dot"></span><span class="tier-label">Demo Ready</span></div>
-          <div class="card-actions">
-            <a href="${s.path}" class="btn btn-primary btn-sm">Live Demo</a>
-            <a href="${s.path.replace('index.html','README.md')}" class="btn btn-outline btn-sm">Docs</a>
-          </div>
-        </div>
-      </div>
-    </div>`;
+  });
+  container.innerHTML = html;
 }
 
 render();
 document.getElementById('heroSearch').addEventListener('input', filterCards);
 
-// ── Hamburger nav toggle ──────────────────────────────────────────
+/* ── Hamburger ───────────────────────────────────────────── */
 function toggleNav() {
-  var links  = document.getElementById('navLinks');
-  var toggle = document.getElementById('menuToggle');
-  var isOpen = links.classList.toggle('open');
-  toggle.classList.toggle('open', isOpen);
+  const links  = document.getElementById('navLinks');
+  const toggle = document.getElementById('menuToggle');
+  const open   = links.classList.toggle('open');
+  toggle.classList.toggle('open', open);
 }
 function closeNav() {
   document.getElementById('navLinks').classList.remove('open');
   document.getElementById('menuToggle').classList.remove('open');
 }
-document.addEventListener('click', function(e) {
-  var nav = document.querySelector('.portal-nav');
-  if (nav && !nav.contains(e.target)) closeNav();
+document.addEventListener('click', e => {
+  if (!document.querySelector('.portal-nav').contains(e.target)) closeNav();
 });
 
-// ── Animated dot field ───────────────────────────────────────────
+/* ── Nav scroll observer ─────────────────────────────────── */
+(function() {
+  var nav = document.querySelector('[data-nav]');
+  if (!nav) return;
+  function tick() { nav.classList.toggle('is-scrolled', window.scrollY > 50); }
+  window.addEventListener('scroll', tick, { passive: true });
+  tick();
+})();
+
+/* ── Filter indicator (sliding underline) ────────────────── */
+(function() {
+  var bar = document.querySelector('.ev-filter-bar');
+  if (!bar) return;
+  var ind = bar.querySelector('.ev-filter-indicator');
+
+  function move(tab) {
+    if (!tab || !ind) return;
+    var br = bar.getBoundingClientRect();
+    var tr = tab.getBoundingClientRect();
+    ind.style.left  = (tr.left - br.left + bar.scrollLeft) + 'px';
+    ind.style.width = tr.width + 'px';
+  }
+
+  requestAnimationFrame(function() {
+    move(bar.querySelector('.ev-filter-tab.active'));
+  });
+
+  var _setFilter = window.setFilter;
+  window.setFilter = function(cat, btn) {
+    _setFilter(cat, btn);
+    move(btn);
+  };
+
+  window.addEventListener('resize', function() {
+    move(bar.querySelector('.ev-filter-tab.active'));
+  }, { passive: true });
+})();
+
+/* ── IntersectionObserver — staggered entrance ───────────── */
+(function() {
+  if (!window.IntersectionObserver) return;
+
+  var ioCards = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      var cards = entry.target.querySelectorAll('.ev-card');
+      cards.forEach(function(card, i) {
+        card.style.setProperty('--si', i);
+        card.classList.add('ev-visible');
+      });
+      ioCards.unobserve(entry.target);
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -40px 0px' });
+
+  var ioHeaders = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('ev-visible');
+      ioHeaders.unobserve(entry.target);
+    });
+  }, { threshold: 0.15 });
+
+  function observe() {
+    document.querySelectorAll('.cat-grid').forEach(function(g) { ioCards.observe(g); });
+    document.querySelectorAll('.cat-header:not(.ev-visible)').forEach(function(h) { ioHeaders.observe(h); });
+  }
+
+  // Re-observe whenever catalogContainer changes
+  var cc = document.getElementById('catalogContainer');
+  if (cc) {
+    new MutationObserver(function() {
+      requestAnimationFrame(observe);
+    }).observe(cc, { childList: true });
+  }
+  requestAnimationFrame(observe);
+})();
+
+/* ── Dot field (orange glow) ─────────────────────────────── */
 (function() {
   var wrap = document.getElementById('dotField');
   if (!wrap) return;
 
   var COLS   = 52;
-  var RADIUS = 95;
-  var MAX_S  = 3.2;
+  var RADIUS = 100;
+  var MAX_S  = 3.5;
+  var dots;
 
   function build() {
     wrap.innerHTML = '';
     var W = wrap.offsetWidth;
     var H = wrap.offsetHeight;
-    if (W < 1 || H < 1) return;
-
+    if (W < 1 || H < 1) { dots = []; return; }
     var gx = W / COLS;
     var rows = Math.round(H / gx) + 1;
     var gy = H / rows;
-
-    var dots = [];
+    dots = [];
     for (var r = 0; r < rows; r++) {
       for (var c = 0; c < COLS; c++) {
         var el = document.createElement('div');
         el.className = 'dot';
-        var x = (c + 0.5) * gx;
-        var y = (r + 0.5) * gy;
+        var x = (c + .5) * gx;
+        var y = (r + .5) * gy;
         el.style.left = x + 'px';
         el.style.top  = y + 'px';
         wrap.appendChild(el);
-        dots.push({ el: el, x: x, y: y });
+        dots.push({ el, x, y });
       }
     }
-    return dots;
   }
 
-  var dots = build();
-  var raf  = null;
-  var mx   = -9999;
-  var my   = -9999;
+  var raf = null;
+  var mx = -9999, my = -9999;
 
   function frame() {
     raf = null;
     if (!dots) return;
     for (var i = 0; i < dots.length; i++) {
-      var d  = dots[i];
-      var dx = d.x - mx;
-      var dy = d.y - my;
-      var dist = Math.sqrt(dx * dx + dy * dy);
+      var d = dots[i];
+      var dx = d.x - mx, dy = d.y - my;
+      var dist = Math.sqrt(dx*dx + dy*dy);
       if (dist < RADIUS) {
         var t = 1 - dist / RADIUS;
         var s = 1 + t * (MAX_S - 1);
-        var o = 0.12 + t * 0.88;
+        var o = 0.05 + t * 0.95;
         d.el.style.transform  = 'scale(' + s.toFixed(3) + ')';
-        d.el.style.background = 'rgba(255,255,255,' + o.toFixed(3) + ')';
+        d.el.style.background = 'rgba(250,93,41,' + o.toFixed(3) + ')';
       } else {
         d.el.style.transform  = 'scale(1)';
-        d.el.style.background = 'rgba(255,255,255,0.12)';
+        d.el.style.background = 'rgba(255,255,255,0.05)';
       }
     }
   }
 
-  function schedule() {
-    if (!raf) raf = requestAnimationFrame(frame);
-  }
+  function schedule() { if (!raf) raf = requestAnimationFrame(frame); }
 
   wrap.addEventListener('mousemove', function(e) {
-    var rect = wrap.getBoundingClientRect();
-    mx = e.clientX - rect.left;
-    my = e.clientY - rect.top;
+    var r = wrap.getBoundingClientRect();
+    mx = e.clientX - r.left; my = e.clientY - r.top;
     schedule();
   });
-
   wrap.addEventListener('mouseleave', function() {
-    mx = -9999; my = -9999;
-    schedule();
+    mx = -9999; my = -9999; schedule();
   });
-
   wrap.addEventListener('touchmove', function(e) {
-    var rect = wrap.getBoundingClientRect();
-    mx = e.touches[0].clientX - rect.left;
-    my = e.touches[0].clientY - rect.top;
+    var r = wrap.getBoundingClientRect();
+    mx = e.touches[0].clientX - r.left;
+    my = e.touches[0].clientY - r.top;
     schedule();
   }, { passive: true });
-
   wrap.addEventListener('touchend', function() {
-    mx = -9999; my = -9999;
-    schedule();
+    mx = -9999; my = -9999; schedule();
   });
 
-  // Rebuild on resize
-  var resizeTimer;
+  var rt;
   window.addEventListener('resize', function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() { dots = build(); }, 200);
-  });
+    clearTimeout(rt); rt = setTimeout(build, 200);
+  }, { passive: true });
+
+  build();
+})();
+
+/* ── Hero grid art tiles ─────────────────────────────────── */
+(function() {
+  var container = document.getElementById('gridTiles');
+  if (!container) return;
+  var pattern = ['accent','lit','','lit', '','','lit','', 'lit','accent','','lit', '','lit','','accent'];
+  var emojis  = ['📊','🏥','','🚗', '','','💰','', '🎓','🛒','','🚚', '','🏨','','🌾'];
+  for (var i = 0; i < 16; i++) {
+    var tile = document.createElement('div');
+    tile.className = 'grid-tile' + (pattern[i] ? ' ' + pattern[i] : '');
+    if (emojis[i]) tile.textContent = emojis[i];
+    container.appendChild(tile);
+  }
+  // Randomize lit state every 3s for ambient animation
+  setInterval(function() {
+    var tiles = container.querySelectorAll('.grid-tile:not(.accent)');
+    tiles.forEach(function(t) {
+      if (Math.random() > .75) t.classList.toggle('lit');
+    });
+  }, 2800);
 })();
 </script>
 </body>
