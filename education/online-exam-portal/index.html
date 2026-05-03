@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Online Exam Portal — Everything Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../_shared/css/design-system.css"/>
+<style>
+.section { animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
+.back-link { display:inline-flex; align-items:center; gap:.5rem; font-size:.875rem; color:var(--color-gray-500); text-decoration:none; margin-bottom:1.5rem; }
+.back-link:hover { color:var(--color-primary); }
+</style>
+</head>
+<body>
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">📝 ExamPortal</div>
+    <div style="padding:.5rem .75rem .25rem;font-size:10px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.35);text-transform:uppercase;margin-top:.5rem">Navigation</div>
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="#" onclick="showSection('dashboard');return false;" id="nav-dashboard" class="active">Dashboard</a></li>
+        <li><a href="#" onclick="showSection('exams');return false;" id="nav-exams" class="">Exams</a></li>
+        <li><a href="#" onclick="showSection('question-bank');return false;" id="nav-question-bank" class="">Question Bank</a></li>
+        <li><a href="#" onclick="showSection('results');return false;" id="nav-results" class="">Results</a></li>
+        <li><a href="#" onclick="showSection('certificates');return false;" id="nav-certificates" class="">Certificates</a></li>
+      </ul>
+    </nav>
+    <div style="margin-top:auto;padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.08)">
+      <div style="font-size:.75rem;color:rgba(255,255,255,.4)">Everything Platform</div>
+      <div style="font-size:.7rem;color:rgba(255,255,255,.25);margin-top:2px">Education Solution</div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <a href="../../index.html" class="back-link">← Back to Catalog</a>
+
+    <!-- Dashboard -->
+    <div id="section-dashboard" class="section">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">Online Exam Portal</div>
+          <div class="topbar-sub">MCQ and subjective exams, auto-grading, timer, result publishing, and certificates.</div>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:center">
+          <button class="btn btn-outline btn-sm" data-theme-toggle>🌙 Theme</button>
+          <button class="btn btn-primary btn-sm" onclick="EV.toast('Report generated!','success')">📊 Export</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-grid">
+        
+      <div class="stat-card">
+        <div class="stat-label">📝 Active Exams</div>
+        <div class="stat-value">3</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">👥 Total Candidates</div>
+        <div class="stat-value">456</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">📊 Avg Score</div>
+        <div class="stat-value">72%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">✅ Pass Rate</div>
+        <div class="stat-value">84%</div>
+      </div>
+      </div>
+
+      <!-- Chart + Quick Actions -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-top:1rem">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Activity Overview</div>
+            <div class="card-sub">Performance for last 6 periods</div>
+          </div>
+          <canvas id="mainChart" width="500" height="200" style="width:100%;height:200px"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Quick Actions</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.75rem">
+            <button class="btn btn-outline" onclick="showSection('exams')" style="justify-content:flex-start">📝 Go to Exams</button><button class="btn btn-outline" onclick="showSection('question-bank')" style="justify-content:flex-start">📝 Go to Question Bank</button><button class="btn btn-outline" onclick="showSection('results')" style="justify-content:flex-start">📝 Go to Results</button><button class="btn btn-outline" onclick="showSection('certificates')" style="justify-content:flex-start">📝 Go to Certificates</button>
+            <button class="btn btn-primary" onclick="EV.toast('Welcome to Online Exam Portal!','success')">🚀 Get Started</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div id="section-exams" class="section hidden">
+      <div class="flex items-center justify-between" style="margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-size:1.25rem;font-weight:700">Exams</h2>
+          <p style="font-size:.875rem;color:var(--color-gray-500)">Manage and track exams</p>
+        </div>
+        <button class="btn btn-primary" onclick="EV.toast('Feature coming soon!','info')">+ Add New</button>
+      </div>
+      <div style="margin-bottom:1rem">
+        <input type="text" class="form-input" placeholder="Search exams..." style="max-width:320px" oninput="searchTable(this.value,'main-table')"/>
+      </div>
+      <div class="table-wrap">
+        <table id="main-table">
+          <thead><tr>
+            <th>ID</th><th>Name</th><th>Category</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1001</code></td>
+              <td><strong>Record 1</strong></td>
+              <td><span class="badge badge-primary">Category 2</span></td>
+              <td>3/2/2024</td>
+              <td>₹81,988</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 1','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 1 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1002</code></td>
+              <td><strong>Record 2</strong></td>
+              <td><span class="badge badge-primary">Category 3</span></td>
+              <td>5/3/2024</td>
+              <td>₹54,679</td>
+              <td><span class="badge badge-info">Processing</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 2','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 2 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1003</code></td>
+              <td><strong>Record 3</strong></td>
+              <td><span class="badge badge-primary">Category 1</span></td>
+              <td>7/4/2024</td>
+              <td>₹93,192</td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 3','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 3 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1004</code></td>
+              <td><strong>Record 4</strong></td>
+              <td><span class="badge badge-primary">Category 2</span></td>
+              <td>9/5/2024</td>
+              <td>₹99,083</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 4','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 4 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1005</code></td>
+              <td><strong>Record 5</strong></td>
+              <td><span class="badge badge-primary">Category 3</span></td>
+              <td>11/6/2024</td>
+              <td>₹86,429</td>
+              <td><span class="badge badge-info">Processing</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 5','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 5 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1006</code></td>
+              <td><strong>Record 6</strong></td>
+              <td><span class="badge badge-primary">Category 1</span></td>
+              <td>13/7/2024</td>
+              <td>₹24,174</td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 6','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 6 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1007</code></td>
+              <td><strong>Record 7</strong></td>
+              <td><span class="badge badge-primary">Category 2</span></td>
+              <td>15/8/2024</td>
+              <td>₹86,120</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 7','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 7 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">EXA-1008</code></td>
+              <td><strong>Record 8</strong></td>
+              <td><span class="badge badge-primary">Category 3</span></td>
+              <td>17/9/2024</td>
+              <td>₹43,445</td>
+              <td><span class="badge badge-info">Processing</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 8','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 8 updated','success')">Edit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div id="section-question-bank" class="section hidden">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Question Bank</h2>
+      <div class="card" style="padding:3rem;text-align:center;color:var(--color-gray-400)">
+        <div style="font-size:3rem;margin-bottom:1rem">📝</div>
+        <p style="font-size:1rem;font-weight:600;color:var(--color-gray-600)">Question Bank Module</p>
+        <p style="margin-top:.5rem">Full question bank functionality for Online Exam Portal</p>
+        <button class="btn btn-primary" style="margin-top:1.5rem" onclick="EV.toast('Question Bank module loaded!','success')">Load Question Bank</button>
+      </div>
+    </div>
+    <div id="section-results" class="section hidden">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Results</h2>
+      <div class="card" style="padding:3rem;text-align:center;color:var(--color-gray-400)">
+        <div style="font-size:3rem;margin-bottom:1rem">📝</div>
+        <p style="font-size:1rem;font-weight:600;color:var(--color-gray-600)">Results Module</p>
+        <p style="margin-top:.5rem">Full results functionality for Online Exam Portal</p>
+        <button class="btn btn-primary" style="margin-top:1.5rem" onclick="EV.toast('Results module loaded!','success')">Load Results</button>
+      </div>
+    </div>
+    <div id="section-certificates" class="section hidden">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Certificates</h2>
+      <div class="card" style="padding:3rem;text-align:center;color:var(--color-gray-400)">
+        <div style="font-size:3rem;margin-bottom:1rem">📝</div>
+        <p style="font-size:1rem;font-weight:600;color:var(--color-gray-600)">Certificates Module</p>
+        <p style="margin-top:.5rem">Full certificates functionality for Online Exam Portal</p>
+        <button class="btn btn-primary" style="margin-top:1.5rem" onclick="EV.toast('Certificates module loaded!','success')">Load Certificates</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../../_shared/js/demo-utils.js"></script>
+<script>
+const sections = ["dashboard","exams","question-bank","results","certificates"];
+
+function showSection(id) {
+  sections.forEach(s => {
+    const el = document.getElementById('section-'+s);
+    const nav = document.getElementById('nav-'+s);
+    if(el) el.classList.add('hidden');
+    if(nav) nav.classList.remove('active');
+  });
+  const target = document.getElementById('section-'+id);
+  const navTarget = document.getElementById('nav-'+id);
+  if(target) target.classList.remove('hidden');
+  if(navTarget) navTarget.classList.add('active');
+}
+
+function searchTable(q, tableId) {
+  const rows = document.querySelectorAll('#'+tableId+' tbody tr');
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// Draw bar chart
+window.addEventListener('load', () => {
+  const labels = ["Jan","Feb","Mar","Apr","May","Jun"];
+  const data   = [72,68,75,79,72,84];
+  const canvas = document.getElementById('mainChart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.clientWidth || 500;
+  const H = 200;
+  canvas.width = W; canvas.height = H;
+  const pad = {top:20,right:20,bottom:40,left:60};
+  const chartW = W-pad.left-pad.right;
+  const chartH = H-pad.top-pad.bottom;
+  const max = Math.max(...data)*1.15||1;
+  const barW = (chartW/labels.length)*0.55;
+  const gap   = chartW/labels.length;
+  const bg = getComputedStyle(document.body).backgroundColor || '#f9fafb';
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.top+(chartH/4)*i;
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
+    ctx.fillStyle='#9ca3af'; ctx.font='10px Inter,sans-serif'; ctx.textAlign='right';
+    ctx.fillText(Math.round(max*(1-i/4)).toLocaleString('en-IN'), pad.left-6, y+4);
+  }
+  // Bars
+  labels.forEach((lbl,i)=>{
+    const bH=(data[i]/max)*chartH;
+    const x=pad.left+gap*i+(gap-barW)/2;
+    const y=pad.top+chartH-bH;
+    ctx.fillStyle='#7c3aed';
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(x,y,barW,bH,[4,4,0,0]); else ctx.rect(x,y,barW,bH);
+    ctx.fill();
+    ctx.fillStyle='#6b7280'; ctx.font='11px Inter,sans-serif'; ctx.textAlign='center';
+    ctx.fillText(lbl, x+barW/2, H-pad.bottom+16);
+  });
+});
+</script>
+</body>
+</html>

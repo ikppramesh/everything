@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Library Management System — Everything Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../_shared/css/design-system.css"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: #f4f6fb; color: #1e293b; display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 260px; min-height: 100vh; background: #1e293b; color: #fff;
+    display: flex; flex-direction: column; position: fixed; top: 0; left: 0; z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 24px 20px 18px; font-size: 1.25rem; font-weight: 800;
+    border-bottom: 1px solid rgba(255,255,255,0.08); letter-spacing: -0.3px;
+  }
+  .sidebar-logo span { color: #60a5fa; }
+  .sidebar-nav { flex: 1; padding: 12px 0; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 20px;
+    cursor: pointer; font-size: 0.9rem; font-weight: 500; border-radius: 0;
+    transition: background 0.15s; color: #94a3b8;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.07); color: #e2e8f0; }
+  .nav-item.active { background: #2563eb; color: #fff; }
+  .nav-item .icon { font-size: 1.1rem; width: 22px; text-align: center; }
+  .sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 0.8rem; color: #64748b; }
+
+  /* Main */
+  .main { margin-left: 260px; flex: 1; padding: 0; }
+  .topbar {
+    background: #fff; padding: 16px 32px; border-bottom: 1px solid #e2e8f0;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 50;
+  }
+  .topbar-title { font-size: 1.1rem; font-weight: 700; color: #1e293b; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .topbar-badge {
+    background: #fef3c7; color: #92400e; font-size: 0.75rem; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 0.9rem; }
+  .content { padding: 28px 32px; }
+
+  /* Section */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* Stat Cards */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-bottom: 28px; }
+  .stat-card {
+    background: #fff; border-radius: 14px; padding: 22px 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #f1f5f9;
+  }
+  .stat-card .label { font-size: 0.78rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-card .value { font-size: 2rem; font-weight: 800; margin: 6px 0 2px; color: #1e293b; }
+  .stat-card .sub { font-size: 0.78rem; color: #94a3b8; }
+  .stat-card.blue .value { color: #2563eb; }
+  .stat-card.green .value { color: #16a34a; }
+  .stat-card.orange .value { color: #ea580c; }
+  .stat-card.red .value { color: #dc2626; }
+
+  /* Chart Card */
+  .card { background: #fff; border-radius: 14px; padding: 22px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #f1f5f9; margin-bottom: 22px; }
+  .card-title { font-size: 0.95rem; font-weight: 700; color: #1e293b; margin-bottom: 18px; }
+  canvas { display: block; }
+
+  /* Table */
+  .table-wrap { background: #fff; border-radius: 14px; padding: 0; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #f1f5f9; overflow: hidden; }
+  .table-header { padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f1f5f9; }
+  .table-header h3 { font-size: 0.95rem; font-weight: 700; }
+  .search-input {
+    padding: 8px 14px; border: 1px solid #e2e8f0; border-radius: 8px;
+    font-size: 0.85rem; outline: none; width: 220px;
+  }
+  .search-input:focus { border-color: #2563eb; }
+  .btn {
+    padding: 8px 18px; border: none; border-radius: 8px; cursor: pointer;
+    font-size: 0.85rem; font-weight: 600; transition: opacity 0.15s;
+  }
+  .btn:hover { opacity: 0.87; }
+  .btn-primary { background: #2563eb; color: #fff; }
+  .btn-success { background: #16a34a; color: #fff; }
+  .btn-sm { padding: 5px 12px; font-size: 0.78rem; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f8fafc; padding: 11px 16px; text-align: left; font-size: 0.78rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1px solid #e2e8f0; }
+  tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
+  tbody tr:hover { background: #f8fafc; }
+  tbody td { padding: 11px 16px; font-size: 0.855rem; color: #334155; }
+
+  /* Badges */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.73rem; font-weight: 700; }
+  .badge-success { background: #dcfce7; color: #166534; }
+  .badge-warning { background: #fef9c3; color: #854d0e; }
+  .badge-info { background: #dbeafe; color: #1e40af; }
+  .badge-danger { background: #fee2e2; color: #991b1b; }
+  .badge-gray { background: #f1f5f9; color: #475569; }
+
+  /* Forms */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 0.82rem; font-weight: 600; color: #374151; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 9px 13px; border: 1px solid #e2e8f0; border-radius: 8px;
+    font-size: 0.875rem; outline: none; font-family: inherit;
+  }
+  .form-group input:focus, .form-group select:focus { border-color: #2563eb; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    z-index: 200; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff; border-radius: 16px; padding: 28px 32px; width: 560px;
+    max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px; }
+  .modal-header h3 { font-size: 1.1rem; font-weight: 700; }
+  .modal-close { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #64748b; }
+  .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; padding-top: 18px; border-top: 1px solid #f1f5f9; }
+
+  /* Return Form */
+  .return-form-card { background: #fff; border-radius: 14px; padding: 28px; max-width: 520px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #f1f5f9; }
+  .return-form-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 20px; }
+
+  /* Report Cards */
+  .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .report-card { background: #fff; border-radius: 14px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #f1f5f9; }
+  .report-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; }
+  .report-card p { font-size: 0.83rem; color: #64748b; }
+  .report-card .report-val { font-size: 1.8rem; font-weight: 800; color: #2563eb; margin: 10px 0 4px; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 30px; right: 30px; background: #1e293b; color: #fff;
+    padding: 14px 22px; border-radius: 10px; font-size: 0.875rem; font-weight: 500;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18); z-index: 9999;
+    transform: translateY(80px); opacity: 0; transition: all 0.3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 4px solid #22c55e; }
+  .toast.error { border-left: 4px solid #ef4444; }
+
+  /* Overdue highlight */
+  .overdue-row td { background: #fff5f5 !important; }
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-logo">📚 <span>Library</span>MS</div>
+  <nav class="sidebar-nav">
+    <div class="nav-item active" onclick="showSection('dashboard', this)">
+      <span class="icon">🏠</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showSection('books', this)">
+      <span class="icon">📖</span> Books
+    </div>
+    <div class="nav-item" onclick="showSection('members', this)">
+      <span class="icon">👥</span> Members
+    </div>
+    <div class="nav-item" onclick="showSection('borrowings', this)">
+      <span class="icon">📤</span> Borrowings
+    </div>
+    <div class="nav-item" onclick="showSection('returns', this)">
+      <span class="icon">📥</span> Returns
+    </div>
+    <div class="nav-item" onclick="showSection('reports', this)">
+      <span class="icon">📊</span> Reports
+    </div>
+  </nav>
+  <div class="sidebar-footer">Everything Platform v1.0<br/>Library Module</div>
+</aside>
+
+<!-- Main Content -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-right">
+      <span class="topbar-badge">⚠️ 23 Overdue</span>
+      <div class="avatar">LB</div>
+    </div>
+  </div>
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="sec-dashboard" class="section active">
+      <div class="stat-grid">
+        <div class="stat-card blue">
+          <div class="label">Total Books</div>
+          <div class="value">2,847</div>
+          <div class="sub">Across all shelves</div>
+        </div>
+        <div class="stat-card green">
+          <div class="label">Available</div>
+          <div class="value">2,341</div>
+          <div class="sub">Ready to borrow</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="label">Borrowed</div>
+          <div class="value">506</div>
+          <div class="sub">Currently issued</div>
+        </div>
+        <div class="stat-card red">
+          <div class="label">Overdue</div>
+          <div class="value">23</div>
+          <div class="sub">Pending return</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Monthly Borrowings — 2024</div>
+        <canvas id="borrowChart" width="740" height="260"></canvas>
+      </div>
+    </div>
+
+    <!-- BOOKS -->
+    <div id="sec-books" class="section">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>Book Catalogue</h3>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input class="search-input" id="bookSearch" placeholder="Search books..." oninput="filterBooks()"/>
+            <button class="btn btn-primary" onclick="document.getElementById('addBookModal').classList.add('open')">+ Add Book</button>
+          </div>
+        </div>
+        <table id="booksTable">
+          <thead>
+            <tr>
+              <th>Book ID</th><th>Title</th><th>Author</th><th>Genre</th>
+              <th>Copies</th><th>Available</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>BK001</td><td>Clean Code</td><td>Robert C. Martin</td><td>Computer Science</td><td>5</td><td>3</td><td><span class="badge badge-success">Available</span></td></tr>
+            <tr><td>BK002</td><td>Database Management Systems</td><td>Ramakrishnan & Gehrke</td><td>Computer Science</td><td>8</td><td>0</td><td><span class="badge badge-warning">Borrowed</span></td></tr>
+            <tr><td>BK003</td><td>Introduction to Algorithms</td><td>Cormen et al.</td><td>Computer Science</td><td>6</td><td>2</td><td><span class="badge badge-success">Available</span></td></tr>
+            <tr><td>BK004</td><td>Calculus — Early Transcendentals</td><td>James Stewart</td><td>Mathematics</td><td>10</td><td>7</td><td><span class="badge badge-success">Available</span></td></tr>
+            <tr><td>BK005</td><td>Linear Algebra and Its Applications</td><td>Gilbert Strang</td><td>Mathematics</td><td>4</td><td>1</td><td><span class="badge badge-info">Reserved</span></td></tr>
+            <tr><td>BK006</td><td>Wings of Fire</td><td>A.P.J. Abdul Kalam</td><td>Literature</td><td>12</td><td>9</td><td><span class="badge badge-success">Available</span></td></tr>
+            <tr><td>BK007</td><td>Midnight's Children</td><td>Salman Rushdie</td><td>Literature</td><td>3</td><td>0</td><td><span class="badge badge-warning">Borrowed</span></td></tr>
+            <tr><td>BK008</td><td>A Brief History of Time</td><td>Stephen Hawking</td><td>Science</td><td>7</td><td>4</td><td><span class="badge badge-success">Available</span></td></tr>
+            <tr><td>BK009</td><td>Cosmos</td><td>Carl Sagan</td><td>Science</td><td>5</td><td>2</td><td><span class="badge badge-info">Reserved</span></td></tr>
+            <tr><td>BK010</td><td>Design Patterns</td><td>Gang of Four</td><td>Computer Science</td><td>4</td><td>0</td><td><span class="badge badge-warning">Borrowed</span></td></tr>
+            <tr><td>BK011</td><td>The Discovery of India</td><td>Jawaharlal Nehru</td><td>History</td><td>6</td><td>5</td><td><span class="badge badge-success">Available</span></td></tr>
+            <tr><td>BK012</td><td>Organic Chemistry</td><td>Morrison & Boyd</td><td>Chemistry</td><td>9</td><td>6</td><td><span class="badge badge-success">Available</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MEMBERS -->
+    <div id="sec-members" class="section">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>Library Members</h3>
+          <button class="btn btn-primary">+ Add Member</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Member ID</th><th>Name</th><th>Roll No</th><th>Department</th>
+              <th>Books Borrowed</th><th>Outstanding Fine (₹)</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>M001</td><td>Arjun Sharma</td><td>CS21001</td><td>Computer Science</td><td>2</td><td>0</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>M002</td><td>Priya Nair</td><td>ME21045</td><td>Mechanical Engg.</td><td>1</td><td>₹20</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>M003</td><td>Rahul Verma</td><td>CS21023</td><td>Computer Science</td><td>3</td><td>₹60</td><td><span class="badge badge-warning">Active</span></td></tr>
+            <tr><td>M004</td><td>Sneha Patil</td><td>EC21067</td><td>Electronics</td><td>0</td><td>₹200</td><td><span class="badge badge-danger">Suspended</span></td></tr>
+            <tr><td>M005</td><td>Vikram Singh</td><td>CE21012</td><td>Civil Engg.</td><td>1</td><td>0</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>M006</td><td>Ananya Iyer</td><td>MA21089</td><td>Mathematics</td><td>2</td><td>0</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>M007</td><td>Rohan Mehta</td><td>CS21056</td><td>Computer Science</td><td>2</td><td>₹40</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>M008</td><td>Kavya Reddy</td><td>BT21034</td><td>Biotechnology</td><td>0</td><td>0</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>M009</td><td>Aditya Kumar</td><td>PH21019</td><td>Physics</td><td>1</td><td>0</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>M010</td><td>Neha Joshi</td><td>CH21044</td><td>Chemistry</td><td>3</td><td>₹80</td><td><span class="badge badge-danger">Suspended</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BORROWINGS -->
+    <div id="sec-borrowings" class="section">
+      <div class="table-wrap">
+        <div class="table-header">
+          <h3>Active Borrowings</h3>
+          <button class="btn btn-primary">+ Issue Book</button>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Borrow ID</th><th>Member Name</th><th>Book Title</th>
+              <th>Borrow Date</th><th>Due Date</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>BR001</td><td>Arjun Sharma</td><td>Clean Code</td><td>05 Apr 2025</td><td>19 Apr 2025</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>BR002</td><td>Rahul Verma</td><td>Design Patterns</td><td>28 Mar 2025</td><td>11 Apr 2025</td><td><span class="badge badge-danger">Overdue</span></td></tr>
+            <tr><td>BR003</td><td>Priya Nair</td><td>Calculus — Early Transcendentals</td><td>10 Apr 2025</td><td>24 Apr 2025</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>BR004</td><td>Rohan Mehta</td><td>Introduction to Algorithms</td><td>01 Apr 2025</td><td>15 Apr 2025</td><td><span class="badge badge-danger">Overdue</span></td></tr>
+            <tr><td>BR005</td><td>Vikram Singh</td><td>A Brief History of Time</td><td>12 Apr 2025</td><td>26 Apr 2025</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>BR006</td><td>Ananya Iyer</td><td>Linear Algebra and Its Applications</td><td>08 Apr 2025</td><td>22 Apr 2025</td><td><span class="badge badge-warning">Due Soon</span></td></tr>
+            <tr><td>BR007</td><td>Aditya Kumar</td><td>Cosmos</td><td>14 Apr 2025</td><td>28 Apr 2025</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>BR008</td><td>Neha Joshi</td><td>Database Management Systems</td><td>20 Mar 2025</td><td>03 Apr 2025</td><td><span class="badge badge-danger">Overdue</span></td></tr>
+            <tr><td>BR009</td><td>Kavya Reddy</td><td>Midnight's Children</td><td>15 Apr 2025</td><td>29 Apr 2025</td><td><span class="badge badge-success">Active</span></td></tr>
+            <tr><td>BR010</td><td>Arjun Sharma</td><td>Wings of Fire</td><td>17 Apr 2025</td><td>01 May 2025</td><td><span class="badge badge-success">Active</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RETURNS -->
+    <div id="sec-returns" class="section">
+      <div class="return-form-card">
+        <h3>Process Book Return</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Book ID</label>
+            <input type="text" placeholder="e.g. BK003" id="retBookId"/>
+          </div>
+          <div class="form-group">
+            <label>Member ID</label>
+            <input type="text" placeholder="e.g. M001" id="retMemberId"/>
+          </div>
+          <div class="form-group">
+            <label>Return Date</label>
+            <input type="date" id="retDate"/>
+          </div>
+          <div class="form-group">
+            <label>Book Condition</label>
+            <select id="retCondition">
+              <option value="good">Good</option>
+              <option value="minor">Minor Wear</option>
+              <option value="damaged">Damaged</option>
+            </select>
+          </div>
+          <div class="form-group" id="fineGroup" style="display:none;">
+            <label>Fine Amount (₹)</label>
+            <input type="number" id="retFine" placeholder="0" value="40"/>
+          </div>
+          <div class="form-group">
+            <label>Notes</label>
+            <input type="text" placeholder="Optional remarks"/>
+          </div>
+        </div>
+        <div style="margin-top:20px;display:flex;gap:12px;">
+          <button class="btn btn-success" onclick="processReturn()">✔ Process Return</button>
+          <button class="btn" style="background:#f1f5f9;color:#475569;" onclick="checkOverdue()">Check Fine</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div id="sec-reports" class="section">
+      <div class="report-grid">
+        <div class="report-card">
+          <h4>📊 Monthly Borrowings</h4>
+          <p>Books issued in current month</p>
+          <div class="report-val">412</div>
+          <p style="color:#16a34a;font-size:0.8rem;">↑ 15.7% vs last month</p>
+        </div>
+        <div class="report-card">
+          <h4>💰 Fine Collected</h4>
+          <p>Total fines this quarter</p>
+          <div class="report-val" style="color:#ea580c;">₹4,280</div>
+          <p style="color:#64748b;font-size:0.8rem;">23 overdue cases</p>
+        </div>
+        <div class="report-card">
+          <h4>📚 Top Genre</h4>
+          <p>Most borrowed category</p>
+          <div class="report-val" style="color:#7c3aed;">CS</div>
+          <p style="color:#64748b;font-size:0.8rem;">Computer Science — 187 issues</p>
+        </div>
+        <div class="report-card">
+          <h4>👤 Active Members</h4>
+          <p>Members with valid accounts</p>
+          <div class="report-val" style="color:#059669;">1,203</div>
+          <p style="color:#16a34a;font-size:0.8rem;">↑ 42 new this month</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Add Book Modal -->
+<div class="modal-overlay" id="addBookModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add New Book</h3>
+      <button class="modal-close" onclick="document.getElementById('addBookModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Book Title</label>
+        <input type="text" placeholder="Enter book title" id="newTitle"/>
+      </div>
+      <div class="form-group">
+        <label>Author</label>
+        <input type="text" placeholder="Author name" id="newAuthor"/>
+      </div>
+      <div class="form-group">
+        <label>ISBN</label>
+        <input type="text" placeholder="978-XXXXXXXXXX"/>
+      </div>
+      <div class="form-group">
+        <label>Genre</label>
+        <select>
+          <option>Computer Science</option>
+          <option>Mathematics</option>
+          <option>Science</option>
+          <option>Literature</option>
+          <option>History</option>
+          <option>Chemistry</option>
+          <option>Physics</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Publisher</label>
+        <input type="text" placeholder="Publisher name"/>
+      </div>
+      <div class="form-group">
+        <label>Publication Year</label>
+        <input type="number" placeholder="2024" min="1900" max="2025"/>
+      </div>
+      <div class="form-group">
+        <label>Number of Copies</label>
+        <input type="number" placeholder="1" min="1"/>
+      </div>
+      <div class="form-group">
+        <label>Shelf Location</label>
+        <input type="text" placeholder="e.g. A-3-12"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" style="background:#f1f5f9;color:#475569;" onclick="document.getElementById('addBookModal').classList.remove('open')">Cancel</button>
+      <button class="btn btn-primary" onclick="addBook()">Save Book</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="../../_shared/js/demo-utils.js"></script>
+<script>
+  // Set return date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('retDate').value = today;
+
+  // Section switching
+  function showSection(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('sec-' + id).classList.add('active');
+    el.classList.add('active');
+    const titles = { dashboard:'Dashboard', books:'Books', members:'Members', borrowings:'Borrowings', returns:'Returns', reports:'Reports' };
+    document.getElementById('topbarTitle').textContent = titles[id] || id;
+  }
+
+  // Toast
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type + ' show';
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Book search filter
+  function filterBooks() {
+    const q = document.getElementById('bookSearch').value.toLowerCase();
+    document.querySelectorAll('#booksTable tbody tr').forEach(row => {
+      row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  // Process return
+  function processReturn() {
+    const bid = document.getElementById('retBookId').value.trim();
+    const mid = document.getElementById('retMemberId').value.trim();
+    if (!bid || !mid) { showToast('Please enter Book ID and Member ID', 'error'); return; }
+    showToast('✔ Book ' + bid + ' returned successfully by ' + mid, 'success');
+    document.getElementById('retBookId').value = '';
+    document.getElementById('retMemberId').value = '';
+    document.getElementById('fineGroup').style.display = 'none';
+  }
+
+  // Check overdue
+  function checkOverdue() {
+    document.getElementById('fineGroup').style.display = 'flex';
+    showToast('Fine calculated: ₹40 (8 days overdue × ₹5/day)', 'success');
+  }
+
+  // Add book
+  function addBook() {
+    const title = document.getElementById('newTitle').value.trim();
+    const author = document.getElementById('newAuthor').value.trim();
+    if (!title || !author) { showToast('Title and Author are required', 'error'); return; }
+    document.getElementById('addBookModal').classList.remove('open');
+    showToast('Book "' + title + '" added to catalogue', 'success');
+    document.getElementById('newTitle').value = '';
+    document.getElementById('newAuthor').value = '';
+  }
+
+  // Draw bar chart
+  function drawChart() {
+    const canvas = document.getElementById('borrowChart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const data = [312, 287, 341, 298, 356, 412];
+    const labels = ['January', 'February', 'March', 'April', 'May', 'June'];
+    const colors = ['#3b82f6','#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b'];
+    const W = canvas.width, H = canvas.height;
+    const padL = 50, padR = 20, padT = 20, padB = 50;
+    const chartW = W - padL - padR, chartH = H - padT - padB;
+    const maxVal = 450;
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Grid lines
+    ctx.strokeStyle = '#f1f5f9';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= 5; i++) {
+      const y = padT + (chartH / 5) * i;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL + chartW, y); ctx.stroke();
+      ctx.fillStyle = '#94a3b8'; ctx.font = '11px Inter';
+      ctx.fillText(Math.round(maxVal - (maxVal / 5) * i), 6, y + 4);
+    }
+
+    // Bars
+    const barW = (chartW / data.length) * 0.55;
+    const gap = chartW / data.length;
+    data.forEach((val, i) => {
+      const x = padL + gap * i + (gap - barW) / 2;
+      const barH = (val / maxVal) * chartH;
+      const y = padT + chartH - barH;
+
+      // Gradient
+      const grad = ctx.createLinearGradient(0, y, 0, y + barH);
+      grad.addColorStop(0, colors[i]);
+      grad.addColorStop(1, colors[i] + '88');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]) : ctx.rect(x, y, barW, barH);
+      ctx.fill();
+
+      // Value label
+      ctx.fillStyle = '#374151'; ctx.font = 'bold 12px Inter'; ctx.textAlign = 'center';
+      ctx.fillText(val, x + barW / 2, y - 6);
+
+      // X label
+      ctx.fillStyle = '#64748b'; ctx.font = '11px Inter';
+      ctx.fillText(labels[i].substring(0,3), x + barW / 2, padT + chartH + 18);
+    });
+
+    // X axis line
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(padL, padT + chartH); ctx.lineTo(padL + chartW, padT + chartH); ctx.stroke();
+  }
+
+  window.addEventListener('load', drawChart);
+</script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Everything — Enterprise Solution Catalog</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="_shared/css/design-system.css"/>
+<style>
+/* Portal-specific styles */
+.portal-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 40%, #7c3aed 100%);
+  padding: 80px 0 60px;
+  text-align: center;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.portal-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.portal-hero > * { position: relative; z-index: 1; }
+.portal-hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 1rem; }
+.portal-hero h1 span { color: #93c5fd; }
+.portal-hero p { font-size: 1.25rem; opacity: .85; max-width: 560px; margin: 0 auto 2rem; }
+.hero-search {
+  display: flex;
+  max-width: 520px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: 0 20px 40px rgba(0,0,0,.25);
+  overflow: hidden;
+}
+.hero-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 14px 20px;
+  font-size: 1rem;
+  color: #1f2937;
+  background: transparent;
+}
+.hero-search button {
+  background: #2563eb;
+  border: none;
+  padding: 0 24px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: .95rem;
+  transition: background .15s;
+}
+.hero-search button:hover { background: #1d4ed8; }
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+}
+.hero-stat { text-align: center; }
+.hero-stat .num { font-size: 2.25rem; font-weight: 900; color: #93c5fd; }
+.hero-stat .lbl { font-size: .85rem; opacity: .75; margin-top: 2px; }
+
+/* Catalog section */
+.catalog-section { padding: 60px 0; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+.section-title { font-size: 1.5rem; font-weight: 700; color: #111827; }
+.filter-bar {
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+.filter-btn {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #4b5563;
+  font-size: .85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.filter-btn:hover, .filter-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+/* Solution Card */
+.solution-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+}
+.solution-card:hover { box-shadow: 0 12px 30px rgba(0,0,0,.12); transform: translateY(-3px); }
+.card-banner {
+  height: 8px;
+  background: linear-gradient(90deg, var(--cat-color, #2563eb), var(--cat-color2, #7c3aed));
+}
+.card-body { padding: 1.5rem; flex: 1; display: flex; flex-direction: column; }
+.card-icon {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  background: var(--color-primary-light);
+}
+.card-name { font-size: 1.05rem; font-weight: 700; color: #111827; margin-bottom: .3rem; }
+.card-desc { font-size: .85rem; color: #6b7280; line-height: 1.5; flex: 1; }
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #f3f4f6;
+}
+.card-actions { display: flex; gap: .5rem; }
+.tier-dot { width: 8px; height: 8px; border-radius: 50%; background: #16a34a; display: inline-block; margin-right: 4px; }
+.tier-label { font-size: .75rem; color: #6b7280; font-weight: 500; }
+
+/* Category ribbon */
+.cat-section { margin-bottom: 3rem; }
+.cat-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f3f4f6;
+}
+.cat-icon { font-size: 1.75rem; }
+.cat-title { font-size: 1.25rem; font-weight: 700; color: #111827; }
+.cat-count { background: #f3f4f6; color: #6b7280; font-size: .75rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem; }
+
+/* Footer */
+.portal-footer {
+  background: #111827;
+  color: rgba(255,255,255,.6);
+  text-align: center;
+  padding: 2rem;
+  font-size: .875rem;
+}
+.portal-footer a { color: #93c5fd; }
+
+/* Topnav */
+.portal-nav {
+  background: rgba(255,255,255,.95);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.nav-brand { font-size: 1.25rem; font-weight: 900; color: #111827; }
+.nav-brand span { color: #2563eb; }
+.nav-links { display: flex; gap: 1.5rem; align-items: center; }
+.nav-links a { font-size: .9rem; font-weight: 500; color: #4b5563; text-decoration: none; transition: color .15s; }
+.nav-links a:hover { color: #2563eb; }
+
+/* Stats bar */
+.stats-bar {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 2rem;
+  display: flex;
+  gap: 3rem;
+  overflow-x: auto;
+}
+.stats-bar-item { display: flex; align-items: center; gap: .75rem; white-space: nowrap; }
+.stats-bar-item .icon { font-size: 1.5rem; }
+.stats-bar-item .info .val { font-size: 1.1rem; font-weight: 700; color: #111827; }
+.stats-bar-item .info .lbl { font-size: .75rem; color: #9ca3af; }
+
+/* No results */
+.no-results { text-align: center; padding: 4rem 2rem; color: #9ca3af; }
+.no-results .big { font-size: 3rem; margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="portal-nav">
+  <div class="nav-brand">Every<span>thing</span></div>
+  <div class="nav-links">
+    <a href="#catalog">Catalog</a>
+    <a href="CATALOG.md">Full Index</a>
+    <a href="README.md">Docs</a>
+    <a href="https://github.com/ikppramesh/everything" target="_blank">GitHub</a>
+    <button class="btn btn-primary btn-sm" onclick="EV.toast('Contribution guide coming soon!','info')">+ Contribute</button>
+    <button class="btn btn-outline btn-sm" data-theme-toggle>🌙 Theme</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="portal-hero">
+  <h1>Every<span>thing</span> Platform</h1>
+  <p>Enterprise-ready solution templates for every business sector. Browse, demo, and pitch — all in one place.</p>
+  <div class="hero-search">
+    <input type="text" id="heroSearch" placeholder="Search solutions, sectors, use-cases…" oninput="filterCards()"/>
+    <button onclick="filterCards()">Search</button>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">30+</div><div class="lbl">Solutions</div></div>
+    <div class="hero-stat"><div class="num">11</div><div class="lbl">Industries</div></div>
+    <div class="hero-stat"><div class="num">100%</div><div class="lbl">Open Source</div></div>
+    <div class="hero-stat"><div class="num">0</div><div class="lbl">Dependencies</div></div>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="stats-bar container">
+  <div class="stats-bar-item"><span class="icon">🎓</span><div class="info"><div class="val">4</div><div class="lbl">Education</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🚗</span><div class="info"><div class="val">4</div><div class="lbl">Automotive</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🏥</span><div class="info"><div class="val">4</div><div class="lbl">Healthcare</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🛒</span><div class="info"><div class="val">4</div><div class="lbl">Retail</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🏠</span><div class="info"><div class="val">3</div><div class="lbl">Real Estate</div></div></div>
+  <div class="stats-bar-item"><span class="icon">💰</span><div class="info"><div class="val">4</div><div class="lbl">Finance</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🏨</span><div class="info"><div class="val">3</div><div class="lbl">Hospitality</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🚚</span><div class="info"><div class="val">3</div><div class="lbl">Logistics</div></div></div>
+  <div class="stats-bar-item"><span class="icon">👥</span><div class="info"><div class="val">3</div><div class="lbl">HR</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🏛️</span><div class="info"><div class="val">3</div><div class="lbl">Government</div></div></div>
+  <div class="stats-bar-item"><span class="icon">🌾</span><div class="info"><div class="val">3</div><div class="lbl">Agriculture</div></div></div>
+</div>
+
+<!-- Catalog -->
+<div class="catalog-section container" id="catalog">
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <span style="font-size:.85rem;font-weight:600;color:#374151;margin-right:.5rem">Filter:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('education',this)">🎓 Education</button>
+    <button class="filter-btn" onclick="setFilter('automotive',this)">🚗 Automotive</button>
+    <button class="filter-btn" onclick="setFilter('healthcare',this)">🏥 Healthcare</button>
+    <button class="filter-btn" onclick="setFilter('retail',this)">🛒 Retail</button>
+    <button class="filter-btn" onclick="setFilter('real-estate',this)">🏠 Real Estate</button>
+    <button class="filter-btn" onclick="setFilter('finance',this)">💰 Finance</button>
+    <button class="filter-btn" onclick="setFilter('hospitality',this)">🏨 Hospitality</button>
+    <button class="filter-btn" onclick="setFilter('logistics',this)">🚚 Logistics</button>
+    <button class="filter-btn" onclick="setFilter('hr',this)">👥 HR</button>
+    <button class="filter-btn" onclick="setFilter('government',this)">🏛️ Govt</button>
+    <button class="filter-btn" onclick="setFilter('agriculture',this)">🌾 Agriculture</button>
+  </div>
+
+  <!-- Cards Container -->
+  <div id="catalogContainer"></div>
+  <div id="noResults" class="no-results hidden">
+    <div class="big">🔍</div>
+    <p>No solutions match your search. Try a different keyword.</p>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="portal-footer">
+  <p>Built with ❤️ · <a href="https://github.com/ikppramesh/everything" target="_blank">github.com/ikppramesh/everything</a> · Open Source &amp; Free</p>
+</footer>
+
+<script src="_shared/js/demo-utils.js"></script>
+<script>
+const SOLUTIONS = [
+  // EDUCATION
+  { category:'education', icon:'📚', name:'Library Management', path:'education/library-management/index.html', desc:'Book inventory, borrow/return tracking, overdue alerts, student portal for any college or school.', tags:['college','books','inventory'], color:'#2563eb', color2:'#0891b2' },
+  { category:'education', icon:'🎯', name:'Student Information System', path:'education/student-information-system/index.html', desc:'Admissions, grades, attendance tracking, timetable, and parent communication portal.', tags:['school','grades','attendance'], color:'#0891b2', color2:'#2563eb' },
+  { category:'education', icon:'📝', name:'Online Exam Portal', path:'education/online-exam-portal/index.html', desc:'MCQ & subjective exams, auto-grading, timer, result publishing, certificate generation.', tags:['exam','quiz','certificate'], color:'#7c3aed', color2:'#2563eb' },
+  { category:'education', icon:'🖥️', name:'Learning Management System', path:'education/learning-management-system/index.html', desc:'Course builder, video lessons, quizzes, progress tracking, instructor dashboard.', tags:['lms','course','elearning'], color:'#16a34a', color2:'#2563eb' },
+  // AUTOMOTIVE
+  { category:'automotive', icon:'🚗', name:'Car Dealer Service', path:'automotive/car-dealer-service/index.html', desc:'End-to-end dealer process: lead capture → test drive → sale → delivery → post-sale service.', tags:['car','dealer','sales','crm'], color:'#dc2626', color2:'#d97706' },
+  { category:'automotive', icon:'🚛', name:'Fleet Management', path:'automotive/fleet-management/index.html', desc:'Vehicle tracking, maintenance scheduling, fuel logs, driver management, expense reports.', tags:['fleet','vehicles','tracking'], color:'#d97706', color2:'#dc2626' },
+  { category:'automotive', icon:'🔧', name:'Auto Repair Workshop', path:'automotive/auto-repair-workshop/index.html', desc:'Job card management, spare parts inventory, mechanic assignment, billing, customer SMS.', tags:['workshop','repair','billing'], color:'#4b5563', color2:'#d97706' },
+  { category:'automotive', icon:'🔑', name:'Vehicle Rental System', path:'automotive/vehicle-rental/index.html', desc:'Booking calendar, contract generation, damage tracking, fleet availability, invoicing.', tags:['rental','booking','contract'], color:'#0891b2', color2:'#7c3aed' },
+  // HEALTHCARE
+  { category:'healthcare', icon:'🏥', name:'Hospital Management', path:'healthcare/hospital-management/index.html', desc:'OPD, IPD, billing, pharmacy integration, lab reports, ward management, doctor schedules.', tags:['hospital','opd','billing','ward'], color:'#dc2626', color2:'#7c3aed' },
+  { category:'healthcare', icon:'📅', name:'Clinic Appointment', path:'healthcare/clinic-appointment/index.html', desc:'Online booking, doctor availability calendar, patient records, SMS reminders, billing.', tags:['clinic','appointment','doctor'], color:'#16a34a', color2:'#0891b2' },
+  { category:'healthcare', icon:'💊', name:'Pharmacy Management', path:'healthcare/pharmacy-management/index.html', desc:'Drug inventory, expiry tracking, prescription management, GST billing, reorder alerts.', tags:['pharmacy','drugs','inventory'], color:'#7c3aed', color2:'#16a34a' },
+  { category:'healthcare', icon:'🧪', name:'Lab Reports Portal', path:'healthcare/lab-reports-portal/index.html', desc:'Sample collection, test assignment, result entry, digital report delivery, billing.', tags:['lab','pathology','reports'], color:'#0891b2', color2:'#dc2626' },
+  // RETAIL
+  { category:'retail', icon:'🛒', name:'Inventory & POS', path:'retail/inventory-pos/index.html', desc:'Multi-store inventory, barcode scanning, point-of-sale billing, daily sales reports.', tags:['pos','inventory','barcode','shop'], color:'#d97706', color2:'#16a34a' },
+  { category:'retail', icon:'🏪', name:'E-Commerce Dashboard', path:'retail/ecommerce-dashboard/index.html', desc:'Product catalogue, orders, returns management, seller analytics, coupon engine.', tags:['ecommerce','orders','sellers'], color:'#2563eb', color2:'#d97706' },
+  { category:'retail', icon:'🎁', name:'Loyalty Program', path:'retail/loyalty-program/index.html', desc:'Points engine, tier management, reward redemption, customer segments, campaign builder.', tags:['loyalty','rewards','crm'], color:'#7c3aed', color2:'#dc2626' },
+  { category:'retail', icon:'📦', name:'Supplier Portal', path:'retail/supplier-portal/index.html', desc:'Purchase orders, goods receipt, vendor management, payment tracking, quality checks.', tags:['supplier','purchase','vendor'], color:'#16a34a', color2:'#2563eb' },
+  // REAL ESTATE
+  { category:'real-estate', icon:'🏠', name:'Property Management', path:'real-estate/property-management/index.html', desc:'Property listings, tenant management, rent collection, maintenance requests, lease tracking.', tags:['property','tenant','rent','lease'], color:'#d97706', color2:'#0891b2' },
+  { category:'real-estate', icon:'🏗️', name:'Construction Tracker', path:'real-estate/construction-tracker/index.html', desc:'Project milestones, BOQ management, contractor payments, material tracking, site reports.', tags:['construction','boq','contractor'], color:'#4b5563', color2:'#d97706' },
+  { category:'real-estate', icon:'🔑', name:'Rental Portal', path:'real-estate/rental-portal/index.html', desc:'Owner & tenant portals, online agreement, maintenance tickets, payment history.', tags:['rental','tenant','agreement'], color:'#2563eb', color2:'#16a34a' },
+  // FINANCE
+  { category:'finance', icon:'🧾', name:'Invoice & Billing', path:'finance/invoice-billing/index.html', desc:'Quotation to invoice workflow, GST computation, payment tracking, aging reports, PDF export.', tags:['invoice','billing','gst','payment'], color:'#16a34a', color2:'#2563eb' },
+  { category:'finance', icon:'💳', name:'Expense Tracker', path:'finance/expense-tracker/index.html', desc:'Employee expense claims, approval workflow, budget vs actual, category analysis, export.', tags:['expense','budget','claims'], color:'#d97706', color2:'#dc2626' },
+  { category:'finance', icon:'👔', name:'Payroll Management', path:'finance/payroll-management/index.html', desc:'Salary computation, PF/ESI/TDS, payslip generation, bank transfer file, Form 16.', tags:['payroll','salary','tax','hr'], color:'#2563eb', color2:'#7c3aed' },
+  { category:'finance', icon:'📊', name:'Budget Planner', path:'finance/budget-planner/index.html', desc:'Annual budget creation, department allocation, variance tracking, forecast, approval workflow.', tags:['budget','forecast','planning'], color:'#7c3aed', color2:'#16a34a' },
+  // HOSPITALITY
+  { category:'hospitality', icon:'🏨', name:'Hotel Management', path:'hospitality/hotel-management/index.html', desc:'Reservations, check-in/out, housekeeping, F&B, front desk dashboard, billing, night audit.', tags:['hotel','reservation','rooms'], color:'#d97706', color2:'#7c3aed' },
+  { category:'hospitality', icon:'🍽️', name:'Restaurant POS', path:'hospitality/restaurant-pos/index.html', desc:'Table management, KOT, menu builder, billing, daily reports, kitchen display.', tags:['restaurant','kot','billing','food'], color:'#dc2626', color2:'#d97706' },
+  { category:'hospitality', icon:'🎉', name:'Event Management', path:'hospitality/event-management/index.html', desc:'Venue booking, catering management, guest lists, vendor coordination, budget tracking.', tags:['events','venue','catering'], color:'#7c3aed', color2:'#dc2626' },
+  // LOGISTICS
+  { category:'logistics', icon:'🚚', name:'Delivery Tracker', path:'logistics/delivery-tracker/index.html', desc:'Order to delivery workflow, driver assignment, GPS status, POD capture, customer notifications.', tags:['delivery','tracking','logistics'], color:'#0891b2', color2:'#2563eb' },
+  { category:'logistics', icon:'🏭', name:'Warehouse Management', path:'logistics/warehouse-management/index.html', desc:'Bin locations, inbound/outbound, pick-pack-ship, cycle count, putaway rules.', tags:['warehouse','wms','inventory'], color:'#4b5563', color2:'#0891b2' },
+  { category:'logistics', icon:'🔗', name:'Supply Chain Portal', path:'logistics/supply-chain-portal/index.html', desc:'Vendor onboarding, PO lifecycle, shipment tracking, compliance docs, analytics dashboard.', tags:['supply chain','vendor','procurement'], color:'#2563eb', color2:'#4b5563' },
+  // HR
+  { category:'hr', icon:'🤝', name:'Recruitment ATS', path:'hr/recruitment-ats/index.html', desc:'Job postings, applicant tracking, interview scheduling, offer letters, onboarding pipeline.', tags:['recruitment','ats','hiring','hr'], color:'#7c3aed', color2:'#2563eb' },
+  { category:'hr', icon:'📅', name:'Leave Management', path:'hr/leave-management/index.html', desc:'Leave policy engine, approval workflow, balance tracking, team calendar, compliance reports.', tags:['leave','attendance','hr'], color:'#16a34a', color2:'#0891b2' },
+  { category:'hr', icon:'⭐', name:'Performance Review', path:'hr/performance-review/index.html', desc:'Goal setting, 360° feedback, appraisal cycles, rating normalization, increment planning.', tags:['performance','appraisal','goals','hr'], color:'#d97706', color2:'#7c3aed' },
+  // GOVERNMENT
+  { category:'government', icon:'🏛️', name:'Citizen Services Portal', path:'government/citizen-services/index.html', desc:'Online form submission, document upload, application status tracking, payment gateway.', tags:['government','citizen','services'], color:'#1d4ed8', color2:'#16a34a' },
+  { category:'government', icon:'📋', name:'Document Management', path:'government/document-management/index.html', desc:'Document classification, version control, access permissions, audit trail, search.', tags:['documents','dms','records'], color:'#4b5563', color2:'#1d4ed8' },
+  { category:'government', icon:'📢', name:'Municipal Grievance', path:'government/municipal-grievance/index.html', desc:'Citizen complaint submission, department routing, SLA tracking, escalation, resolution.', tags:['grievance','complaint','municipal'], color:'#dc2626', color2:'#1d4ed8' },
+  // AGRICULTURE
+  { category:'agriculture', icon:'🌾', name:'Farm Management', path:'agriculture/farm-management/index.html', desc:'Plot tracking, crop cycle management, input cost logging, yield recording, soil health.', tags:['farm','crops','agriculture'], color:'#16a34a', color2:'#d97706' },
+  { category:'agriculture', icon:'📈', name:'Agri Market Portal', path:'agriculture/agri-market-portal/index.html', desc:'Farmer listings, buyer discovery, mandi rates, trade matching, payment settlement.', tags:['market','mandi','farmer','buyer'], color:'#d97706', color2:'#16a34a' },
+  { category:'agriculture', icon:'💧', name:'Crop Tracking', path:'agriculture/crop-tracking/index.html', desc:'Season-wise tracking, pesticide schedules, irrigation logs, harvest prediction, alerts.', tags:['crops','irrigation','harvest'], color:'#0891b2', color2:'#16a34a' },
+];
+
+const CAT_META = {
+  education:    { icon:'🎓', label:'Education' },
+  automotive:   { icon:'🚗', label:'Automotive' },
+  healthcare:   { icon:'🏥', label:'Healthcare' },
+  retail:       { icon:'🛒', label:'Retail' },
+  'real-estate':{ icon:'🏠', label:'Real Estate' },
+  finance:      { icon:'💰', label:'Finance' },
+  hospitality:  { icon:'🏨', label:'Hospitality' },
+  logistics:    { icon:'🚚', label:'Logistics' },
+  hr:           { icon:'👥', label:'Human Resources' },
+  government:   { icon:'🏛️', label:'Government' },
+  agriculture:  { icon:'🌾', label:'Agriculture' },
+};
+
+let activeFilter = 'all';
+let searchQuery  = '';
+
+function setFilter(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function filterCards() {
+  searchQuery = document.getElementById('heroSearch').value.toLowerCase();
+  render();
+}
+
+function render() {
+  const container = document.getElementById('catalogContainer');
+  const noResults = document.getElementById('noResults');
+
+  const filtered = SOLUTIONS.filter(s => {
+    const matchCat   = activeFilter === 'all' || s.category === activeFilter;
+    const matchQuery = !searchQuery || s.name.toLowerCase().includes(searchQuery)
+      || s.desc.toLowerCase().includes(searchQuery)
+      || s.tags.some(t => t.includes(searchQuery));
+    return matchCat && matchQuery;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = '';
+    noResults.classList.remove('hidden');
+    return;
+  }
+  noResults.classList.add('hidden');
+
+  if (activeFilter !== 'all') {
+    container.innerHTML = `<div class="cat-grid">${filtered.map(cardHTML).join('')}</div>`;
+    return;
+  }
+
+  // Group by category
+  const cats = [...new Set(SOLUTIONS.map(s => s.category))];
+  container.innerHTML = cats.map(cat => {
+    const items = filtered.filter(s => s.category === cat);
+    if (!items.length) return '';
+    const meta = CAT_META[cat];
+    return `
+      <div class="cat-section" data-cat="${cat}">
+        <div class="cat-header">
+          <span class="cat-icon">${meta.icon}</span>
+          <span class="cat-title">${meta.label}</span>
+          <span class="cat-count">${items.length} solution${items.length > 1 ? 's' : ''}</span>
+        </div>
+        <div class="cat-grid">${items.map(cardHTML).join('')}</div>
+      </div>`;
+  }).join('');
+}
+
+function cardHTML(s) {
+  return `
+    <div class="solution-card" data-category="${s.category}">
+      <div class="card-banner" style="--cat-color:${s.color};--cat-color2:${s.color2}"></div>
+      <div class="card-body">
+        <div class="card-icon" style="background:${s.color}18">${s.icon}</div>
+        <div class="card-name">${s.name}</div>
+        <div class="card-desc">${s.desc}</div>
+        <div style="margin-top:.75rem;display:flex;gap:.4rem;flex-wrap:wrap">
+          ${s.tags.map(t => `<span class="badge badge-gray">${t}</span>`).join('')}
+        </div>
+        <div class="card-meta">
+          <div><span class="tier-dot"></span><span class="tier-label">Demo Ready</span></div>
+          <div class="card-actions">
+            <a href="${s.path}" class="btn btn-primary btn-sm">Live Demo</a>
+            <a href="${s.path.replace('index.html','README.md')}" class="btn btn-outline btn-sm">Docs</a>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+render();
+document.getElementById('heroSearch').addEventListener('input', filterCards);
+</script>
+</body>
+</html>

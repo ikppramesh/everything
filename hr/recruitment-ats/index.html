@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Recruitment ATS — Everything Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../_shared/css/design-system.css"/>
+<style>
+.section { animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:1rem; margin-bottom:2rem; }
+.back-link { display:inline-flex; align-items:center; gap:.5rem; font-size:.875rem; color:var(--color-gray-500); text-decoration:none; margin-bottom:1.5rem; }
+.back-link:hover { color:var(--color-primary); }
+</style>
+</head>
+<body>
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">🤝 HireFlow</div>
+    <div style="padding:.5rem .75rem .25rem;font-size:10px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,.35);text-transform:uppercase;margin-top:.5rem">Navigation</div>
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="#" onclick="showSection('dashboard');return false;" id="nav-dashboard" class="active">Dashboard</a></li>
+        <li><a href="#" onclick="showSection('jobs');return false;" id="nav-jobs" class="">Jobs</a></li>
+        <li><a href="#" onclick="showSection('candidates');return false;" id="nav-candidates" class="">Candidates</a></li>
+        <li><a href="#" onclick="showSection('interviews');return false;" id="nav-interviews" class="">Interviews</a></li>
+        <li><a href="#" onclick="showSection('offers');return false;" id="nav-offers" class="">Offers</a></li>
+        <li><a href="#" onclick="showSection('onboarding');return false;" id="nav-onboarding" class="">Onboarding</a></li>
+      </ul>
+    </nav>
+    <div style="margin-top:auto;padding:1rem 1.5rem;border-top:1px solid rgba(255,255,255,.08)">
+      <div style="font-size:.75rem;color:rgba(255,255,255,.4)">Everything Platform</div>
+      <div style="font-size:.7rem;color:rgba(255,255,255,.25);margin-top:2px">Human Resources Solution</div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <a href="../../index.html" class="back-link">← Back to Catalog</a>
+
+    <!-- Dashboard -->
+    <div id="section-dashboard" class="section">
+      <div class="topbar">
+        <div>
+          <div class="topbar-title">Recruitment ATS</div>
+          <div class="topbar-sub">Job postings, applicant tracking, interview scheduling, and offer management.</div>
+        </div>
+        <div style="display:flex;gap:.75rem;align-items:center">
+          <button class="btn btn-outline btn-sm" data-theme-toggle>🌙 Theme</button>
+          <button class="btn btn-primary btn-sm" onclick="EV.toast('Report generated!','success')">📊 Export</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-grid">
+        
+      <div class="stat-card">
+        <div class="stat-label">💼 Open Positions</div>
+        <div class="stat-value">18</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">👥 Applications</div>
+        <div class="stat-value">342</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">🗓️ Interviews (Week)</div>
+        <div class="stat-value">24</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">✅ Offers Made</div>
+        <div class="stat-value">6</div>
+      </div>
+      </div>
+
+      <!-- Chart + Quick Actions -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-top:1rem">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Activity Overview</div>
+            <div class="card-sub">Performance for last 6 periods</div>
+          </div>
+          <canvas id="mainChart" width="500" height="200" style="width:100%;height:200px"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Quick Actions</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:.75rem">
+            <button class="btn btn-outline" onclick="showSection('jobs')" style="justify-content:flex-start">🤝 Go to Jobs</button><button class="btn btn-outline" onclick="showSection('candidates')" style="justify-content:flex-start">🤝 Go to Candidates</button><button class="btn btn-outline" onclick="showSection('interviews')" style="justify-content:flex-start">🤝 Go to Interviews</button><button class="btn btn-outline" onclick="showSection('offers')" style="justify-content:flex-start">🤝 Go to Offers</button>
+            <button class="btn btn-primary" onclick="EV.toast('Welcome to Recruitment ATS!','success')">🚀 Get Started</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div id="section-jobs" class="section hidden">
+      <div class="flex items-center justify-between" style="margin-bottom:1.5rem">
+        <div>
+          <h2 style="font-size:1.25rem;font-weight:700">Jobs</h2>
+          <p style="font-size:.875rem;color:var(--color-gray-500)">Manage and track jobs</p>
+        </div>
+        <button class="btn btn-primary" onclick="EV.toast('Feature coming soon!','info')">+ Add New</button>
+      </div>
+      <div style="margin-bottom:1rem">
+        <input type="text" class="form-input" placeholder="Search jobs..." style="max-width:320px" oninput="searchTable(this.value,'main-table')"/>
+      </div>
+      <div class="table-wrap">
+        <table id="main-table">
+          <thead><tr>
+            <th>ID</th><th>Name</th><th>Category</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+          </tr></thead>
+          <tbody>
+            <tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1001</code></td>
+              <td><strong>Record 1</strong></td>
+              <td><span class="badge badge-primary">Category 2</span></td>
+              <td>3/2/2024</td>
+              <td>₹94,747</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 1','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 1 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1002</code></td>
+              <td><strong>Record 2</strong></td>
+              <td><span class="badge badge-primary">Category 3</span></td>
+              <td>5/3/2024</td>
+              <td>₹71,602</td>
+              <td><span class="badge badge-info">Processing</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 2','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 2 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1003</code></td>
+              <td><strong>Record 3</strong></td>
+              <td><span class="badge badge-primary">Category 1</span></td>
+              <td>7/4/2024</td>
+              <td>₹12,696</td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 3','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 3 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1004</code></td>
+              <td><strong>Record 4</strong></td>
+              <td><span class="badge badge-primary">Category 2</span></td>
+              <td>9/5/2024</td>
+              <td>₹13,660</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 4','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 4 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1005</code></td>
+              <td><strong>Record 5</strong></td>
+              <td><span class="badge badge-primary">Category 3</span></td>
+              <td>11/6/2024</td>
+              <td>₹56,549</td>
+              <td><span class="badge badge-info">Processing</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 5','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 5 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1006</code></td>
+              <td><strong>Record 6</strong></td>
+              <td><span class="badge badge-primary">Category 1</span></td>
+              <td>13/7/2024</td>
+              <td>₹90,813</td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 6','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 6 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1007</code></td>
+              <td><strong>Record 7</strong></td>
+              <td><span class="badge badge-primary">Category 2</span></td>
+              <td>15/8/2024</td>
+              <td>₹52,426</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 7','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 7 updated','success')">Edit</button>
+              </td>
+            </tr><tr>
+              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">HIR-1008</code></td>
+              <td><strong>Record 8</strong></td>
+              <td><span class="badge badge-primary">Category 3</span></td>
+              <td>17/9/2024</td>
+              <td>₹82,838</td>
+              <td><span class="badge badge-info">Processing</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 8','info')">View</button>
+                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 8 updated','success')">Edit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <div id="section-candidates" class="section hidden">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Candidates</h2>
+      <div class="card" style="padding:3rem;text-align:center;color:var(--color-gray-400)">
+        <div style="font-size:3rem;margin-bottom:1rem">🤝</div>
+        <p style="font-size:1rem;font-weight:600;color:var(--color-gray-600)">Candidates Module</p>
+        <p style="margin-top:.5rem">Full candidates functionality for Recruitment ATS</p>
+        <button class="btn btn-primary" style="margin-top:1.5rem" onclick="EV.toast('Candidates module loaded!','success')">Load Candidates</button>
+      </div>
+    </div>
+    <div id="section-interviews" class="section hidden">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Interviews</h2>
+      <div class="card" style="padding:3rem;text-align:center;color:var(--color-gray-400)">
+        <div style="font-size:3rem;margin-bottom:1rem">🤝</div>
+        <p style="font-size:1rem;font-weight:600;color:var(--color-gray-600)">Interviews Module</p>
+        <p style="margin-top:.5rem">Full interviews functionality for Recruitment ATS</p>
+        <button class="btn btn-primary" style="margin-top:1.5rem" onclick="EV.toast('Interviews module loaded!','success')">Load Interviews</button>
+      </div>
+    </div>
+    <div id="section-offers" class="section hidden">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Offers</h2>
+      <div class="card" style="padding:3rem;text-align:center;color:var(--color-gray-400)">
+        <div style="font-size:3rem;margin-bottom:1rem">🤝</div>
+        <p style="font-size:1rem;font-weight:600;color:var(--color-gray-600)">Offers Module</p>
+        <p style="margin-top:.5rem">Full offers functionality for Recruitment ATS</p>
+        <button class="btn btn-primary" style="margin-top:1.5rem" onclick="EV.toast('Offers module loaded!','success')">Load Offers</button>
+      </div>
+    </div>
+    <div id="section-onboarding" class="section hidden">
+      <h2 style="font-size:1.25rem;font-weight:700;margin-bottom:1.5rem">Onboarding</h2>
+      <div class="card" style="padding:3rem;text-align:center;color:var(--color-gray-400)">
+        <div style="font-size:3rem;margin-bottom:1rem">🤝</div>
+        <p style="font-size:1rem;font-weight:600;color:var(--color-gray-600)">Onboarding Module</p>
+        <p style="margin-top:.5rem">Full onboarding functionality for Recruitment ATS</p>
+        <button class="btn btn-primary" style="margin-top:1.5rem" onclick="EV.toast('Onboarding module loaded!','success')">Load Onboarding</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="../../_shared/js/demo-utils.js"></script>
+<script>
+const sections = ["dashboard","jobs","candidates","interviews","offers","onboarding"];
+
+function showSection(id) {
+  sections.forEach(s => {
+    const el = document.getElementById('section-'+s);
+    const nav = document.getElementById('nav-'+s);
+    if(el) el.classList.add('hidden');
+    if(nav) nav.classList.remove('active');
+  });
+  const target = document.getElementById('section-'+id);
+  const navTarget = document.getElementById('nav-'+id);
+  if(target) target.classList.remove('hidden');
+  if(navTarget) navTarget.classList.add('active');
+}
+
+function searchTable(q, tableId) {
+  const rows = document.querySelectorAll('#'+tableId+' tbody tr');
+  rows.forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+// Draw bar chart
+window.addEventListener('load', () => {
+  const labels = ["Jan","Feb","Mar","Apr","May","Jun"];
+  const data   = [24,31,28,38,34,42];
+  const canvas = document.getElementById('mainChart');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.clientWidth || 500;
+  const H = 200;
+  canvas.width = W; canvas.height = H;
+  const pad = {top:20,right:20,bottom:40,left:60};
+  const chartW = W-pad.left-pad.right;
+  const chartH = H-pad.top-pad.bottom;
+  const max = Math.max(...data)*1.15||1;
+  const barW = (chartW/labels.length)*0.55;
+  const gap   = chartW/labels.length;
+  const bg = getComputedStyle(document.body).backgroundColor || '#f9fafb';
+  ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+  // Grid
+  ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad.top+(chartH/4)*i;
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(W-pad.right,y); ctx.stroke();
+    ctx.fillStyle='#9ca3af'; ctx.font='10px Inter,sans-serif'; ctx.textAlign='right';
+    ctx.fillText(Math.round(max*(1-i/4)).toLocaleString('en-IN'), pad.left-6, y+4);
+  }
+  // Bars
+  labels.forEach((lbl,i)=>{
+    const bH=(data[i]/max)*chartH;
+    const x=pad.left+gap*i+(gap-barW)/2;
+    const y=pad.top+chartH-bH;
+    ctx.fillStyle='#7c3aed';
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(x,y,barW,bH,[4,4,0,0]); else ctx.rect(x,y,barW,bH);
+    ctx.fill();
+    ctx.fillStyle='#6b7280'; ctx.font='11px Inter,sans-serif'; ctx.textAlign='center';
+    ctx.fillText(lbl, x+barW/2, H-pad.bottom+16);
+  });
+});
+</script>
+</body>
+</html>
