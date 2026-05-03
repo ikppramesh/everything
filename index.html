@@ -1341,88 +1341,188 @@ document.addEventListener('click', e => {
   requestAnimationFrame(observe);
 })();
 
-/* ── Dot field (orange glow) ─────────────────────────────── */
+/* ── Dot field — category emoji animation + hover glow ───── */
 (function() {
   var wrap = document.getElementById('dotField');
   if (!wrap) return;
 
-  var COLS   = 52;
-  var RADIUS = 100;
-  var MAX_S  = 3.5;
-  var dots;
+  var COLS      = 52;
+  var HOVER_R   = 110;
+  var HOVER_S   = 3.5;
+  var PAT_COLS  = 22;   // dots wide for emoji stamp
+  var FADE_MS   = 320;  // fade-in / fade-out duration each
+  var HOLD_MS   = 2360; // hold time per category (total cycle = 3000ms)
+  var CYCLE_MS  = HOLD_MS + FADE_MS * 2; // 3000ms
 
+  // Category roster — RGB pre-computed from brand colours
+  var CATS = [
+    { label:'Education',   emoji:'🎓', r:37,  g:99,  b:235 },
+    { label:'Automotive',  emoji:'🚗', r:220, g:38,  b:38  },
+    { label:'Healthcare',  emoji:'🏥', r:22,  g:163, b:74  },
+    { label:'Retail',      emoji:'🛒', r:217, g:119, b:6   },
+    { label:'Real Estate', emoji:'🏠', r:8,   g:145, b:178 },
+    { label:'Finance',     emoji:'💰', r:22,  g:163, b:74  },
+    { label:'Hospitality', emoji:'🏨', r:217, g:119, b:6   },
+    { label:'Logistics',   emoji:'🚚', r:8,   g:145, b:178 },
+    { label:'HR',          emoji:'👥', r:124, g:58,  b:237 },
+    { label:'Government',  emoji:'🏛️', r:29,  g:78,  b:216 },
+    { label:'Agriculture', emoji:'🌾', r:22,  g:163, b:74  },
+    { label:'Software',    emoji:'💻', r:99,  g:102, b:241 },
+  ];
+
+  var dots       = [];
+  var patterns   = null;
+  var patRows    = 0;
+  var patStartC  = 0;
+  var mx = -9999, my = -9999;
+  var raf        = null;
+  var cycleStart = 0;
+  var currIdx    = 0;
+
+  /* — Sample an emoji via offscreen canvas → Uint8Array(patCols × patRows) */
+  function sampleEmoji(emoji, pCols, pRows) {
+    var SC  = 12;                    // pixel scale for sampling
+    var cw  = pCols * SC;
+    var ch  = pRows * SC;
+    var cvs = document.createElement('canvas');
+    cvs.width = cw; cvs.height = ch;
+    var ctx = cvs.getContext('2d');
+    var sz  = Math.min(cw, ch) * 0.78;
+    ctx.font          = sz + 'px serif';
+    ctx.textAlign     = 'center';
+    ctx.textBaseline  = 'middle';
+    ctx.fillText(emoji, cw / 2, ch / 2);
+    var px  = ctx.getImageData(0, 0, cw, ch).data;
+    var pat = new Uint8Array(pCols * pRows);
+    for (var row = 0; row < pRows; row++) {
+      for (var col = 0; col < pCols; col++) {
+        var sum = 0;
+        for (var dy = 0; dy < SC; dy++) {
+          for (var dx = 0; dx < SC; dx++) {
+            sum += px[((row * SC + dy) * cw + (col * SC + dx)) * 4 + 3];
+          }
+        }
+        pat[row * pCols + col] = (sum / (SC * SC)) > 22 ? 1 : 0;
+      }
+    }
+    return pat;
+  }
+
+  /* — Build dot-grid DOM */
   function build() {
     wrap.innerHTML = '';
-    var W = wrap.offsetWidth;
-    var H = wrap.offsetHeight;
+    var W = wrap.offsetWidth, H = wrap.offsetHeight;
     if (W < 1 || H < 1) { dots = []; return; }
-    var gx = W / COLS;
+    var gx   = W / COLS;
     var rows = Math.round(H / gx) + 1;
-    var gy = H / rows;
+    var gy   = H / rows;
+    patStartC = Math.floor((COLS - PAT_COLS) / 2);
+
+    if (!patterns || patRows !== rows) {
+      patRows  = rows;
+      patterns = CATS.map(function(cat) {
+        return sampleEmoji(cat.emoji, PAT_COLS, patRows);
+      });
+    }
+
     dots = [];
     for (var r = 0; r < rows; r++) {
       for (var c = 0; c < COLS; c++) {
         var el = document.createElement('div');
-        el.className = 'dot';
+        el.className  = 'dot';
         var x = (c + .5) * gx;
         var y = (r + .5) * gy;
-        el.style.left = x + 'px';
-        el.style.top  = y + 'px';
+        el.style.cssText = 'left:' + x + 'px;top:' + y + 'px';
         wrap.appendChild(el);
-        dots.push({ el, x, y });
+        dots.push({ el: el, x: x, y: y, row: r, col: c });
       }
     }
   }
 
-  var raf = null;
-  var mx = -9999, my = -9999;
+  /* — Is dot[row,col] lit in pattern idx? */
+  function isLit(row, col, idx) {
+    var lc = col - patStartC;
+    if (lc < 0 || lc >= PAT_COLS || row < 0 || row >= patRows) return false;
+    return patterns[idx][row * PAT_COLS + lc] === 1;
+  }
 
+  /* — Main render loop (runs continuously) */
   function frame() {
     raf = null;
-    if (!dots) return;
+    if (!dots.length || !patterns) return;
+
+    var now     = performance.now();
+    var elapsed = now - cycleStart;
+
+    // Advance to next category when cycle completes
+    if (elapsed >= CYCLE_MS) {
+      currIdx    = (currIdx + 1) % CATS.length;
+      cycleStart = now;
+      elapsed    = 0;
+    }
+
+    // Alpha for the category pattern (0 → 1 → 1 → 0)
+    var a;
+    if (elapsed < FADE_MS) {
+      a = elapsed / FADE_MS;                              // fade in
+    } else if (elapsed < FADE_MS + HOLD_MS) {
+      a = 1;                                              // hold
+    } else {
+      a = 1 - (elapsed - FADE_MS - HOLD_MS) / FADE_MS;  // fade out
+    }
+    a = a < 0 ? 0 : a > 1 ? 1 : a;
+
+    var cat = CATS[currIdx];
+
     for (var i = 0; i < dots.length; i++) {
-      var d = dots[i];
-      var dx = d.x - mx, dy = d.y - my;
-      var dist = Math.sqrt(dx*dx + dy*dy);
-      if (dist < RADIUS) {
-        var t = 1 - dist / RADIUS;
-        var s = 1 + t * (MAX_S - 1);
-        var o = 0.05 + t * 0.95;
+      var d   = dots[i];
+      var ddx = d.x - mx, ddy = d.y - my;
+      var dist = Math.sqrt(ddx * ddx + ddy * ddy);
+      var lit  = isLit(d.row, d.col, currIdx);
+
+      if (dist < HOVER_R) {
+        // Orange proximity glow (overrides pattern)
+        var t = 1 - dist / HOVER_R;
+        d.el.style.transform  = 'scale(' + (1 + t * (HOVER_S - 1)).toFixed(3) + ')';
+        d.el.style.background = 'rgba(250,93,41,' + (0.05 + t * 0.95).toFixed(3) + ')';
+      } else if (lit && a > 0.01) {
+        // Category emoji dot
+        var s = 1 + a * 1.8;
         d.el.style.transform  = 'scale(' + s.toFixed(3) + ')';
-        d.el.style.background = 'rgba(250,93,41,' + o.toFixed(3) + ')';
+        d.el.style.background = 'rgba(' + cat.r + ',' + cat.g + ',' + cat.b + ','
+                               + (0.18 + a * 0.82).toFixed(3) + ')';
       } else {
+        // Resting dot
         d.el.style.transform  = 'scale(1)';
         d.el.style.background = 'rgba(255,255,255,0.05)';
       }
     }
+
+    raf = requestAnimationFrame(frame);
   }
 
-  function schedule() { if (!raf) raf = requestAnimationFrame(frame); }
-
+  /* — Events */
   wrap.addEventListener('mousemove', function(e) {
     var r = wrap.getBoundingClientRect();
     mx = e.clientX - r.left; my = e.clientY - r.top;
-    schedule();
   });
-  wrap.addEventListener('mouseleave', function() {
-    mx = -9999; my = -9999; schedule();
-  });
+  wrap.addEventListener('mouseleave', function() { mx = -9999; my = -9999; });
   wrap.addEventListener('touchmove', function(e) {
     var r = wrap.getBoundingClientRect();
     mx = e.touches[0].clientX - r.left;
     my = e.touches[0].clientY - r.top;
-    schedule();
   }, { passive: true });
-  wrap.addEventListener('touchend', function() {
-    mx = -9999; my = -9999; schedule();
-  });
+  wrap.addEventListener('touchend', function() { mx = -9999; my = -9999; });
 
   var rt;
   window.addEventListener('resize', function() {
-    clearTimeout(rt); rt = setTimeout(build, 200);
+    clearTimeout(rt);
+    rt = setTimeout(function() { patterns = null; build(); }, 200);
   }, { passive: true });
 
   build();
+  cycleStart = performance.now();
+  raf = requestAnimationFrame(frame);
 })();
 
 /* ── Hero grid art tiles ─────────────────────────────────── */
