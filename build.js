@@ -679,6 +679,144 @@ const SOLUTIONS = [
     sections: ['Dashboard','Crops','Irrigation Log','Pesticide Schedule','Alerts','Harvest'],
     chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [12,15,14,18,16,18] }
   },
+
+  // SOFTWARE
+  {
+    id: 'software/project-management',
+    name: 'Project Management', emoji: '📋', short: 'ProjectHub',
+    tagline: 'Agile boards, sprint planning, milestone tracking, and team velocity — all in one workspace.',
+    color: '#6366f1', color2: '#8b5cf6',
+    category: 'Software',
+    target: 'Software Teams, Product Companies, Agencies, Startups',
+    problem: 'Teams juggle Slack threads, emails, and spreadsheets to track tasks — sprints slip and deadlines are missed.',
+    stats: [
+      { label: 'Active Projects', value: '14', icon: '📋' },
+      { label: 'Open Tasks', value: '287', icon: '✅' },
+      { label: 'Sprint Velocity', value: '48 pts', icon: '⚡' },
+      { label: 'On-Time Delivery', value: '91%', icon: '🎯' },
+    ],
+    sections: ['Dashboard','Board','Backlog','Sprints','Milestones','Reports'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [38,42,45,41,48,51] }
+  },
+  {
+    id: 'software/bug-tracker',
+    name: 'Bug & Issue Tracker', emoji: '🐛', short: 'BugDesk',
+    tagline: 'Triage, assign, and resolve issues with priority queues, status workflows, and release linking.',
+    color: '#dc2626', color2: '#f97316',
+    category: 'Software',
+    target: 'QA Teams, Dev Teams, Product Companies, SaaS Businesses',
+    problem: 'Bugs pile up in spreadsheets and chat — no priority, no owner, no SLA, no audit trail.',
+    stats: [
+      { label: 'Open Bugs', value: '64', icon: '🐛' },
+      { label: 'Critical', value: '5', icon: '🔴' },
+      { label: 'Fixed This Week', value: '28', icon: '✅' },
+      { label: 'Avg Resolution', value: '1.8 days', icon: '⏱️' },
+    ],
+    sections: ['Dashboard','Issues','My Queue','Releases','Reports','Settings'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [82,74,68,71,65,64] }
+  },
+  {
+    id: 'software/api-developer-portal',
+    name: 'API Developer Portal', emoji: '🔌', short: 'APIPortal',
+    tagline: 'API key management, interactive docs, rate limit monitoring, sandbox testing, and webhook logs.',
+    color: '#0891b2', color2: '#6366f1',
+    category: 'Software',
+    target: 'SaaS Companies, Platform Teams, API-first Businesses, Fintechs',
+    problem: 'Developers waste hours hunting undocumented endpoints; API keys are shared over email with no audit.',
+    stats: [
+      { label: 'Active API Keys', value: '1,240', icon: '🔑' },
+      { label: 'Requests / Day', value: '2.4M', icon: '📡' },
+      { label: 'Avg Latency', value: '48ms', icon: '⚡' },
+      { label: 'Uptime', value: '99.97%', icon: '✅' },
+    ],
+    sections: ['Dashboard','API Keys','Documentation','Sandbox','Analytics','Webhooks'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [1800000,2000000,2100000,2300000,2200000,2400000] }
+  },
+  {
+    id: 'software/qa-test-management',
+    name: 'QA Test Management', emoji: '🧪', short: 'TestLab',
+    tagline: 'Test case library, execution runs, defect linking, coverage reports, and regression suite tracking.',
+    color: '#16a34a', color2: '#0891b2',
+    category: 'Software',
+    target: 'QA Teams, SDET Engineers, Release Managers, Product Companies',
+    problem: 'Test cases live in spreadsheets, defects in chat — coverage is unknown and regressions ship to production.',
+    stats: [
+      { label: 'Total Test Cases', value: '2,184', icon: '🧪' },
+      { label: 'Pass Rate', value: '94.2%', icon: '✅' },
+      { label: 'Open Defects', value: '18', icon: '🐛' },
+      { label: 'Coverage', value: '87%', icon: '📊' },
+    ],
+    sections: ['Dashboard','Test Cases','Test Runs','Defects','Coverage','Reports'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [88,90,91,93,94,94] }
+  },
+  {
+    id: 'software/devops-dashboard',
+    name: 'DevOps Release Dashboard', emoji: '🚀', short: 'DevOpsPro',
+    tagline: 'CI/CD pipeline status, environment deployments, rollback controls, incident alerts, and uptime.',
+    color: '#f97316', color2: '#6366f1',
+    category: 'Software',
+    target: 'DevOps Engineers, SREs, Platform Teams, Tech Startups',
+    problem: 'Deployments happen via SSH, rollbacks are manual, and teams learn about outages from angry customers.',
+    stats: [
+      { label: 'Deployments / Week', value: '34', icon: '🚀' },
+      { label: 'Success Rate', value: '97.1%', icon: '✅' },
+      { label: 'Open Incidents', value: '1', icon: '🔴' },
+      { label: 'Avg Deploy Time', value: '3.2 min', icon: '⏱️' },
+    ],
+    sections: ['Dashboard','Pipelines','Deployments','Environments','Incidents','Uptime'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [24,28,30,31,33,34] }
+  },
+  {
+    id: 'software/tech-docs-wiki',
+    name: 'Tech Documentation Wiki', emoji: '📖', short: 'TechDocs',
+    tagline: 'Markdown wiki, versioned pages, full-text search, team spaces, API reference, and changelogs.',
+    color: '#7c3aed', color2: '#6366f1',
+    category: 'Software',
+    target: 'Engineering Teams, Open-source Projects, Product Companies, Dev Agencies',
+    problem: 'Documentation lives in outdated Google Docs, tribal knowledge stays in Slack, and new hires are lost for weeks.',
+    stats: [
+      { label: 'Total Pages', value: '648', icon: '📄' },
+      { label: 'Team Spaces', value: '12', icon: '🏢' },
+      { label: 'Searches / Day', value: '840', icon: '🔍' },
+      { label: 'Pages Updated (Week)', value: '47', icon: '✏️' },
+    ],
+    sections: ['Dashboard','Pages','Spaces','Search','Changelog','Settings'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [520,548,572,601,628,648] }
+  },
+  {
+    id: 'software/code-review-portal',
+    name: 'Code Review Portal', emoji: '🔍', short: 'ReviewBoard',
+    tagline: 'Pull request workflows, inline comments, approval gates, code quality metrics, and merge controls.',
+    color: '#8b5cf6', color2: '#0891b2',
+    category: 'Software',
+    target: 'Engineering Teams, Dev Agencies, Open-source Maintainers, CTOs',
+    problem: 'Code ships without review, inline feedback is lost in chat, and quality metrics are invisible to leadership.',
+    stats: [
+      { label: 'Open PRs', value: '23', icon: '🔀' },
+      { label: 'Avg Review Time', value: '4.1 hrs', icon: '⏱️' },
+      { label: 'Merged This Week', value: '61', icon: '✅' },
+      { label: 'Code Quality', value: 'A-', icon: '⭐' },
+    ],
+    sections: ['Dashboard','Pull Requests','My Reviews','Approvals','Metrics','Settings'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [44,50,55,58,60,61] }
+  },
+  {
+    id: 'software/software-license-manager',
+    name: 'Software License Manager', emoji: '🔐', short: 'LicenseVault',
+    tagline: 'Track SaaS subscriptions, seat allocations, renewal alerts, vendor contracts, and spend analytics.',
+    color: '#6366f1', color2: '#dc2626',
+    category: 'Software',
+    target: 'IT Managers, Finance Teams, CIOs, Enterprise Procurement',
+    problem: 'Companies pay for unused seats, miss renewal deadlines, and have zero visibility into total SaaS spend.',
+    stats: [
+      { label: 'Active Licenses', value: '84', icon: '🔐' },
+      { label: 'Monthly Spend', value: '₹4.2L', icon: '💰' },
+      { label: 'Renewing in 30 days', value: '6', icon: '⏰' },
+      { label: 'Unused Seats', value: '127', icon: '⚠️' },
+    ],
+    sections: ['Dashboard','Licenses','Vendors','Renewals','Spend Analytics','Alerts'],
+    chartData: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], data: [72,75,78,80,82,84] }
+  },
 ];
 
 // ─── HTML Demo Generator ────────────────────────────────────────────────────────

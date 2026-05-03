@@ -952,7 +952,7 @@ body {
     <div class="hero-left">
       <div class="hero-eyebrow">Enterprise Solution Catalog</div>
       <h1 class="hero-title">Every<span>thing</span><br>Platform</h1>
-      <p class="hero-sub">37 enterprise-ready templates across 11 industries. Browse, demo, and pitch — zero dependencies required.</p>
+      <p class="hero-sub">45 enterprise-ready templates across 12 industries. Browse, demo, and pitch — zero dependencies required.</p>
       <div class="hero-search">
         <svg class="hero-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="heroSearch" placeholder="Search solutions, sectors, industries…" oninput="filterCards()"/>
@@ -961,8 +961,8 @@ body {
         </button>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="num">37</div><div class="lbl">Solutions</div></div>
-        <div class="hero-stat"><div class="num">11</div><div class="lbl">Industries</div></div>
+        <div class="hero-stat"><div class="num">45</div><div class="lbl">Solutions</div></div>
+        <div class="hero-stat"><div class="num">12</div><div class="lbl">Industries</div></div>
         <div class="hero-stat"><div class="num">100%</div><div class="lbl">Open Source</div></div>
         <div class="hero-stat"><div class="num">0</div><div class="lbl">Dependencies</div></div>
       </div>
@@ -989,6 +989,7 @@ body {
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>HR</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Government</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">8</span>Software</span><span class="ev-ticker-sep">—</span>
     <!-- duplicated for seamless CSS loop -->
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Education</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Automotive</span><span class="ev-ticker-sep">—</span>
@@ -1001,6 +1002,7 @@ body {
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>HR</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Government</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">8</span>Software</span><span class="ev-ticker-sep">—</span>
   </div>
 </div>
 
@@ -1010,7 +1012,7 @@ body {
 
     <!-- Filter tab strip -->
     <div class="ev-filter-bar" role="tablist" aria-label="Filter by industry">
-      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">37</span></button>
+      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">45</span></button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('education',this)">Education</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('automotive',this)">Automotive</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('healthcare',this)">Healthcare</button>
@@ -1022,6 +1024,7 @@ body {
       <button class="ev-filter-tab" role="tab" onclick="setFilter('hr',this)">HR</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('government',this)">Govt</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('agriculture',this)">Agriculture</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('software',this)">Software</button>
       <span class="ev-filter-indicator" aria-hidden="true"></span>
     </div>
 
@@ -1115,6 +1118,15 @@ const SOLUTIONS = [
   { category:'agriculture', icon:'🌾', name:'Farm Management', path:'agriculture/farm-management/index.html', desc:'Plot tracking, crop cycle management, input cost logging, yield recording, soil health.', tags:['farm','crops','agriculture'], color:'#16a34a', color2:'#d97706' },
   { category:'agriculture', icon:'📈', name:'Agri Market Portal', path:'agriculture/agri-market-portal/index.html', desc:'Farmer listings, buyer discovery, mandi rates, trade matching, payment settlement.', tags:['market','mandi','farmer'], color:'#d97706', color2:'#16a34a' },
   { category:'agriculture', icon:'💧', name:'Crop Tracking', path:'agriculture/crop-tracking/index.html', desc:'Season-wise tracking, pesticide schedules, irrigation logs, harvest prediction, alerts.', tags:['crops','irrigation','harvest'], color:'#0891b2', color2:'#16a34a' },
+  // SOFTWARE
+  { category:'software', icon:'📋', name:'Project Management', path:'software/project-management/index.html', desc:'Agile boards, sprint planning, milestone tracking, and team velocity — all in one workspace.', tags:['agile','sprint','roadmap'], color:'#6366f1', color2:'#8b5cf6' },
+  { category:'software', icon:'🐛', name:'Bug & Issue Tracker', path:'software/bug-tracker/index.html', desc:'Triage, assign, and resolve issues with priority queues, status workflows, and release linking.', tags:['bugs','issues','qa'], color:'#dc2626', color2:'#f97316' },
+  { category:'software', icon:'🔌', name:'API Developer Portal', path:'software/api-developer-portal/index.html', desc:'API key management, interactive docs, rate limit monitoring, sandbox testing, and webhook logs.', tags:['api','developers','sdk'], color:'#0891b2', color2:'#6366f1' },
+  { category:'software', icon:'🧪', name:'QA Test Management', path:'software/qa-test-management/index.html', desc:'Test case library, execution runs, defect linking, coverage reports, and regression suite tracking.', tags:['testing','qa','coverage'], color:'#16a34a', color2:'#0891b2' },
+  { category:'software', icon:'🚀', name:'DevOps Release Dashboard', path:'software/devops-dashboard/index.html', desc:'CI/CD pipeline status, environment deployments, rollback controls, incident alerts, and uptime.', tags:['devops','cicd','deployments'], color:'#f97316', color2:'#6366f1' },
+  { category:'software', icon:'📖', name:'Tech Documentation Wiki', path:'software/tech-docs-wiki/index.html', desc:'Markdown wiki, versioned pages, full-text search, team spaces, API reference, and changelogs.', tags:['docs','wiki','knowledge'], color:'#7c3aed', color2:'#6366f1' },
+  { category:'software', icon:'🔍', name:'Code Review Portal', path:'software/code-review-portal/index.html', desc:'Pull request workflows, inline comments, approval gates, code quality metrics, and merge controls.', tags:['code review','pr','quality'], color:'#8b5cf6', color2:'#0891b2' },
+  { category:'software', icon:'🔐', name:'Software License Manager', path:'software/software-license-manager/index.html', desc:'Track SaaS subscriptions, seat allocations, renewal alerts, vendor contracts, and spend analytics.', tags:['licenses','saas','spend'], color:'#6366f1', color2:'#dc2626' },
 ];
 
 const CAT_META = {
@@ -1129,6 +1141,7 @@ const CAT_META = {
   hr:           { icon:'👥', label:'Human Resources' },
   government:   { icon:'🏛️', label:'Government' },
   agriculture:  { icon:'🌾', label:'Agriculture' },
+  software:     { icon:'💻', label:'Software' },
 };
 
 /* ── State ────────────────────────────────────────────────── */
