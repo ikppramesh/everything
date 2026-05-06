@@ -819,7 +819,7 @@ const SOLUTIONS = [
     difficulty: "intermediate",
     tableColumns: ["App ID","Citizen Name","Service Type","Submitted","Processing Officer","Status"],
     mockRows: [["GOV-001","Ramesh Patil","Birth Certificate","03 May 2026","Smt. Lata Desai","Under Review"],["GOV-002","Sunita Sharma","Income Certificate","01 May 2026","Shri. Ravi Kulkarni","Approved"],["GOV-003","Mohan Iyer","Domicile Certificate","04 May 2026","Smt. Lata Desai","Pending"],["GOV-004","Priya Nair","Caste Certificate","30 Apr 2026","Shri. Anant Joshi","Approved"],["GOV-005","Arjun Gupta","Trade Licence Renewal","02 May 2026","Shri. Ravi Kulkarni","Under Review"],["GOV-006","Kavya Mehta","Marriage Certificate","05 May 2026","Smt. Lata Desai","Pending"],["GOV-007","Deepak Rao","Building Plan Approval","28 Apr 2026","Shri. Anant Joshi","Rejected"],["GOV-008","Vikram Singh","Death Certificate","05 May 2026","Shri. Ravi Kulkarni","Approved"]],
-    features: [{"icon":"📋","title":"Service Catalog","desc":"Self-service directory of all government services with eligibility and document guide."},{"icon":"📝","title":"Application Submission","desc":"Online form filling with field validation, document upload, and auto-acknowledgement."},{"icon":"📄","title":"Document Upload","desc":"Secure document upload with Aadhaar-based digital signature verification."},{"icon":"🔍","title":"Status Tracker","desc":"Application status at each stage with expected processing time and officer details."},{"icon":"💳","name":"Payment Gateway","desc":"Government fee collection via UPI, netbanking, with e-challan generation."},{"icon":"👮","title":"Officer Portal","desc":"Officer-facing dashboard with queue management, approval workflow, and SLA monitor."}],
+    features: [{"icon":"📋","title":"Service Catalog","desc":"Self-service directory of all government services with eligibility and document guide."},{"icon":"📝","title":"Application Submission","desc":"Online form filling with field validation, document upload, and auto-acknowledgement."},{"icon":"📄","title":"Document Upload","desc":"Secure document upload with Aadhaar-based digital signature verification."},{"icon":"🔍","title":"Status Tracker","desc":"Application status at each stage with expected processing time and officer details."},{"icon":"💳","title":"Payment Gateway","desc":"Government fee collection via UPI, netbanking, with e-challan generation."},{"icon":"👮","title":"Officer Portal","desc":"Officer-facing dashboard with queue management, approval workflow, and SLA monitor."}],
     stack: [{"icon":"⚛️","name":"React 18","purpose":"Component UI framework"},{"icon":"🟢","name":"Node.js 20","purpose":"REST API runtime"},{"icon":"🐘","name":"PostgreSQL 15","purpose":"Primary relational database"},{"icon":"⚡","name":"Redis 7","purpose":"Session cache & job queue"},{"icon":"🔷","name":"TypeScript 5","purpose":"Type-safe full-stack code"},{"icon":"🐳","name":"Docker","purpose":"Containerised deployment"}],
     integrations: [{"icon":"💳","name":"Razorpay","purpose":"Government fee collection with e-challan and receipt"},{"icon":"📧","name":"SendGrid","purpose":"Application status updates and approval notices by email"},{"icon":"☁️","name":"AWS S3","purpose":"Citizen documents and approved certificate storage"},{"icon":"📱","name":"Twilio","purpose":"Status update SMS at each processing stage"}]
   },
@@ -1842,7 +1842,7 @@ function generateTEMPLATEPAGE(sol) {
   const featureCards = (sol.features||[]).map(f=>`<div class="tp-feat-card"><div class="tp-feat-icon">${f.icon}</div><div class="tp-feat-title">${f.title}</div><div class="tp-feat-desc">${f.desc}</div></div>`).join('');
   const stackCards = (sol.stack||[]).map(t=>`<div class="tp-stack-card"><div class="tp-stack-icon">${t.icon}</div><div><div class="tp-stack-name">${t.name}</div><div class="tp-stack-purpose">${t.purpose}</div></div></div>`).join('');
   const integCards = (sol.integrations||[]).map(i=>`<div class="tp-integ-card"><div class="tp-integ-icon">${i.icon}</div><div><div class="tp-integ-name">${i.name}</div><div class="tp-integ-why">${i.purpose}</div></div></div>`).join('');
-  const relCards = related.map(r=>`<a href="../${r.id.split('/')[1]||r.id}/template.html" class="tp-rel-card"><div class="tp-rel-icon">${r.icon}</div><div class="tp-rel-name">${r.name}</div><div class="tp-rel-tag">${r.tagline||r.desc.slice(0,60)+'…'}</div><span class="tp-rel-cta">View Template →</span></a>`).join('');
+  const relCards = related.map(r=>`<a href="../${r.id.split('/')[1]||r.id}/template.html" class="tp-rel-card"><div class="tp-rel-icon">${r.emoji}</div><div class="tp-rel-name">${r.name}</div><div class="tp-rel-tag">${r.tagline||r.desc.slice(0,60)+'…'}</div><span class="tp-rel-cta">View Template →</span></a>`).join('');
   const sideIntegList = (sol.integrations||[]).map(i=>`<div class="tp-side-integ">${i.icon} ${i.name}</div>`).join('');
   const bulletFeats = (sol.features||[]).slice(0,4).map(f=>`<li>${f.icon} ${f.title}</li>`).join('');
 
@@ -1973,7 +1973,7 @@ a{color:inherit;text-decoration:none;}
 <!-- NAV -->
 <nav class="tp-nav">
   <a href="../../index.html" class="tp-nav-back">← Everything Catalog</a>
-  <div class="tp-nav-title">${sol.icon} ${sol.name}</div>
+  <div class="tp-nav-title">${sol.emoji} ${sol.name}</div>
   <a href="index.html" class="tp-nav-demo">Live Demo ↗</a>
 </nav>
 
@@ -2153,7 +2153,7 @@ docker compose up -d
   <!-- ASIDE -->
   <aside class="tp-aside">
     <div class="tp-aside-card">
-      <div class="tp-aside-emoji">${sol.icon}</div>
+      <div class="tp-aside-emoji">${sol.emoji}</div>
       <div class="tp-aside-name">${sol.name}</div>
       <div class="tp-aside-cat">${catLabel}</div>
       <div class="tp-aside-row"><span class="tp-aside-label">Use Case</span><span class="tp-aside-val">${sol.useCase||catLabel}</span></div>
