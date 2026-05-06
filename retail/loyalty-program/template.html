@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customer Loyalty Program — Template | Everything Platform</title>
+<link rel="stylesheet" href="../../_shared/css/design-system.css">
+<style>
+:root{--tp-bg:#fafafa;--tp-bg2:#ffffff;--tp-border:#e5e7eb;--tp-text1:#111827;--tp-text2:#6b7280;--tp-accent:#FA5D29;--tp-nav:60px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--tp-bg);color:var(--tp-text1);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding-top:var(--tp-nav);}
+a{color:inherit;text-decoration:none;}
+/* NAV */
+.tp-nav{position:fixed;top:0;left:0;right:0;height:var(--tp-nav);background:#fff;border-bottom:1px solid var(--tp-border);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;z-index:100;}
+.tp-nav-back{font-size:.8rem;color:var(--tp-text2);display:flex;align-items:center;gap:.4rem;transition:color 150ms;}
+.tp-nav-back:hover{color:var(--tp-accent);}
+.tp-nav-title{font-size:.9rem;font-weight:600;display:flex;align-items:center;gap:.5rem;}
+.tp-nav-demo{font-size:.78rem;font-weight:600;background:var(--tp-accent);color:#fff;padding:.35rem .9rem;border-radius:6px;transition:opacity 150ms;}
+.tp-nav-demo:hover{opacity:.85;}
+/* HERO */
+.tp-hero{display:grid;grid-template-columns:55fr 45fr;gap:3rem;align-items:center;min-height:520px;max-width:1200px;margin:0 auto;padding:4rem 2rem;}
+.tp-hero-cat{display:inline-flex;gap:.5rem;align-items:center;margin-bottom:1rem;}
+.tp-cat-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;background:var(--tp-accent);color:#fff;padding:.22rem .55rem;border-radius:4px;}
+.tp-diff-badge{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;border:1px solid var(--tp-border);color:var(--tp-text2);padding:.22rem .55rem;border-radius:4px;}
+.tp-hero h1{font-size:2.25rem;font-weight:800;line-height:1.2;margin-bottom:.875rem;color:var(--tp-text1);}
+.tp-hero-desc{font-size:1rem;color:var(--tp-text2);line-height:1.6;margin-bottom:1.25rem;}
+.tp-hero-feats{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:.35rem .75rem;margin-bottom:1.5rem;font-size:.85rem;color:var(--tp-text2);}
+.tp-hero-feats li::before{content:'✓ ';color:var(--tp-accent);font-weight:700;}
+.tp-hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem;}
+.tp-btn-primary{font-size:.85rem;font-weight:600;background:var(--tp-accent);color:#fff;padding:.55rem 1.25rem;border-radius:7px;transition:opacity 150ms;}
+.tp-btn-primary:hover{opacity:.85;}
+.tp-btn-ghost{font-size:.85rem;font-weight:500;border:1px solid var(--tp-border);color:var(--tp-text2);padding:.55rem 1.25rem;border-radius:7px;transition:border-color 150ms,color 150ms;}
+.tp-btn-ghost:hover{border-color:var(--tp-text2);color:var(--tp-text1);}
+.tp-stack-pills{display:flex;flex-wrap:wrap;gap:.4rem;}
+.tp-pill{font-size:.7rem;background:#f3f4f6;border:1px solid var(--tp-border);color:var(--tp-text2);padding:.22rem .55rem;border-radius:5px;}
+/* IFRAME PREVIEW */
+.tp-preview-wrap{background:#fff;border:1px solid var(--tp-border);border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.07);position:relative;}
+.tp-preview-bar{background:#f9fafb;border-bottom:1px solid var(--tp-border);padding:.5rem .75rem;display:flex;align-items:center;gap:.5rem;}
+.tp-preview-dot{width:10px;height:10px;border-radius:50%;}
+.tp-preview-url{flex:1;background:#fff;border:1px solid var(--tp-border);border-radius:5px;font-size:.68rem;color:var(--tp-text2);padding:.2rem .5rem;text-align:center;}
+.tp-iframe{width:100%;height:420px;border:none;display:block;transform-origin:top left;transform:scale(0.72);width:138.9%;height:583px;margin-bottom:-166px;}
+.tp-preview-label{position:absolute;bottom:.75rem;right:.75rem;font-size:.62rem;background:rgba(0,0,0,.6);color:#fff;padding:.2rem .5rem;border-radius:4px;letter-spacing:.04em;text-transform:uppercase;}
+/* SECTIONS */
+.tp-section{max-width:1200px;margin:0 auto;padding:3.5rem 2rem;}
+.tp-section-title{font-size:1.4rem;font-weight:700;margin-bottom:.4rem;}
+.tp-section-sub{font-size:.9rem;color:var(--tp-text2);margin-bottom:2rem;}
+/* WHAT YOU'LL BUILD */
+.tp-feats{background:#fff;border-top:1px solid var(--tp-border);border-bottom:1px solid var(--tp-border);}
+.tp-feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
+.tp-feat-card{background:#fafafa;border:1px solid var(--tp-border);border-radius:10px;padding:1.25rem;}
+.tp-feat-icon{font-size:1.5rem;margin-bottom:.6rem;}
+.tp-feat-title{font-size:.9rem;font-weight:700;margin-bottom:.35rem;}
+.tp-feat-desc{font-size:.8rem;color:var(--tp-text2);line-height:1.5;}
+/* ARCHITECTURE */
+.tp-arch{background:#fff;border-top:1px solid var(--tp-border);border-bottom:1px solid var(--tp-border);}
+.tp-arch-diagram{display:flex;flex-direction:column;gap:.5rem;font-family:monospace;}
+.tp-arch-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;}
+.tp-arch-box{border:1px solid var(--tp-border);background:#fff;border-radius:7px;padding:.5rem .875rem;font-size:.78rem;font-weight:600;white-space:nowrap;}
+.tp-arch-arrow{color:#9ca3af;font-size:.78rem;padding:0 .1rem;}
+.tp-arch-step{width:18px;height:18px;background:var(--tp-accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;flex-shrink:0;}
+/* 2-COL LAYOUT */
+.tp-main{max-width:1200px;margin:0 auto;padding:3rem 2rem;display:grid;grid-template-columns:1fr 280px;gap:3rem;align-items:start;}
+/* STACK GRID */
+.tp-stack-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;margin-bottom:3rem;}
+.tp-stack-card{background:#fff;border:1px solid var(--tp-border);border-radius:9px;padding:1rem;display:flex;align-items:flex-start;gap:.75rem;}
+.tp-stack-icon{font-size:1.4rem;flex-shrink:0;}
+.tp-stack-name{font-size:.85rem;font-weight:700;margin-bottom:.2rem;}
+.tp-stack-purpose{font-size:.75rem;color:var(--tp-text2);}
+/* INTEGRATIONS */
+.tp-integ-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.875rem;margin-bottom:3rem;}
+.tp-integ-card{background:#fff;border:1px solid var(--tp-border);border-radius:9px;padding:1rem;display:flex;align-items:flex-start;gap:.75rem;}
+.tp-integ-icon{font-size:1.3rem;flex-shrink:0;}
+.tp-integ-name{font-size:.85rem;font-weight:700;margin-bottom:.2rem;}
+.tp-integ-why{font-size:.75rem;color:var(--tp-text2);line-height:1.45;}
+/* GETTING STARTED */
+.tp-gs-step{display:flex;gap:1rem;margin-bottom:1.5rem;align-items:flex-start;}
+.tp-gs-num{width:28px;height:28px;background:var(--tp-accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;margin-top:.1rem;}
+.tp-gs-body{flex:1;}
+.tp-gs-title{font-size:.9rem;font-weight:700;margin-bottom:.4rem;}
+.tp-gs-desc{font-size:.8rem;color:var(--tp-text2);margin-bottom:.5rem;}
+.tp-code{background:#111827;color:#e5e7eb;border-radius:8px;padding:1rem 1.25rem;font-size:.78rem;font-family:'Courier New',monospace;line-height:1.6;overflow-x:auto;white-space:pre;}
+.tp-code .cm{color:#6b7280;}
+/* FILE TREE */
+.tp-filetree{background:#111827;color:#e5e7eb;border-radius:8px;padding:1.25rem 1.5rem;font-size:.78rem;font-family:'Courier New',monospace;line-height:1.8;margin-bottom:3rem;}
+.tp-filetree .dir{color:#93c5fd;}.tp-filetree .file{color:#d1d5db;}.tp-filetree .comment{color:#6b7280;}
+/* ASIDE */
+.tp-aside{position:sticky;top:80px;}
+.tp-aside-card{background:#fff;border:1px solid var(--tp-border);border-radius:12px;padding:1.5rem;margin-bottom:1rem;}
+.tp-aside-emoji{font-size:2rem;margin-bottom:.5rem;}
+.tp-aside-name{font-size:1rem;font-weight:700;margin-bottom:.2rem;}
+.tp-aside-cat{font-size:.75rem;color:var(--tp-text2);margin-bottom:1rem;}
+.tp-aside-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem;font-size:.8rem;}
+.tp-aside-label{color:var(--tp-text2);}
+.tp-aside-val{font-weight:600;}
+.tp-aside-pills{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.25rem;}
+.tp-aside-btn{display:block;width:100%;text-align:center;font-size:.85rem;font-weight:600;background:var(--tp-accent);color:#fff;padding:.65rem;border-radius:7px;margin-top:1rem;transition:opacity 150ms;}
+.tp-aside-btn:hover{opacity:.85;}
+.tp-aside-link{display:block;text-align:center;font-size:.78rem;color:var(--tp-text2);margin-top:.75rem;}
+.tp-aside-link:hover{color:var(--tp-text1);}
+.tp-side-integ{font-size:.78rem;color:var(--tp-text2);padding:.3rem 0;border-bottom:1px solid var(--tp-border);}
+.tp-side-integ:last-child{border:none;}
+/* RELATED */
+.tp-related{background:#fff;border-top:1px solid var(--tp-border);}
+.tp-rel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;}
+.tp-rel-card{background:#fafafa;border:1px solid var(--tp-border);border-radius:10px;padding:1.25rem;display:flex;flex-direction:column;gap:.4rem;transition:box-shadow 200ms;}
+.tp-rel-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.tp-rel-icon{font-size:1.6rem;}
+.tp-rel-name{font-size:.9rem;font-weight:700;}
+.tp-rel-tag{font-size:.78rem;color:var(--tp-text2);line-height:1.4;flex:1;}
+.tp-rel-cta{font-size:.78rem;font-weight:600;color:var(--tp-accent);margin-top:.25rem;}
+/* FOOTER */
+.tp-footer{text-align:center;padding:2rem;font-size:.78rem;color:var(--tp-text2);border-top:1px solid var(--tp-border);}
+@media(max-width:900px){
+  .tp-hero{grid-template-columns:1fr;}.tp-preview-wrap{display:none;}
+  .tp-main{grid-template-columns:1fr;}.tp-aside{position:static;}
+  .tp-feat-grid{grid-template-columns:1fr 1fr;}.tp-rel-grid{grid-template-columns:1fr 1fr;}
+  .tp-stack-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  .tp-feat-grid,.tp-rel-grid,.tp-integ-grid,.tp-stack-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="tp-nav">
+  <a href="../../index.html" class="tp-nav-back">← Everything Catalog</a>
+  <div class="tp-nav-title">undefined Customer Loyalty Program</div>
+  <a href="index.html" class="tp-nav-demo">Live Demo ↗</a>
+</nav>
+
+<!-- HERO -->
+<section class="tp-hero">
+  <div>
+    <div class="tp-hero-cat">
+      <span class="tp-cat-badge">Retail</span>
+      <span class="tp-diff-badge">starter</span>
+    </div>
+    <h1>Customer Loyalty Program</h1>
+    <p class="tp-hero-desc">Points engine, tier management, reward redemption, and campaign builder.</p>
+    <ul class="tp-hero-feats">
+      <li>⭐ Points Engine</li><li>🏆 Tier Management</li><li>🎁 Reward Redemption</li><li>📢 Campaign Builder</li>
+    </ul>
+    <div class="tp-hero-actions">
+      <a href="index.html" class="tp-btn-primary">▶ Live Demo</a>
+      <a href="README.md" class="tp-btn-ghost">📖 Docs</a>
+    </div>
+    <div class="tp-stack-pills"><span class="tp-pill">⚛️ React 18</span><span class="tp-pill">🟢 Node.js 20</span><span class="tp-pill">🐘 PostgreSQL 15</span><span class="tp-pill">⚡ Redis 7</span><span class="tp-pill">🔷 TypeScript 5</span><span class="tp-pill">🐳 Docker</span></div>
+  </div>
+  <div class="tp-preview-wrap">
+    <div class="tp-preview-bar">
+      <div class="tp-preview-dot" style="background:#ef4444"></div>
+      <div class="tp-preview-dot" style="background:#f59e0b"></div>
+      <div class="tp-preview-dot" style="background:#22c55e"></div>
+      <div class="tp-preview-url">localhost:3000 — Customer Loyalty Program</div>
+    </div>
+    <iframe src="index.html" class="tp-iframe" title="Customer Loyalty Program preview" scrolling="no"></iframe>
+    <div class="tp-preview-label">Interactive Demo</div>
+  </div>
+</section>
+
+<!-- WHAT YOU'LL BUILD -->
+<section class="tp-feats">
+  <div class="tp-section">
+    <div class="tp-section-title">What You'll Build</div>
+    <div class="tp-section-sub">Six production-ready modules included out of the box</div>
+    <div class="tp-feat-grid"><div class="tp-feat-card"><div class="tp-feat-icon">⭐</div><div class="tp-feat-title">Points Engine</div><div class="tp-feat-desc">Configurable earn rates per category, channel, and payment method.</div></div><div class="tp-feat-card"><div class="tp-feat-icon">🏆</div><div class="tp-feat-title">Tier Management</div><div class="tp-feat-desc">Bronze/Silver/Gold/Platinum tiers with automatic upgrade and downgrade logic.</div></div><div class="tp-feat-card"><div class="tp-feat-icon">🎁</div><div class="tp-feat-title">Reward Redemption</div><div class="tp-feat-desc">Points-to-discount redemption at POS, online, and through partner brands.</div></div><div class="tp-feat-card"><div class="tp-feat-icon">📢</div><div class="tp-feat-title">Campaign Builder</div><div class="tp-feat-desc">Targeted bonus point campaigns by tier, segment, or product category.</div></div><div class="tp-feat-card"><div class="tp-feat-icon">👥</div><div class="tp-feat-title">Customer Segments</div><div class="tp-feat-desc">RFM-based segmentation for personalised offers and re-engagement triggers.</div></div><div class="tp-feat-card"><div class="tp-feat-icon">📊</div><div class="tp-feat-title">Analytics</div><div class="tp-feat-desc">Programme ROI, redemption rates, churn risk, and tier migration reports.</div></div></div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="tp-arch">
+  <div class="tp-section">
+    <div class="tp-section-title">Architecture Overview</div>
+    <div class="tp-section-sub">Scalable 3-tier architecture designed for production workloads</div>
+    <div class="tp-arch-diagram">
+      <div class="tp-arch-row">
+        <div class="tp-arch-box">🌐 Browser / PWA</div>
+        <div class="tp-arch-arrow"><span class="tp-arch-step">1</span> →</div>
+        <div class="tp-arch-box">⚡ CDN / Nginx</div>
+        <div class="tp-arch-arrow"><span class="tp-arch-step">2</span> →</div>
+        <div class="tp-arch-box">🔀 API Gateway</div>
+        <div class="tp-arch-arrow"><span class="tp-arch-step">3</span> →</div>
+        <div class="tp-arch-box">🖥️ App Server (Node.js)</div>
+      </div>
+      <div class="tp-arch-row" style="margin-left:12rem;">
+        <div class="tp-arch-arrow">↓ <span class="tp-arch-step">4</span></div>
+        <div style="width:4rem"></div>
+        <div class="tp-arch-arrow">↓ <span class="tp-arch-step">5</span></div>
+      </div>
+      <div class="tp-arch-row" style="margin-left:10.5rem;">
+        <div class="tp-arch-box">⚡ Redis Cache</div>
+        <div style="width:2rem"></div>
+        <div class="tp-arch-box">🐘 PostgreSQL DB</div>
+      </div>
+      <div class="tp-arch-row" style="margin-left:12rem;">
+        <div class="tp-arch-arrow">↓ <span class="tp-arch-step">6</span></div>
+        <div style="width:4rem"></div>
+        <div class="tp-arch-arrow">↓ <span class="tp-arch-step">7</span></div>
+      </div>
+      <div class="tp-arch-row" style="margin-left:9.5rem;">
+        <div class="tp-arch-box">⚙️ Background Jobs</div>
+        <div style="width:1rem"></div>
+        <div class="tp-arch-box">☁️ S3 / File Store</div>
+      </div>
+      <div class="tp-arch-row" style="margin-left:9.5rem;">
+        <div class="tp-arch-arrow">↓ <span class="tp-arch-step">8</span></div>
+      </div>
+      <div class="tp-arch-row" style="margin-left:8.5rem;">
+        <div class="tp-arch-box" style="border-color:var(--tp-accent);color:var(--tp-accent);">🔌 External: SendGrid / Twilio / Razorpay / AWS S3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN 2-COL -->
+<div class="tp-main">
+  <article>
+    <!-- TECH STACK -->
+    <div class="tp-section-title" style="margin-bottom:.4rem">Tech Stack</div>
+    <div class="tp-section-sub">Battle-tested tools chosen for reliability and developer experience</div>
+    <div class="tp-stack-grid"><div class="tp-stack-card"><div class="tp-stack-icon">⚛️</div><div><div class="tp-stack-name">React 18</div><div class="tp-stack-purpose">Component UI framework</div></div></div><div class="tp-stack-card"><div class="tp-stack-icon">🟢</div><div><div class="tp-stack-name">Node.js 20</div><div class="tp-stack-purpose">REST API runtime</div></div></div><div class="tp-stack-card"><div class="tp-stack-icon">🐘</div><div><div class="tp-stack-name">PostgreSQL 15</div><div class="tp-stack-purpose">Primary relational database</div></div></div><div class="tp-stack-card"><div class="tp-stack-icon">⚡</div><div><div class="tp-stack-name">Redis 7</div><div class="tp-stack-purpose">Points ledger cache & real-time balance</div></div></div><div class="tp-stack-card"><div class="tp-stack-icon">🔷</div><div><div class="tp-stack-name">TypeScript 5</div><div class="tp-stack-purpose">Type-safe full-stack code</div></div></div><div class="tp-stack-card"><div class="tp-stack-icon">🐳</div><div><div class="tp-stack-name">Docker</div><div class="tp-stack-purpose">Containerised deployment</div></div></div></div>
+
+    <!-- INTEGRATIONS -->
+    <div class="tp-section-title" style="margin-bottom:.4rem">Integrations</div>
+    <div class="tp-section-sub">Pre-built connectors for essential third-party services</div>
+    <div class="tp-integ-grid"><div class="tp-integ-card"><div class="tp-integ-icon">📧</div><div><div class="tp-integ-name">SendGrid</div><div class="tp-integ-why">Campaign emails, tier upgrade congratulations, and offers</div></div></div><div class="tp-integ-card"><div class="tp-integ-icon">📱</div><div><div class="tp-integ-name">Twilio</div><div class="tp-integ-why">Promotional SMS and OTP for redemption at counter</div></div></div><div class="tp-integ-card"><div class="tp-integ-icon">💳</div><div><div class="tp-integ-name">Razorpay</div><div class="tp-integ-why">Voucher issuance and partner cashback settlement</div></div></div><div class="tp-integ-card"><div class="tp-integ-icon">☁️</div><div><div class="tp-integ-name">AWS S3</div><div class="tp-integ-why">Campaign assets, member reports, and tier certificates</div></div></div></div>
+
+    <!-- GETTING STARTED -->
+    <div class="tp-section-title" style="margin-bottom:1.5rem">Getting Started</div>
+
+    <div class="tp-gs-step">
+      <div class="tp-gs-num">1</div>
+      <div class="tp-gs-body">
+        <div class="tp-gs-title">Prerequisites</div>
+        <div class="tp-gs-desc">Node.js 20+, PostgreSQL 15, Redis 7, Git</div>
+      </div>
+    </div>
+
+    <div class="tp-gs-step">
+      <div class="tp-gs-num">2</div>
+      <div class="tp-gs-body">
+        <div class="tp-gs-title">Clone & Install</div>
+        <pre class="tp-code"><span class="cm"># Clone the repository</span>
+git clone https://github.com/ikppramesh/everything.git
+cd everything/retail/loyalty-program
+npm install</pre>
+      </div>
+    </div>
+
+    <div class="tp-gs-step">
+      <div class="tp-gs-num">3</div>
+      <div class="tp-gs-body">
+        <div class="tp-gs-title">Configure Environment</div>
+        <pre class="tp-code">cp .env.example .env
+<span class="cm"># Edit .env with your values:</span>
+DATABASE_URL=postgresql://user:pass@localhost:5432/loyaltyhub
+REDIS_URL=redis://localhost:6379
+JWT_SECRET=change-me-in-production
+SENDGRID_API_KEY=
+TWILIO_API_KEY=
+RAZORPAY_API_KEY=
+AWS_S3_API_KEY=</pre>
+      </div>
+    </div>
+
+    <div class="tp-gs-step">
+      <div class="tp-gs-num">4</div>
+      <div class="tp-gs-body">
+        <div class="tp-gs-title">Run Development Server</div>
+        <pre class="tp-code">npm run dev
+<span class="cm"># App runs at http://localhost:3000</span>
+<span class="cm"># Admin panel at http://localhost:3000/admin</span></pre>
+      </div>
+    </div>
+
+    <div class="tp-gs-step">
+      <div class="tp-gs-num">5</div>
+      <div class="tp-gs-body">
+        <div class="tp-gs-title">Deploy to Production</div>
+        <pre class="tp-code">npm run build
+<span class="cm"># Deploy with Docker:</span>
+docker compose up -d
+<span class="cm"># Or deploy to Vercel / Railway / Render</span></pre>
+      </div>
+    </div>
+
+    <!-- FILE TREE -->
+    <div class="tp-section-title" style="margin-bottom:1rem">Project Structure</div>
+    <div class="tp-filetree"><span class="dir">loyaltyhub/</span>
+├── <span class="dir">src/</span>
+│   ├── <span class="dir">routes/</span>       <span class="comment"># Express route handlers</span>
+│   ├── <span class="dir">controllers/</span>  <span class="comment"># Business logic</span>
+│   ├── <span class="dir">models/</span>       <span class="comment"># Database schemas</span>
+│   ├── <span class="dir">jobs/</span>         <span class="comment"># Background workers</span>
+│   └── <span class="dir">middleware/</span>   <span class="comment"># Auth, validation, logging</span>
+├── <span class="dir">frontend/</span>
+│   ├── <span class="dir">components/</span>   <span class="comment"># Reusable UI components</span>
+│   └── <span class="dir">pages/</span>        <span class="comment"># Page-level components</span>
+├── <span class="dir">db/</span>
+│   ├── <span class="file">schema.sql</span>    <span class="comment"># Database schema</span>
+│   └── <span class="file">seed.sql</span>      <span class="comment"># Sample data</span>
+├── <span class="file">docker-compose.yml</span>
+├── <span class="file">.env.example</span>
+└── <span class="file">package.json</span></div>
+  </article>
+
+  <!-- ASIDE -->
+  <aside class="tp-aside">
+    <div class="tp-aside-card">
+      <div class="tp-aside-emoji">undefined</div>
+      <div class="tp-aside-name">Customer Loyalty Program</div>
+      <div class="tp-aside-cat">Retail</div>
+      <div class="tp-aside-row"><span class="tp-aside-label">Use Case</span><span class="tp-aside-val">Customer Loyalty</span></div>
+      <div class="tp-aside-row"><span class="tp-aside-label">Difficulty</span><span class="tp-aside-val">●○○</span></div>
+      <div style="margin-top:.5rem;font-size:.75rem;color:var(--tp-text2);margin-bottom:.35rem;">Stack</div>
+      <div class="tp-aside-pills"><span class="tp-pill">⚛️ React 18</span><span class="tp-pill">🟢 Node.js 20</span><span class="tp-pill">🐘 PostgreSQL 15</span><span class="tp-pill">⚡ Redis 7</span><span class="tp-pill">🔷 TypeScript 5</span><span class="tp-pill">🐳 Docker</span></div>
+      <a href="index.html" class="tp-aside-btn">▶ Live Demo</a>
+      <a href="../../index.html" class="tp-aside-link">← All Templates</a>
+    </div>
+    <div class="tp-aside-card"><div style="font-size:.75rem;font-weight:700;margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--tp-text2);">Integrations</div><div class="tp-side-integ">📧 SendGrid</div><div class="tp-side-integ">📱 Twilio</div><div class="tp-side-integ">💳 Razorpay</div><div class="tp-side-integ">☁️ AWS S3</div></div>
+  </aside>
+</div>
+
+<!-- RELATED -->
+<section class="tp-related">
+  <div class="tp-section">
+    <div class="tp-section-title">Related Templates</div>
+    <div class="tp-section-sub">More templates in the Retail category</div>
+    <div class="tp-rel-grid"><a href="../inventory-pos/template.html" class="tp-rel-card"><div class="tp-rel-icon">undefined</div><div class="tp-rel-name">Inventory & POS System</div><div class="tp-rel-tag">Multi-store inventory management with point-of-sale billing and barcode support.</div><span class="tp-rel-cta">View Template →</span></a><a href="../ecommerce-dashboard/template.html" class="tp-rel-card"><div class="tp-rel-icon">undefined</div><div class="tp-rel-name">E-Commerce Dashboard</div><div class="tp-rel-tag">Manage orders, products, customers, returns, and analytics for your online store.</div><span class="tp-rel-cta">View Template →</span></a><a href="../supplier-portal/template.html" class="tp-rel-card"><div class="tp-rel-icon">undefined</div><div class="tp-rel-name">Supplier Portal</div><div class="tp-rel-tag">Purchase orders, goods receipt, vendor management, and payment tracking.</div><span class="tp-rel-cta">View Template →</span></a></div>
+  </div>
+</section>
+
+<footer class="tp-footer">
+  Part of the <a href="../../index.html" style="color:var(--tp-accent);font-weight:600;">Everything Platform</a> — Customer Loyalty Program Template
+</footer>
+
+</body>
+</html>

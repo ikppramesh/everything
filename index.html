@@ -651,170 +651,139 @@ body {
   transition-delay: 0ms !important;
 }
 
-/* Left accent stripe */
-.ev-card-accent {
-  position: absolute;
-  top: 0; left: 0;
-  width: 3px; height: 100%;
-  background: linear-gradient(180deg, var(--c,#FA5D29), var(--c2,#7c3aed));
-  opacity: .65;
-  transition: opacity 280ms ease;
-  z-index: 3;
-}
-.ev-card:hover .ev-card-accent { opacity: 1; }
-
-/* Resting body */
-.ev-card-body {
-  flex: 1;
-  padding: 1.5rem 1.5rem 1.5rem 1.875rem;
+/* Preview panel */
+.ev-card-preview {
+  position: relative;
+  height: 110px;
+  background: linear-gradient(135deg, var(--c,#FA5D29), var(--c2,#7c3aed));
   display: flex;
-  flex-direction: column;
-  gap: .75rem;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.ev-card-preview-bg {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255,255,255,.04) 0 1px,
+    transparent 1px 12px
+  );
+}
+.ev-card-preview-emoji {
+  font-size: 2.75rem;
   position: relative;
   z-index: 1;
-  transition: opacity 230ms ease 40ms;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.3));
 }
-.ev-card:hover .ev-card-body { opacity: 0; }
+.ev-card-cat-badge {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  font-size: 9px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  font-weight: 700;
+  background: rgba(0,0,0,.4);
+  color: #fff;
+  padding: .2rem .45rem;
+  border-radius: 4px;
+  z-index: 1;
+}
 
-.ev-card-top {
+/* Card body */
+.ev-card-body {
+  padding: .875rem 1rem;
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: .4rem;
+  flex: 1;
+}
+.ev-card-meta {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: .5rem;
 }
-.ev-card-icon { font-size: 1.75rem; line-height: 1; flex-shrink: 0; }
-.ev-card-cat {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  color: var(--ev-text-3);
-  background: var(--ev-bg-3);
-  padding: 3px 7px;
-  border-radius: 3px;
-  white-space: nowrap;
-  align-self: flex-start;
-}
 .ev-card-name {
-  font-size: clamp(.9375rem,.8vw + .5rem,1.125rem);
+  font-size: .9375rem;
   font-weight: 700;
   color: var(--ev-text-1);
-  letter-spacing: -.02em;
+  letter-spacing: -.01em;
   line-height: 1.25;
+  flex: 1;
+}
+.ev-card-diff {
+  font-size: .62rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--ev-text-3);
+  border: 1px solid var(--ev-border);
+  padding: .15rem .4rem;
+  border-radius: 99px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ev-card-desc {
+  font-size: var(--ev-type-body);
+  color: var(--ev-text-2);
+  line-height: 1.55;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.ev-card-desc {
-  font-size: var(--ev-type-body);
+.ev-card-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  margin-top: .25rem;
+}
+.ev-stack-pill {
+  font-size: .67rem;
+  background: var(--ev-bg-3);
   color: var(--ev-text-2);
-  line-height: 1.65;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.ev-card-tags {
-  display: flex;
-  gap: .35rem;
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding-top: .5rem;
-}
-.ev-tag {
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: .04em;
-  color: var(--ev-text-3);
   border: 1px solid var(--ev-border);
-  border-radius: 3px;
-  padding: 2px 6px;
+  padding: .18rem .45rem;
+  border-radius: 4px;
+  white-space: nowrap;
 }
 
-/* Hover overlay */
-.ev-card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(10,10,10,.98) 0%,
-    rgba(10,10,10,.88) 52%,
-    rgba(10,10,10,.45) 100%
-  );
+/* Card actions bar */
+.ev-card-actions {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.875rem 1.875rem 1.875rem 2.125rem;
-  opacity: 0;
-  transition: opacity 260ms ease;
-  z-index: 2;
+  gap: .5rem;
+  padding: .625rem .875rem .875rem;
+  border-top: 1px solid var(--ev-border);
+  margin-top: auto;
 }
-.ev-card:hover .ev-card-overlay { opacity: 1; }
-
-.ev-card-overlay-name {
-  font-size: clamp(1rem,1.2vw + .4rem,1.375rem);
-  font-weight: 800;
-  color: var(--ev-text-1);
-  letter-spacing: -.025em;
-  line-height: 1.15;
-  margin-bottom: 1.25rem;
-  transform: translateY(10px);
-  transition: transform 280ms ease 60ms;
-}
-.ev-card:hover .ev-card-overlay-name { transform: translateY(0); }
-
-.ev-card-overlay-actions {
-  display: flex;
-  gap: .625rem;
-  align-items: center;
-  flex-wrap: wrap;
-  transform: translateY(10px);
-  transition: transform 280ms ease 100ms;
-}
-.ev-card:hover .ev-card-overlay-actions { transform: translateY(0); }
-
-.ev-card-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: .375rem;
+.ev-cta-primary {
+  flex: 1;
+  text-align: center;
+  font-size: .76rem;
+  font-weight: 600;
   background: var(--ev-accent);
   color: #fff;
-  font-size: .7rem;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  padding: .55rem 1.1rem;
-  border-radius: 4px;
+  padding: .44rem .625rem;
+  border-radius: 5px;
   text-decoration: none;
-  transition: background 180ms ease, transform 180ms ease;
+  transition: opacity 200ms;
   white-space: nowrap;
 }
-.ev-card-cta:hover { background: #e8511f; transform: scale(1.03); text-decoration: none; }
-
-.ev-card-cta-outline {
-  display: inline-flex;
-  align-items: center;
-  font-size: .7rem;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  color: var(--ev-text-2);
-  padding: .55rem .875rem;
+.ev-cta-primary:hover { opacity: .85; text-decoration: none; }
+.ev-cta-ghost {
+  font-size: .76rem;
+  font-weight: 500;
   border: 1px solid var(--ev-border-h);
-  border-radius: 4px;
+  color: var(--ev-text-2);
+  padding: .44rem .75rem;
+  border-radius: 5px;
   text-decoration: none;
-  transition: color 180ms ease, border-color 180ms ease;
+  transition: color 200ms, border-color 200ms;
   white-space: nowrap;
 }
-.ev-card-cta-outline:hover { color: var(--ev-text-1); border-color: var(--ev-text-2); text-decoration: none; }
-
-/* Mobile: always show body, hide overlay */
-@media (max-width: 768px) {
-  .ev-card-body { opacity: 1 !important; }
-  .ev-card-overlay { display: none; }
-}
+.ev-cta-ghost:hover { color: var(--ev-text-1); border-color: var(--ev-text-2); text-decoration: none; }
 
 /* ════════════════════════════════════════════════════════════
    NO RESULTS
@@ -1162,30 +1131,53 @@ function filterCards() {
   render();
 }
 
+/* ── Stack + Difficulty lookup per category ─────────────── */
+const CAT_STACK = {
+  education:     [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🐘',name:'PostgreSQL'}],
+  automotive:    [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🗺️',name:'Maps API'}],
+  healthcare:    [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🐘',name:'PostgreSQL'}],
+  retail:        [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'💳',name:'Razorpay'}],
+  'real-estate': [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🗺️',name:'Maps API'}],
+  finance:       [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'💳',name:'Razorpay'}],
+  hospitality:   [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'⚡',name:'Redis'}],
+  logistics:     [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🗺️',name:'Maps API'}],
+  hr:            [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'📧',name:'SendGrid'}],
+  government:    [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🔐',name:'JWT Auth'}],
+  agriculture:   [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🌤️',name:'Weather API'}],
+  software:      [{icon:'⚛️',name:'React'},{icon:'🔷',name:'TypeScript'},{icon:'🐘',name:'PostgreSQL'}],
+};
+const CAT_DIFF = {
+  education:'starter', automotive:'intermediate', healthcare:'intermediate',
+  retail:'starter', 'real-estate':'intermediate', finance:'intermediate',
+  hospitality:'starter', logistics:'intermediate', hr:'starter',
+  government:'advanced', agriculture:'starter', software:'advanced',
+};
+
 /* ── cardHTML ────────────────────────────────────────────── */
 function cardHTML(s) {
   const catLabel = (CAT_META[s.category] || {}).label || s.category;
-  const docsPath = s.path.replace('index.html','README.md');
+  const templatePath = s.path.replace('index.html','template.html');
+  const stackItems = s.stack || CAT_STACK[s.category] || [];
+  const diff = s.difficulty || CAT_DIFF[s.category] || 'intermediate';
+  const stackPills = stackItems.slice(0,3).map(t=>`<span class="ev-stack-pill">${t.icon} ${t.name}</span>`).join('');
   return `
     <article class="ev-card" data-category="${s.category}" style="--c:${s.color};--c2:${s.color2}">
-      <div class="ev-card-accent"></div>
-      <div class="ev-card-body">
-        <div class="ev-card-top">
-          <div class="ev-card-icon">${s.icon}</div>
-          <div class="ev-card-cat">${catLabel}</div>
-        </div>
-        <div class="ev-card-name">${s.name}</div>
-        <div class="ev-card-desc">${s.desc}</div>
-        <div class="ev-card-tags">
-          ${s.tags.slice(0,3).map(t => `<span class="ev-tag">${t}</span>`).join('')}
-        </div>
+      <div class="ev-card-preview">
+        <div class="ev-card-preview-bg"></div>
+        <div class="ev-card-preview-emoji">${s.icon}</div>
+        <span class="ev-card-cat-badge">${catLabel}</span>
       </div>
-      <div class="ev-card-overlay">
-        <div class="ev-card-overlay-name">${s.name}</div>
-        <div class="ev-card-overlay-actions">
-          <a href="${s.path}" class="ev-card-cta">Live Demo ↗</a>
-          <a href="${docsPath}" class="ev-card-cta-outline">Docs</a>
+      <div class="ev-card-body">
+        <div class="ev-card-meta">
+          <span class="ev-card-name">${s.name}</span>
+          <span class="ev-card-diff">${diff}</span>
         </div>
+        <div class="ev-card-desc">${s.desc}</div>
+        <div class="ev-card-stack">${stackPills}</div>
+      </div>
+      <div class="ev-card-actions">
+        <a href="${templatePath}" class="ev-cta-primary">View Template →</a>
+        <a href="${s.path}" class="ev-cta-ghost">Demo</a>
       </div>
     </article>`;
 }

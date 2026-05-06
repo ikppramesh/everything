@@ -111,98 +111,10 @@
       <div class="table-wrap">
         <table id="main-table">
           <thead><tr>
-            <th>ID</th><th>Name</th><th>Category</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+            <th>Deploy ID</th><th>Service Name</th><th>Environment</th><th>Triggered By</th><th>Version</th><th>Status</th><th>Actions</th>
           </tr></thead>
           <tbody>
-            <tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1001</code></td>
-              <td><strong>Record 1</strong></td>
-              <td><span class="badge badge-primary">Category 2</span></td>
-              <td>3/2/2024</td>
-              <td>₹15,583</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 1','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 1 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1002</code></td>
-              <td><strong>Record 2</strong></td>
-              <td><span class="badge badge-primary">Category 3</span></td>
-              <td>5/3/2024</td>
-              <td>₹82,729</td>
-              <td><span class="badge badge-info">Processing</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 2','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 2 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1003</code></td>
-              <td><strong>Record 3</strong></td>
-              <td><span class="badge badge-primary">Category 1</span></td>
-              <td>7/4/2024</td>
-              <td>₹18,763</td>
-              <td><span class="badge badge-success">Active</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 3','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 3 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1004</code></td>
-              <td><strong>Record 4</strong></td>
-              <td><span class="badge badge-primary">Category 2</span></td>
-              <td>9/5/2024</td>
-              <td>₹32,082</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 4','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 4 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1005</code></td>
-              <td><strong>Record 5</strong></td>
-              <td><span class="badge badge-primary">Category 3</span></td>
-              <td>11/6/2024</td>
-              <td>₹88,416</td>
-              <td><span class="badge badge-info">Processing</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 5','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 5 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1006</code></td>
-              <td><strong>Record 6</strong></td>
-              <td><span class="badge badge-primary">Category 1</span></td>
-              <td>13/7/2024</td>
-              <td>₹42,653</td>
-              <td><span class="badge badge-success">Active</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 6','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 6 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1007</code></td>
-              <td><strong>Record 7</strong></td>
-              <td><span class="badge badge-primary">Category 2</span></td>
-              <td>15/8/2024</td>
-              <td>₹49,804</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 7','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 7 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEV-1008</code></td>
-              <td><strong>Record 8</strong></td>
-              <td><span class="badge badge-primary">Category 3</span></td>
-              <td>17/9/2024</td>
-              <td>₹32,988</td>
-              <td><span class="badge badge-info">Processing</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 8','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 8 updated','success')">Edit</button>
-              </td>
-            </tr>
+            <tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-001</code></td><td>payment-service</td><td>Production</td><td>Rahul Mehta</td><td>v2.4.1</td><td><span class="badge badge-info">Success</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-001','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-001 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-002</code></td><td>user-auth-api</td><td>Staging</td><td>Priya Sharma</td><td>v1.8.3</td><td><span class="badge badge-info">Success</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-002','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-002 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-003</code></td><td>notification-worker</td><td>Production</td><td>Arjun Patel</td><td>v3.1.0</td><td><span class="badge badge-info">Failed</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-003','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-003 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-004</code></td><td>analytics-service</td><td>QA</td><td>Kavya Nair</td><td>v1.2.0</td><td><span class="badge badge-info">Success</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-004','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-004 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-005</code></td><td>billing-engine</td><td>Production</td><td>Deepak Singh</td><td>v4.0.2</td><td><span class="badge badge-warning">In Progress</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-005','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-005 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-006</code></td><td>search-indexer</td><td>Staging</td><td>Meera Iyer</td><td>v2.0.1</td><td><span class="badge badge-info">Success</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-006','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-006 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-007</code></td><td>email-gateway</td><td>Production</td><td>Rohit Kumar</td><td>v1.5.4</td><td><span class="badge badge-info">Rolled Back</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-007','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-007 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">DEP-008</code></td><td>report-generator</td><td>QA</td><td>Ankit Verma</td><td>v1.1.0</td><td><span class="badge badge-info">Success</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing DEP-008','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('DEP-008 updated','success')">Edit</button></td></tr>
           </tbody>
         </table>
       </div>

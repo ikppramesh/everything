@@ -111,98 +111,10 @@
       <div class="table-wrap">
         <table id="main-table">
           <thead><tr>
-            <th>ID</th><th>Name</th><th>Category</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th>
+            <th>PR ID</th><th>PR Title</th><th>Author</th><th>Reviewers</th><th>Lines Changed</th><th>Status</th><th>Actions</th>
           </tr></thead>
           <tbody>
-            <tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1001</code></td>
-              <td><strong>Record 1</strong></td>
-              <td><span class="badge badge-primary">Category 2</span></td>
-              <td>3/2/2024</td>
-              <td>₹27,891</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 1','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 1 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1002</code></td>
-              <td><strong>Record 2</strong></td>
-              <td><span class="badge badge-primary">Category 3</span></td>
-              <td>5/3/2024</td>
-              <td>₹11,325</td>
-              <td><span class="badge badge-info">Processing</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 2','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 2 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1003</code></td>
-              <td><strong>Record 3</strong></td>
-              <td><span class="badge badge-primary">Category 1</span></td>
-              <td>7/4/2024</td>
-              <td>₹69,645</td>
-              <td><span class="badge badge-success">Active</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 3','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 3 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1004</code></td>
-              <td><strong>Record 4</strong></td>
-              <td><span class="badge badge-primary">Category 2</span></td>
-              <td>9/5/2024</td>
-              <td>₹38,342</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 4','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 4 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1005</code></td>
-              <td><strong>Record 5</strong></td>
-              <td><span class="badge badge-primary">Category 3</span></td>
-              <td>11/6/2024</td>
-              <td>₹82,848</td>
-              <td><span class="badge badge-info">Processing</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 5','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 5 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1006</code></td>
-              <td><strong>Record 6</strong></td>
-              <td><span class="badge badge-primary">Category 1</span></td>
-              <td>13/7/2024</td>
-              <td>₹99,232</td>
-              <td><span class="badge badge-success">Active</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 6','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 6 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1007</code></td>
-              <td><strong>Record 7</strong></td>
-              <td><span class="badge badge-primary">Category 2</span></td>
-              <td>15/8/2024</td>
-              <td>₹14,302</td>
-              <td><span class="badge badge-warning">Pending</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 7','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 7 updated','success')">Edit</button>
-              </td>
-            </tr><tr>
-              <td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">REV-1008</code></td>
-              <td><strong>Record 8</strong></td>
-              <td><span class="badge badge-primary">Category 3</span></td>
-              <td>17/9/2024</td>
-              <td>₹47,514</td>
-              <td><span class="badge badge-info">Processing</span></td>
-              <td>
-                <button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing record 8','info')">View</button>
-                <button class="btn btn-secondary btn-sm" onclick="EV.toast('Record 8 updated','success')">Edit</button>
-              </td>
-            </tr>
+            <tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-001</code></td><td>feat: Add JWT refresh token rotation</td><td>Arjun Singh</td><td>Priya Sharma, Rahul M.</td><td>+ 248 / - 12</td><td><span class="badge badge-info">In Review</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-001','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-001 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-002</code></td><td>fix: Resolve race condition in payment flow</td><td>Priya Sharma</td><td>Arjun Singh</td><td>+ 34 / - 28</td><td><span class="badge badge-info">Approved</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-002','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-002 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-003</code></td><td>refactor: Extract common API middleware</td><td>Rahul Mehta</td><td>Kavya Nair</td><td>+ 180 / - 210</td><td><span class="badge badge-info">In Review</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-003','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-003 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-004</code></td><td>feat: Add CSV bulk import with validation</td><td>Kavya Nair</td><td>Deepak Singh</td><td>+ 420 / - 18</td><td><span class="badge badge-info">In Review</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-004','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-004 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-005</code></td><td>fix: Dashboard chart NaN on empty dataset</td><td>Deepak Singh</td><td>Meera Iyer</td><td>+ 12 / - 8</td><td><span class="badge badge-info">Merged</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-005','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-005 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-006</code></td><td>test: Add unit tests for billing module</td><td>Meera Iyer</td><td>Rohit Kumar</td><td>+ 840 / - 0</td><td><span class="badge badge-info">Approved</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-006','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-006 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-007</code></td><td>chore: Upgrade dependencies to Nov 2025</td><td>Rohit Kumar</td><td>Ankit Verma</td><td>+ 42 / - 39</td><td><span class="badge badge-info">In Review</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-007','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-007 updated','success')">Edit</button></td></tr><tr><td><code style="font-size:.75rem;background:#f3f4f6;padding:2px 6px;border-radius:4px">PR-008</code></td><td>feat: Dark mode for admin dashboard</td><td>Ankit Verma</td><td>Arjun Singh</td><td>+ 680 / - 120</td><td><span class="badge badge-info">Merged</span></td><td><button class="btn btn-outline btn-sm" onclick="EV.toast('Viewing PR-008','info')">View</button> <button class="btn btn-secondary btn-sm" onclick="EV.toast('PR-008 updated','success')">Edit</button></td></tr>
           </tbody>
         </table>
       </div>
