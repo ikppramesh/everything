@@ -1,6 +1,6 @@
 # Everything Platform — Full Solution Catalog
 
-> Complete index of all 30 enterprise solution templates across 11 industries.
+> Complete index of all 46 enterprise solution templates across 12 industries.
 
 ---
 
@@ -8,24 +8,99 @@
 
 | # | Category | Solutions | Status |
 |---|----------|-----------|--------|
-| 1 | [🎓 Education](#-education) | 4 | ✅ Demo Ready |
-| 2 | [🚗 Automotive](#-automotive) | 4 | ✅ Demo Ready |
-| 3 | [🏥 Healthcare](#-healthcare) | 4 | ✅ Demo Ready |
-| 4 | [🛒 Retail](#-retail) | 4 | ✅ Demo Ready |
-| 5 | [🏠 Real Estate](#-real-estate) | 3 | ✅ Demo Ready |
-| 6 | [💰 Finance](#-finance) | 4 | ✅ Demo Ready |
-| 7 | [🏨 Hospitality](#-hospitality) | 3 | ✅ Demo Ready |
-| 8 | [🚚 Logistics](#-logistics) | 3 | ✅ Demo Ready |
-| 9 | [👥 Human Resources](#-human-resources) | 3 | ✅ Demo Ready |
-| 10 | [🏛️ Government](#️-government) | 3 | ✅ Demo Ready |
-| 11 | [🌾 Agriculture](#-agriculture) | 3 | ✅ Demo Ready |
-| — | **Total** | **35** | — |
+| 1 | [💻 Software & DevTools](#-software--devtools) | 8 | ✅ Demo Ready |
+| 2 | [🎓 Education](#-education) | 4 | ✅ Demo Ready |
+| 3 | [🚗 Automotive](#-automotive) | 4 | ✅ Demo Ready |
+| 4 | [🏥 Healthcare](#-healthcare) | 4 | ✅ Demo Ready |
+| 5 | [🛒 Retail](#-retail) | 4 | ✅ Demo Ready |
+| 6 | [🏠 Real Estate](#-real-estate) | 3 | ✅ Demo Ready |
+| 7 | [💰 Finance](#-finance) | 4 | ✅ Demo Ready |
+| 8 | [🏨 Hospitality](#-hospitality) | 3 | ✅ Demo Ready |
+| 9 | [🚚 Logistics](#-logistics) | 3 | ✅ Demo Ready |
+| 10 | [👥 Human Resources](#-human-resources) | 3 | ✅ Demo Ready |
+| 11 | [🏛️ Government](#️-government) | 3 | ✅ Demo Ready |
+| 12 | [🌾 Agriculture](#-agriculture) | 3 | ✅ Demo Ready |
+| — | **Total** | **46** | — |
+
+---
+
+## 💻 Software & DevTools
+
+### 1. Project Management
+**Path:** `software/project-management/`
+**Tagline:** Agile boards, sprint planning, milestone tracking, and team velocity — all in one workspace.
+**Target:** Software Teams, Product Companies, Agencies, Startups
+**Key Modules:** Board, Backlog, Sprints, Milestones, Reports, Dashboard
+**Files:** [Demo](software/project-management/index.html) · [Template](software/project-management/template.html) · [README](software/project-management/README.md) · [Pitch](software/project-management/PITCH.md) · [Features](software/project-management/FEATURES.md) · [Roadmap](software/project-management/ROADMAP.md) · [Tech Stack](software/project-management/TECH-STACK.md)
+
+---
+
+### 2. Bug & Issue Tracker
+**Path:** `software/bug-tracker/`
+**Tagline:** Triage, assign, and resolve issues with priority queues, status workflows, and release linking.
+**Target:** QA Teams, Dev Teams, Product Companies, SaaS Businesses
+**Key Modules:** Issues, My Queue, Releases, Reports, Settings, Dashboard
+**Files:** [Demo](software/bug-tracker/index.html) · [Template](software/bug-tracker/template.html) · [README](software/bug-tracker/README.md) · [Pitch](software/bug-tracker/PITCH.md) · [Features](software/bug-tracker/FEATURES.md) · [Roadmap](software/bug-tracker/ROADMAP.md) · [Tech Stack](software/bug-tracker/TECH-STACK.md)
+
+---
+
+### 3. DevOps Release Dashboard
+**Path:** `software/devops-dashboard/`
+**Tagline:** CI/CD pipeline status, environment deployments, rollback controls, incident alerts, and uptime.
+**Target:** DevOps Engineers, SREs, Platform Teams, Tech Startups
+**Key Modules:** Pipelines, Environments, Incidents, Deployments, Alerts, Uptime Monitor
+**Files:** [Demo](software/devops-dashboard/index.html) · [Template](software/devops-dashboard/template.html) · [README](software/devops-dashboard/README.md) · [Pitch](software/devops-dashboard/PITCH.md) · [Features](software/devops-dashboard/FEATURES.md) · [Roadmap](software/devops-dashboard/ROADMAP.md) · [Tech Stack](software/devops-dashboard/TECH-STACK.md)
+
+---
+
+### 4. Code Review Portal
+**Path:** `software/code-review-portal/`
+**Tagline:** Pull request workflows, inline comments, approval gates, code quality metrics, and merge controls.
+**Target:** Engineering Teams, Dev Agencies, Open-source Maintainers, CTOs
+**Key Modules:** Pull Requests, Inline Comments, Approval Gates, Quality Metrics, Merge Controls, Analytics
+**Files:** [Demo](software/code-review-portal/index.html) · [Template](software/code-review-portal/template.html) · [README](software/code-review-portal/README.md) · [Pitch](software/code-review-portal/PITCH.md) · [Features](software/code-review-portal/FEATURES.md) · [Roadmap](software/code-review-portal/ROADMAP.md) · [Tech Stack](software/code-review-portal/TECH-STACK.md)
+
+---
+
+### 5. API Developer Portal
+**Path:** `software/api-developer-portal/`
+**Tagline:** API key management, interactive docs, rate limit monitoring, sandbox testing, and webhook logs.
+**Target:** SaaS Companies, Platform Teams, API-first Businesses, Fintechs
+**Key Modules:** API Keys, Interactive Docs, Rate Limits, Sandbox, Webhook Logs, Analytics
+**Files:** [Demo](software/api-developer-portal/index.html) · [Template](software/api-developer-portal/template.html) · [README](software/api-developer-portal/README.md) · [Pitch](software/api-developer-portal/PITCH.md) · [Features](software/api-developer-portal/FEATURES.md) · [Roadmap](software/api-developer-portal/ROADMAP.md) · [Tech Stack](software/api-developer-portal/TECH-STACK.md)
+
+---
+
+### 6. QA Test Management
+**Path:** `software/qa-test-management/`
+**Tagline:** Test case library, execution runs, defect linking, coverage reports, and regression suite tracking.
+**Target:** QA Teams, SDET Engineers, Release Managers, Product Companies
+**Key Modules:** Test Cases, Execution Runs, Defect Linking, Coverage Reports, Regression Suites, Dashboard
+**Files:** [Demo](software/qa-test-management/index.html) · [Template](software/qa-test-management/template.html) · [README](software/qa-test-management/README.md) · [Pitch](software/qa-test-management/PITCH.md) · [Features](software/qa-test-management/FEATURES.md) · [Roadmap](software/qa-test-management/ROADMAP.md) · [Tech Stack](software/qa-test-management/TECH-STACK.md)
+
+---
+
+### 7. Software License Manager
+**Path:** `software/software-license-manager/`
+**Tagline:** Track SaaS subscriptions, seat allocations, renewal alerts, vendor contracts, and spend analytics.
+**Target:** IT Managers, Finance Teams, CIOs, Enterprise Procurement
+**Key Modules:** Licenses, Seat Allocations, Renewals, Vendor Contracts, Spend Analytics, Alerts
+**Files:** [Demo](software/software-license-manager/index.html) · [Template](software/software-license-manager/template.html) · [README](software/software-license-manager/README.md) · [Pitch](software/software-license-manager/PITCH.md) · [Features](software/software-license-manager/FEATURES.md) · [Roadmap](software/software-license-manager/ROADMAP.md) · [Tech Stack](software/software-license-manager/TECH-STACK.md)
+
+---
+
+### 8. Tech Documentation Wiki
+**Path:** `software/tech-docs-wiki/`
+**Tagline:** Markdown wiki, versioned pages, full-text search, team spaces, API reference, and changelogs.
+**Target:** Engineering Teams, Open-source Projects, Product Companies, Dev Agencies
+**Key Modules:** Pages, Versioning, Full-text Search, Team Spaces, API Reference, Changelogs
+**Files:** [Demo](software/tech-docs-wiki/index.html) · [Template](software/tech-docs-wiki/template.html) · [README](software/tech-docs-wiki/README.md) · [Pitch](software/tech-docs-wiki/PITCH.md) · [Features](software/tech-docs-wiki/FEATURES.md) · [Roadmap](software/tech-docs-wiki/ROADMAP.md) · [Tech Stack](software/tech-docs-wiki/TECH-STACK.md)
 
 ---
 
 ## 🎓 Education
 
-### 1. Library Management System
+### 9. Library Management System
 **Path:** `education/library-management/`
 **Tagline:** Digitize your library — track books, manage borrowings, eliminate manual registers.
 **Target:** Colleges, Schools, Public Libraries
@@ -34,7 +109,7 @@
 
 ---
 
-### 2. Student Information System
+### 10. Student Information System
 **Path:** `education/student-information-system/`
 **Tagline:** Admissions, grades, attendance, timetable, and parent communication in one platform.
 **Target:** Schools, Colleges, Universities
@@ -43,7 +118,7 @@
 
 ---
 
-### 3. Online Exam Portal
+### 11. Online Exam Portal
 **Path:** `education/online-exam-portal/`
 **Tagline:** MCQ and subjective exams, auto-grading, timer, result publishing, and certificates.
 **Target:** Schools, Colleges, Training Institutes, Certification Bodies
@@ -52,7 +127,7 @@
 
 ---
 
-### 4. Learning Management System
+### 12. Learning Management System
 **Path:** `education/learning-management-system/`
 **Tagline:** Course builder, video lessons, quizzes, progress tracking, and instructor dashboards.
 **Target:** EdTech Companies, Corporates, Training Institutes, Universities
@@ -63,7 +138,7 @@
 
 ## 🚗 Automotive
 
-### 5. Car Dealer Service Management
+### 13. Car Dealer Service Management
 **Path:** `automotive/car-dealer-service/`
 **Tagline:** End-to-end dealer workflow: lead capture → test drive → sale → delivery → after-service.
 **Target:** Authorized Car Dealerships, Multi-brand Showrooms
@@ -72,7 +147,7 @@
 
 ---
 
-### 6. Fleet Management System
+### 14. Fleet Management System
 **Path:** `automotive/fleet-management/`
 **Tagline:** Track your entire fleet — vehicles, drivers, trips, fuel, and maintenance in one place.
 **Target:** Logistics Companies, Transport Operators, Corporate Fleets
@@ -81,7 +156,7 @@
 
 ---
 
-### 7. Auto Repair Workshop
+### 15. Auto Repair Workshop
 **Path:** `automotive/auto-repair-workshop/`
 **Tagline:** Manage job cards, spare parts, billing, and mechanics — all from one dashboard.
 **Target:** Independent Workshops, Multi-brand Service Centers
@@ -90,7 +165,7 @@
 
 ---
 
-### 8. Vehicle Rental System
+### 16. Vehicle Rental System
 **Path:** `automotive/vehicle-rental/`
 **Tagline:** Bookings, contracts, damage tracking, and invoicing for rental businesses.
 **Target:** Car Rental Companies, Bike Rental Startups
@@ -101,7 +176,7 @@
 
 ## 🏥 Healthcare
 
-### 9. Hospital Management System
+### 17. Hospital Management System
 **Path:** `healthcare/hospital-management/`
 **Tagline:** OPD, IPD, billing, pharmacy, and lab — fully integrated hospital operations.
 **Target:** Multi-specialty Hospitals, Nursing Homes
@@ -110,7 +185,7 @@
 
 ---
 
-### 10. Clinic Appointment System
+### 18. Clinic Appointment System
 **Path:** `healthcare/clinic-appointment/`
 **Tagline:** Online booking, doctor scheduling, patient records, and billing for clinics.
 **Target:** Clinics, Polyclinics, Specialist Practices
@@ -119,7 +194,7 @@
 
 ---
 
-### 11. Pharmacy Management System
+### 19. Pharmacy Management System
 **Path:** `healthcare/pharmacy-management/`
 **Tagline:** Drug inventory, expiry tracking, prescription management, and GST billing.
 **Target:** Standalone Pharmacies, Hospital Pharmacies, Medical Stores
@@ -128,7 +203,7 @@
 
 ---
 
-### 12. Lab Reports Portal
+### 20. Lab Reports Portal
 **Path:** `healthcare/lab-reports-portal/`
 **Tagline:** Sample tracking, test management, digital report delivery, and billing for labs.
 **Target:** Diagnostic Labs, Pathology Centers, Hospital Labs
@@ -139,7 +214,7 @@
 
 ## 🛒 Retail
 
-### 13. Inventory & POS System
+### 21. Inventory & POS System
 **Path:** `retail/inventory-pos/`
 **Tagline:** Multi-store inventory management with point-of-sale billing and barcode support.
 **Target:** Retail Stores, Supermarkets, Electronics Shops, Pharmacies
@@ -148,7 +223,7 @@
 
 ---
 
-### 14. E-Commerce Dashboard
+### 22. E-Commerce Dashboard
 **Path:** `retail/ecommerce-dashboard/`
 **Tagline:** Manage orders, products, customers, returns, and analytics for your online store.
 **Target:** Online Sellers, D2C Brands, Marketplace Sellers
@@ -157,7 +232,7 @@
 
 ---
 
-### 15. Customer Loyalty Program
+### 23. Customer Loyalty Program
 **Path:** `retail/loyalty-program/`
 **Tagline:** Points engine, tier management, reward redemption, and campaign builder.
 **Target:** Retail Chains, Restaurants, E-commerce, Petrol Pumps
@@ -166,7 +241,7 @@
 
 ---
 
-### 16. Supplier Portal
+### 24. Supplier Portal
 **Path:** `retail/supplier-portal/`
 **Tagline:** Purchase orders, goods receipt, vendor management, and payment tracking.
 **Target:** Retailers, Distributors, FMCG Companies
@@ -177,7 +252,7 @@
 
 ## 🏠 Real Estate
 
-### 17. Property Management System
+### 25. Property Management System
 **Path:** `real-estate/property-management/`
 **Tagline:** Properties, tenants, rent collection, and maintenance — all managed digitally.
 **Target:** Property Management Companies, Individual Landlords, Builders
@@ -186,7 +261,7 @@
 
 ---
 
-### 18. Construction Project Tracker
+### 26. Construction Project Tracker
 **Path:** `real-estate/construction-tracker/`
 **Tagline:** Project milestones, BOQ, contractor payments, and material tracking for builders.
 **Target:** Construction Companies, Real Estate Developers, Project Management Firms
@@ -195,7 +270,7 @@
 
 ---
 
-### 19. Rental Portal
+### 27. Rental Portal
 **Path:** `real-estate/rental-portal/`
 **Tagline:** Owner & tenant portals with online agreements, maintenance tickets, and payment history.
 **Target:** Property Owners, Tenants, Real Estate Brokers
@@ -206,7 +281,7 @@
 
 ## 💰 Finance
 
-### 20. Invoice & Billing System
+### 28. Invoice & Billing System
 **Path:** `finance/invoice-billing/`
 **Tagline:** Quotation to invoice workflow, GST, payment tracking, and aging reports.
 **Target:** SMEs, Freelancers, Agencies, Service Businesses
@@ -215,7 +290,7 @@
 
 ---
 
-### 21. Expense Tracker
+### 29. Expense Tracker
 **Path:** `finance/expense-tracker/`
 **Tagline:** Employee expense claims, approval workflow, budget vs actual, and category analysis.
 **Target:** Corporates, Mid-size Companies, Startups
@@ -224,7 +299,7 @@
 
 ---
 
-### 22. Payroll Management System
+### 30. Payroll Management System
 **Path:** `finance/payroll-management/`
 **Tagline:** Salary computation, PF/ESI/TDS, payslip generation, and bank transfer files.
 **Target:** Companies with 10–5000 employees, HR Teams
@@ -233,7 +308,7 @@
 
 ---
 
-### 23. Corporate Budget Planner
+### 31. Corporate Budget Planner
 **Path:** `finance/budget-planner/`
 **Tagline:** Annual budget creation, department allocation, variance tracking, and forecasting.
 **Target:** CFOs, Finance Teams, Department Heads
@@ -244,7 +319,7 @@
 
 ## 🏨 Hospitality
 
-### 24. Hotel Management System
+### 32. Hotel Management System
 **Path:** `hospitality/hotel-management/`
 **Tagline:** Reservations, check-in/out, housekeeping, F&B, and billing — full front-desk control.
 **Target:** Hotels, Resorts, Boutique Properties, Service Apartments
@@ -253,7 +328,7 @@
 
 ---
 
-### 25. Restaurant POS System
+### 33. Restaurant POS System
 **Path:** `hospitality/restaurant-pos/`
 **Tagline:** Table management, KOT, menu builder, billing, and kitchen display.
 **Target:** Restaurants, Cafes, Food Courts, Cloud Kitchens
@@ -262,7 +337,7 @@
 
 ---
 
-### 26. Event Management Platform
+### 34. Event Management Platform
 **Path:** `hospitality/event-management/`
 **Tagline:** Plan and execute events — venues, vendors, guests, budget, and timelines.
 **Target:** Event Management Companies, Wedding Planners, Corporate Event Teams
@@ -273,7 +348,7 @@
 
 ## 🚚 Logistics
 
-### 27. Delivery Tracker
+### 35. Delivery Tracker
 **Path:** `logistics/delivery-tracker/`
 **Tagline:** Order to delivery workflow — driver assignment, status updates, POD, and notifications.
 **Target:** Last-mile Delivery Companies, E-commerce Logistics, Courier Services
@@ -282,7 +357,7 @@
 
 ---
 
-### 28. Warehouse Management System
+### 36. Warehouse Management System
 **Path:** `logistics/warehouse-management/`
 **Tagline:** Bin locations, inbound/outbound, pick-pack-ship, cycle count, and putaway rules.
 **Target:** Warehouses, 3PL Providers, Distribution Centers
@@ -291,7 +366,7 @@
 
 ---
 
-### 29. Supply Chain Portal
+### 37. Supply Chain Portal
 **Path:** `logistics/supply-chain-portal/`
 **Tagline:** Vendor onboarding, PO lifecycle, shipment tracking, compliance, and analytics.
 **Target:** Manufacturing Companies, FMCG, Importers/Exporters
@@ -302,7 +377,7 @@
 
 ## 👥 Human Resources
 
-### 30. Recruitment ATS
+### 38. Recruitment ATS
 **Path:** `hr/recruitment-ats/`
 **Tagline:** Job postings, applicant tracking, interview scheduling, and offer management.
 **Target:** HR Teams, Recruitment Agencies, Startups
@@ -311,7 +386,7 @@
 
 ---
 
-### 31. Leave Management System
+### 39. Leave Management System
 **Path:** `hr/leave-management/`
 **Tagline:** Leave policies, approval workflows, balance tracking, and team calendar.
 **Target:** HR Teams, Companies of All Sizes
@@ -320,7 +395,7 @@
 
 ---
 
-### 32. Performance Review System
+### 40. Performance Review System
 **Path:** `hr/performance-review/`
 **Tagline:** Goal setting, 360° feedback, appraisal cycles, ratings, and increment planning.
 **Target:** HR Teams, People Managers, Corporate Employees
@@ -331,7 +406,7 @@
 
 ## 🏛️ Government
 
-### 33. Citizen Services Portal
+### 41. Citizen Services Portal
 **Path:** `government/citizen-services/`
 **Tagline:** Online form submission, document upload, application tracking, and payments.
 **Target:** Municipal Corporations, State Departments, Public Sector Units
@@ -340,7 +415,7 @@
 
 ---
 
-### 34. Document Management System
+### 42. Document Management System
 **Path:** `government/document-management/`
 **Tagline:** Document classification, version control, access permissions, and audit trail.
 **Target:** Government Offices, Legal Departments, Compliance Teams
@@ -349,7 +424,7 @@
 
 ---
 
-### 35. Municipal Grievance System
+### 43. Municipal Grievance System
 **Path:** `government/municipal-grievance/`
 **Tagline:** Citizen complaint submission, department routing, SLA tracking, and resolution.
 **Target:** Municipal Corporations, Local Bodies, District Administrations
@@ -360,7 +435,7 @@
 
 ## 🌾 Agriculture
 
-### 36. Farm Management System
+### 44. Farm Management System
 **Path:** `agriculture/farm-management/`
 **Tagline:** Plot tracking, crop cycles, input costs, yield recording, and soil health management.
 **Target:** Farmers, Agri-businesses, FPOs, Cooperative Societies
@@ -369,7 +444,7 @@
 
 ---
 
-### 37. Agri Market Portal
+### 45. Agri Market Portal
 **Path:** `agriculture/agri-market-portal/`
 **Tagline:** Farmer listings, buyer discovery, mandi rates, trade matching, and payment settlement.
 **Target:** Farmers, Traders, Mandis, Agri-startups
@@ -378,7 +453,7 @@
 
 ---
 
-### 38. Crop Tracking System
+### 46. Crop Tracking System
 **Path:** `agriculture/crop-tracking/`
 **Tagline:** Season-wise tracking, pesticide schedules, irrigation logs, and harvest prediction.
 **Target:** Large Farms, FPOs, Agricultural Universities, Agri-tech Startups
