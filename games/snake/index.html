@@ -262,14 +262,22 @@ function draw(snakeColor) {
     ctx.beginPath();ctx.moveTo(0,j*c);ctx.lineTo(cvs.width,j*c);ctx.stroke();
   }
 
+  // Feature-detect roundRect once
+  const hasRoundRect = typeof ctx.roundRect === 'function';
+  function fillRounded(x, y, w, h, r) {
+    if (hasRoundRect) {
+      ctx.beginPath(); ctx.roundRect(x, y, w, h, r); ctx.fill();
+    } else {
+      ctx.fillRect(x, y, w, h);
+    }
+  }
+
   // Food
   const fr = food.x*c, ft = food.y*c;
   const gr = ctx.createRadialGradient(fr+c/2,ft+c/2,1,fr+c/2,ft+c/2,c/2);
   gr.addColorStop(0,'#fca5a5'); gr.addColorStop(1,'#ef4444');
   ctx.fillStyle = gr;
-  ctx.beginPath();
-  ctx.roundRect(fr+2, ft+2, c-4, c-4, 4);
-  ctx.fill();
+  fillRounded(fr+2, ft+2, c-4, c-4, 4);
 
   // Snake
   snake.forEach((seg, i) => {
@@ -282,9 +290,7 @@ function draw(snakeColor) {
       ctx.fillStyle = `rgb(${34},${g},${60})`;
     }
     const r = i===0 ? 6 : 3;
-    ctx.beginPath();
-    ctx.roundRect(sx+1, sy+1, c-2, c-2, r);
-    ctx.fill();
+    fillRounded(sx+1, sy+1, c-2, c-2, r);
 
     // Head eyes
     if (i === 0) {
