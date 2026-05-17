@@ -524,11 +524,11 @@ function applyMv(b, fr, fc, m, promo) {
 
 function legalMovesFor(b, r, fc, epTgt, cast) {
   const p = b[r][fc]; if (!p) return [];
-  const cl = co(p);
+  const color = co(p);
   return pseudoMovesFor(b,r,fc,epTgt,cast).filter(m => {
     const b2 = cl(b);
     applyMv(b2, r, fc, m, null);
-    return !inCheck(b2, cl);
+    return !inCheck(b2, color);
   });
 }
 
