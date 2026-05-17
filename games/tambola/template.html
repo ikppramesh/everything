@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tambola – Housie · Everything</title>
+<style>
+:root{--bg:#fafafa;--bg2:#fff;--border:#e5e7eb;--text1:#111827;--text2:#6b7280;--accent:#FA5D29;--nav:60px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text2);font-family:'Inter',system-ui,sans-serif;padding-top:var(--nav)}
+a{color:inherit;text-decoration:none}
+
+.tp-nav{position:fixed;top:0;left:0;right:0;height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(250,250,250,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:100}
+.tp-nav-back{color:var(--text2);font-size:.85em;transition:color .2s}.tp-nav-back:hover{color:var(--text1)}
+.tp-nav-title{font-weight:700;font-size:1rem;color:var(--text1)}
+.tp-nav-demo{background:var(--accent);color:#fff;padding:.35rem .9rem;border-radius:6px;font-size:.8em;font-weight:700;transition:filter .2s}.tp-nav-demo:hover{filter:brightness(1.1)}
+
+.tp-hero{max-width:1100px;margin:0 auto;padding:4rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+@media(max-width:768px){.tp-hero{grid-template-columns:1fr;gap:2rem}}
+.tp-badge{display:inline-block;background:#f3f4f6;color:var(--text2);font-size:.75em;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .75rem;border-radius:20px;margin-bottom:1rem}
+.tp-h1{font-size:clamp(2rem,5vw,3.25rem);font-weight:900;color:var(--text1);line-height:1.1;margin-bottom:1rem;letter-spacing:-.03em}
+.tp-lead{font-size:1.05em;line-height:1.7;margin-bottom:2rem}
+.tp-feats-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.tp-feats-list li{display:flex;align-items:center;gap:.5rem;font-size:.9em;color:var(--text1)}
+.tp-feats-list li::before{content:'✓';color:var(--accent);font-weight:800;flex-shrink:0}
+.tp-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff;padding:.7rem 1.5rem;border-radius:8px;font-weight:700;font-size:.9em;transition:all .2s}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-ghost{border:1px solid var(--border);color:var(--text1);padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9em;transition:all .2s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+.tp-preview{border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12);border:1px solid var(--border);aspect-ratio:4/3}
+.tp-preview iframe{width:100%;height:100%;border:none;display:block}
+
+.tp-feats-section{background:var(--bg2);border-top:1px solid var(--border)}
+.tp-feats-inner{max-width:1100px;margin:0 auto;padding:4rem 2rem}
+.tp-section-label{font-size:.75em;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-bottom:.5rem}
+.tp-section-title{font-size:clamp(1.5rem,3vw,2.25rem);font-weight:800;color:var(--text1);margin-bottom:2.5rem;letter-spacing:-.02em}
+.tp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem}
+.tp-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.tp-card-icon{font-size:1.75em;margin-bottom:.75rem}
+.tp-card-title{font-size:.95em;font-weight:700;color:var(--text1);margin-bottom:.4rem}
+.tp-card-desc{font-size:.83em;line-height:1.6}
+
+footer{background:var(--text1);color:rgba(255,255,255,.5);text-align:center;padding:2rem;font-size:.8em}
+footer a{color:var(--accent)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="tp-nav">
+  <a class="tp-nav-back" href="../../">← Everything</a>
+  <span class="tp-nav-title">Tambola – Housie</span>
+  <a class="tp-nav-demo" href="index.html">Play Now →</a>
+</nav>
+
+<section class="tp-hero">
+  <div>
+    <div class="tp-badge">Games · Party</div>
+    <h1 class="tp-h1">Tambola<br>Housie</h1>
+    <p class="tp-lead">The classic Indian lottery game — Housie / Bingo — playable with up to 10 friends, right in your browser. No app install needed.</p>
+    <ul class="tp-feats-list">
+      <li>1–10 players with custom names</li>
+      <li>Auto-generated valid Tambola tickets</li>
+      <li>Manual or auto number drawing</li>
+      <li>Adjustable draw speed</li>
+      <li>Prize tracking: Early Five, Top/Mid/Bot Line, Full House</li>
+      <li>Voice announcement via Web Speech API</li>
+      <li>Synthesized ball-drop sound effects</li>
+      <li>Win celebrations with confetti</li>
+    </ul>
+    <div class="tp-ctas">
+      <a class="btn-primary" href="index.html">Play Now →</a>
+      <a class="btn-ghost" href="../../">Browse More Games</a>
+    </div>
+  </div>
+  <div class="tp-preview">
+    <iframe src="index.html" title="Tambola game preview"></iframe>
+  </div>
+</section>
+
+<section class="tp-feats-section">
+  <div class="tp-feats-inner">
+    <div class="tp-section-label">Features</div>
+    <h2 class="tp-section-title">What's Included</h2>
+    <div class="tp-cards">
+      <div class="tp-card">
+        <div class="tp-card-icon">🎟️</div>
+        <div class="tp-card-title">Valid Ticket Generation</div>
+        <div class="tp-card-desc">Every ticket is a proper 3×9 Tambola ticket with exactly 5 numbers per row in the correct column ranges.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">🔢</div>
+        <div class="tp-card-title">90-Ball Board</div>
+        <div class="tp-card-desc">Full 1–90 number board. Drawn numbers are highlighted in real time with animated indicators.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">🏆</div>
+        <div class="tp-card-title">5 Prize Types</div>
+        <div class="tp-card-desc">Track Early Five, Top Line, Middle Line, Bottom Line, and Full House prizes automatically.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">🔊</div>
+        <div class="tp-card-title">Voice & Sound</div>
+        <div class="tp-card-desc">Each drawn number is announced via browser Speech Synthesis, with synthesized ball-drop sounds.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">⏱️</div>
+        <div class="tp-card-title">Auto Draw Mode</div>
+        <div class="tp-card-desc">Enable auto-draw and pick a speed from slow (4s) to fast (0.7s) for hands-free games.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">🎉</div>
+        <div class="tp-card-title">Win Celebrations</div>
+        <div class="tp-card-desc">Colourful confetti and a win overlay celebrate each prize, queuing multiple winners gracefully.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Part of the <a href="../../">Everything Platform</a> · Open-source browser games
+</footer>
+</body>
+</html>

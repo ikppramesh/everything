@@ -959,6 +959,7 @@ body {
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Government</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">8</span>Software</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">2</span>Games</span><span class="ev-ticker-sep">—</span>
     <!-- duplicated for seamless CSS loop -->
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Education</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Automotive</span><span class="ev-ticker-sep">—</span>
@@ -972,6 +973,7 @@ body {
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Government</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">8</span>Software</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">2</span>Games</span><span class="ev-ticker-sep">—</span>
   </div>
 </div>
 
@@ -981,7 +983,7 @@ body {
 
     <!-- Filter tab strip -->
     <div class="ev-filter-bar" role="tablist" aria-label="Filter by industry">
-      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">45</span></button>
+      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">47</span></button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('education',this)">Education</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('automotive',this)">Automotive</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('healthcare',this)">Healthcare</button>
@@ -994,6 +996,7 @@ body {
       <button class="ev-filter-tab" role="tab" onclick="setFilter('government',this)">Govt</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('agriculture',this)">Agriculture</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('software',this)">Software</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('games',this)">Games</button>
       <span class="ev-filter-indicator" aria-hidden="true"></span>
     </div>
 
@@ -1096,6 +1099,10 @@ const SOLUTIONS = [
   { category:'software', icon:'📖', name:'Tech Documentation Wiki', path:'software/tech-docs-wiki/index.html', desc:'Markdown wiki, versioned pages, full-text search, team spaces, API reference, and changelogs.', tags:['docs','wiki','knowledge'], color:'#7c3aed', color2:'#6366f1' },
   { category:'software', icon:'🔍', name:'Code Review Portal', path:'software/code-review-portal/index.html', desc:'Pull request workflows, inline comments, approval gates, code quality metrics, and merge controls.', tags:['code review','pr','quality'], color:'#8b5cf6', color2:'#0891b2' },
   { category:'software', icon:'🔐', name:'Software License Manager', path:'software/software-license-manager/index.html', desc:'Track SaaS subscriptions, seat allocations, renewal alerts, vendor contracts, and spend analytics.', tags:['licenses','saas','spend'], color:'#6366f1', color2:'#dc2626' },
+
+  // GAMES
+  { category:'games', icon:'🎲', name:'Tambola – Housie', path:'games/tambola/index.html', desc:'Classic Indian Housie/Bingo for up to 10 players — auto-generated tickets, voice number calling, prizes, and confetti celebrations.', tags:['housie','bingo','party'], color:'#f0c040', color2:'#e03020', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🔊',name:'Web Audio'},{icon:'🗣️',name:'Speech API'}] },
+  { category:'games', icon:'♟️', name:'Chess', path:'games/chess/index.html', desc:'Two-player chess with full rule enforcement — castling, en passant, pawn promotion, check/checkmate detection, and move history.', tags:['chess','strategy','board game'], color:'#a855f7', color2:'#6366f1', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🎨',name:'CSS Grid'},{icon:'♟️',name:'Chess Engine'}] },
 ];
 
 const CAT_META = {
@@ -1111,6 +1118,7 @@ const CAT_META = {
   government:   { icon:'🏛️', label:'Government' },
   agriculture:  { icon:'🌾', label:'Agriculture' },
   software:     { icon:'💻', label:'Software' },
+  games:        { icon:'🎮', label:'Games' },
 };
 
 /* ── State ────────────────────────────────────────────────── */
@@ -1145,12 +1153,14 @@ const CAT_STACK = {
   government:    [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🔐',name:'JWT Auth'}],
   agriculture:   [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🌤️',name:'Weather API'}],
   software:      [{icon:'⚛️',name:'React'},{icon:'🔷',name:'TypeScript'},{icon:'🐘',name:'PostgreSQL'}],
+  games:         [{icon:'🌐',name:'Vanilla JS'},{icon:'🎨',name:'CSS3'},{icon:'🔊',name:'Web Audio'}],
 };
 const CAT_DIFF = {
   education:'starter', automotive:'intermediate', healthcare:'intermediate',
   retail:'starter', 'real-estate':'intermediate', finance:'intermediate',
   hospitality:'starter', logistics:'intermediate', hr:'starter',
   government:'advanced', agriculture:'starter', software:'advanced',
+  games:'starter',
 };
 
 /* ── cardHTML ────────────────────────────────────────────── */
@@ -1360,6 +1370,7 @@ document.addEventListener('click', e => {
     { label:'Government',  emoji:'🏛️', r:29,  g:78,  b:216 },
     { label:'Agriculture', emoji:'🌾', r:22,  g:163, b:74  },
     { label:'Software',    emoji:'💻', r:99,  g:102, b:241 },
+    { label:'Games',       emoji:'🎮', r:168, g:85,  b:247 },
   ];
 
   var dots       = [];

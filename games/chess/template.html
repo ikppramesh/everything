@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chess · Everything</title>
+<style>
+:root{--bg:#fafafa;--bg2:#fff;--border:#e5e7eb;--text1:#111827;--text2:#6b7280;--accent:#FA5D29;--nav:60px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text2);font-family:'Inter',system-ui,sans-serif;padding-top:var(--nav)}
+a{color:inherit;text-decoration:none}
+
+.tp-nav{position:fixed;top:0;left:0;right:0;height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(250,250,250,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:100}
+.tp-nav-back{color:var(--text2);font-size:.85em;transition:color .2s}.tp-nav-back:hover{color:var(--text1)}
+.tp-nav-title{font-weight:700;font-size:1rem;color:var(--text1)}
+.tp-nav-demo{background:var(--accent);color:#fff;padding:.35rem .9rem;border-radius:6px;font-size:.8em;font-weight:700;transition:filter .2s}.tp-nav-demo:hover{filter:brightness(1.1)}
+
+.tp-hero{max-width:1100px;margin:0 auto;padding:4rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+@media(max-width:768px){.tp-hero{grid-template-columns:1fr;gap:2rem}}
+.tp-badge{display:inline-block;background:#f3f4f6;color:var(--text2);font-size:.75em;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .75rem;border-radius:20px;margin-bottom:1rem}
+.tp-h1{font-size:clamp(2rem,5vw,3.25rem);font-weight:900;color:var(--text1);line-height:1.1;margin-bottom:1rem;letter-spacing:-.03em}
+.tp-lead{font-size:1.05em;line-height:1.7;margin-bottom:2rem}
+.tp-feats-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.tp-feats-list li{display:flex;align-items:center;gap:.5rem;font-size:.9em;color:var(--text1)}
+.tp-feats-list li::before{content:'✓';color:var(--accent);font-weight:800;flex-shrink:0}
+.tp-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff;padding:.7rem 1.5rem;border-radius:8px;font-weight:700;font-size:.9em;transition:all .2s}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-ghost{border:1px solid var(--border);color:var(--text1);padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9em;transition:all .2s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+.tp-preview{border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12);border:1px solid var(--border);aspect-ratio:4/3}
+.tp-preview iframe{width:100%;height:100%;border:none;display:block}
+
+.tp-feats-section{background:var(--bg2);border-top:1px solid var(--border)}
+.tp-feats-inner{max-width:1100px;margin:0 auto;padding:4rem 2rem}
+.tp-section-label{font-size:.75em;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-bottom:.5rem}
+.tp-section-title{font-size:clamp(1.5rem,3vw,2.25rem);font-weight:800;color:var(--text1);margin-bottom:2.5rem;letter-spacing:-.02em}
+.tp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem}
+.tp-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.tp-card-icon{font-size:1.75em;margin-bottom:.75rem}
+.tp-card-title{font-size:.95em;font-weight:700;color:var(--text1);margin-bottom:.4rem}
+.tp-card-desc{font-size:.83em;line-height:1.6}
+
+footer{background:var(--text1);color:rgba(255,255,255,.5);text-align:center;padding:2rem;font-size:.8em}
+footer a{color:var(--accent)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="tp-nav">
+  <a class="tp-nav-back" href="../../">← Everything</a>
+  <span class="tp-nav-title">Chess</span>
+  <a class="tp-nav-demo" href="index.html">Play Now →</a>
+</nav>
+
+<section class="tp-hero">
+  <div>
+    <div class="tp-badge">Games · Strategy</div>
+    <h1 class="tp-h1">Chess</h1>
+    <p class="tp-lead">A fully-featured two-player chess game — no server, no login, no install. Play directly in your browser with complete rule enforcement.</p>
+    <ul class="tp-feats-list">
+      <li>Full legal-move validation for all pieces</li>
+      <li>Check, checkmate &amp; stalemate detection</li>
+      <li>Castling (king-side &amp; queen-side)</li>
+      <li>En passant captures</li>
+      <li>Pawn promotion with piece choice dialog</li>
+      <li>Visual move hints (dots &amp; rings)</li>
+      <li>Last-move highlighting</li>
+      <li>Move history panel</li>
+      <li>Captured pieces display</li>
+    </ul>
+    <div class="tp-ctas">
+      <a class="btn-primary" href="index.html">Play Now →</a>
+      <a class="btn-ghost" href="../../">Browse More Games</a>
+    </div>
+  </div>
+  <div class="tp-preview">
+    <iframe src="index.html" title="Chess game preview"></iframe>
+  </div>
+</section>
+
+<section class="tp-feats-section">
+  <div class="tp-feats-inner">
+    <div class="tp-section-label">Features</div>
+    <h2 class="tp-section-title">What's Included</h2>
+    <div class="tp-cards">
+      <div class="tp-card">
+        <div class="tp-card-icon">♟️</div>
+        <div class="tp-card-title">Complete Rule Engine</div>
+        <div class="tp-card-desc">Every chess rule implemented: piece movement, captures, check detection, and illegal move filtering.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">🏰</div>
+        <div class="tp-card-title">Castling</div>
+        <div class="tp-card-desc">Both king-side and queen-side castling with full validity checks — no castling through or out of check.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">👻</div>
+        <div class="tp-card-title">En Passant</div>
+        <div class="tp-card-desc">The tricky en passant pawn capture is fully supported and highlighted as a valid move when available.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">👑</div>
+        <div class="tp-card-title">Pawn Promotion</div>
+        <div class="tp-card-desc">When a pawn reaches the last rank, a dialog prompts for Queen, Rook, Bishop, or Knight promotion.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">💡</div>
+        <div class="tp-card-title">Move Hints</div>
+        <div class="tp-card-desc">Click any piece to see valid destinations: dots for empty squares, rings for capturable pieces.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">📋</div>
+        <div class="tp-card-title">Move History</div>
+        <div class="tp-card-desc">All moves logged in algebraic-style notation in a scrollable history panel.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Part of the <a href="../../">Everything Platform</a> · Open-source browser games
+</footer>
+</body>
+</html>
