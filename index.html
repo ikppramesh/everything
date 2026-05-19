@@ -960,6 +960,7 @@ body {
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">8</span>Software</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Games</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">1</span>Kids</span><span class="ev-ticker-sep">—</span>
     <!-- duplicated for seamless CSS loop -->
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Education</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Automotive</span><span class="ev-ticker-sep">—</span>
@@ -974,6 +975,7 @@ body {
     <span class="ev-ticker-item"><span class="ev-ticker-num">3</span>Agriculture</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">8</span>Software</span><span class="ev-ticker-sep">—</span>
     <span class="ev-ticker-item"><span class="ev-ticker-num">4</span>Games</span><span class="ev-ticker-sep">—</span>
+    <span class="ev-ticker-item"><span class="ev-ticker-num">1</span>Kids</span><span class="ev-ticker-sep">—</span>
   </div>
 </div>
 
@@ -983,7 +985,7 @@ body {
 
     <!-- Filter tab strip -->
     <div class="ev-filter-bar" role="tablist" aria-label="Filter by industry">
-      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">49</span></button>
+      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">50</span></button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('education',this)">Education</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('automotive',this)">Automotive</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('healthcare',this)">Healthcare</button>
@@ -997,6 +999,7 @@ body {
       <button class="ev-filter-tab" role="tab" onclick="setFilter('agriculture',this)">Agriculture</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('software',this)">Software</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('games',this)">Games</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('kids',this)">Kids</button>
       <span class="ev-filter-indicator" aria-hidden="true"></span>
     </div>
 
@@ -1105,6 +1108,9 @@ const SOLUTIONS = [
   { category:'games', icon:'♟️', name:'Chess', path:'games/chess/index.html', desc:'Two-player chess with full rule enforcement — castling, en passant, pawn promotion, check/checkmate detection, and move history.', tags:['chess','strategy','board game'], color:'#a855f7', color2:'#6366f1', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🎨',name:'CSS Grid'},{icon:'♟️',name:'Chess Engine'}] },
   { category:'games', icon:'❌', name:'Tic-Tac-Toe', path:'games/tictactoe/index.html', desc:'Classic 3×3 strategy game with an unbeatable AI (minimax), two-player mode, score tracking, and win-line highlighting.', tags:['tictactoe','strategy','puzzle'], color:'#60a5fa', color2:'#818cf8', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🤖',name:'Minimax AI'},{icon:'🎨',name:'CSS3'}] },
   { category:'games', icon:'🐍', name:'Snake', path:'games/snake/index.html', desc:'The timeless arcade classic — canvas-rendered with speed scaling, persistent high score, touch/swipe controls, and D-pad for mobile.', tags:['snake','arcade','canvas'], color:'#4ade80', color2:'#22c55e', stack:[{icon:'🎨',name:'Canvas API'},{icon:'🌐',name:'Vanilla JS'},{icon:'📱',name:'Touch Events'}] },
+
+  // KIDS
+  { category:'kids', icon:'✏️', name:'Simply Draw', path:'kids/simply-draw/index.html', desc:'Draw anything with pencil, marker, brush or Apple Pencil — then watch it transform into clay, watercolor, neon glow, or rainbow art with real shading.', tags:['drawing','art','kids','apple pencil','creative'], color:'#a855f7', color2:'#ec4899', stack:[{icon:'🎨',name:'Canvas API'},{icon:'✏️',name:'Pointer Events'},{icon:'🌐',name:'Vanilla JS'}] },
 ];
 
 const CAT_META = {
@@ -1121,6 +1127,7 @@ const CAT_META = {
   agriculture:  { icon:'🌾', label:'Agriculture' },
   software:     { icon:'💻', label:'Software' },
   games:        { icon:'🎮', label:'Games' },
+  kids:         { icon:'🧒', label:'Kids' },
 };
 
 /* ── State ────────────────────────────────────────────────── */
@@ -1156,6 +1163,7 @@ const CAT_STACK = {
   agriculture:   [{icon:'⚛️',name:'React'},{icon:'🟢',name:'Node.js'},{icon:'🌤️',name:'Weather API'}],
   software:      [{icon:'⚛️',name:'React'},{icon:'🔷',name:'TypeScript'},{icon:'🐘',name:'PostgreSQL'}],
   games:         [{icon:'🌐',name:'Vanilla JS'},{icon:'🎨',name:'CSS3'},{icon:'🔊',name:'Web Audio'}],
+  kids:          [{icon:'🎨',name:'Canvas API'},{icon:'✏️',name:'Pointer Events'},{icon:'🌐',name:'Vanilla JS'}],
 };
 const CAT_DIFF = {
   education:'starter', automotive:'intermediate', healthcare:'intermediate',
@@ -1163,6 +1171,7 @@ const CAT_DIFF = {
   hospitality:'starter', logistics:'intermediate', hr:'starter',
   government:'advanced', agriculture:'starter', software:'advanced',
   games:'starter',
+  kids:'starter',
 };
 
 /* ── cardHTML ────────────────────────────────────────────── */
@@ -1373,6 +1382,7 @@ document.addEventListener('click', e => {
     { label:'Agriculture', emoji:'🌾', r:22,  g:163, b:74  },
     { label:'Software',    emoji:'💻', r:99,  g:102, b:241 },
     { label:'Games',       emoji:'🎮', r:168, g:85,  b:247 },
+    { label:'Kids',        emoji:'🧒', r:236, g:72,  b:153 },
   ];
 
   var dots       = [];

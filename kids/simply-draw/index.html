@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Simply Draw · Everything Kids</title>
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d;
+  --border:#30363d; --text:#e6edf3; --muted:#8b949e;
+  --accent:#FA5D29; --nav-h:52px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;
+  height:100dvh;display:flex;flex-direction:column;overflow:hidden;padding-top:var(--nav-h)}
+a{color:inherit;text-decoration:none}
+
+/* ── NAV ─────────────────────────────────────────────── */
+.g-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);display:flex;
+  align-items:center;gap:.75rem;padding:0 1.25rem;background:rgba(13,17,23,.95);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:100}
+.g-nav-back{color:var(--muted);font-size:.82em;transition:color .2s}.g-nav-back:hover{color:var(--text)}
+.g-nav-sep{color:var(--border)}
+.g-nav-title{font-weight:700;font-size:.95rem}
+.g-nav-tag{margin-left:auto;background:linear-gradient(135deg,#a855f7,#ec4899);
+  color:#fff;font-size:.68em;font-weight:700;padding:.2rem .6rem;border-radius:20px;
+  letter-spacing:.04em}
+
+/* ── APP LAYOUT ───────────────────────────────────────── */
+.app-wrap{flex:1;display:flex;overflow:hidden;min-height:0}
+
+/* ── LEFT TOOL BAR ────────────────────────────────────── */
+.tool-bar{width:58px;background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;align-items:center;padding:.5rem 0;gap:.15rem;
+  overflow-y:auto;overflow-x:hidden;flex-shrink:0}
+.tool-btn{width:42px;height:42px;border-radius:10px;border:1px solid transparent;
+  background:none;cursor:pointer;font-size:1.2em;display:flex;align-items:center;
+  justify-content:center;transition:all .15s;color:var(--muted)}
+.tool-btn:hover{background:var(--bg3);color:var(--text)}
+.tool-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.tool-sep{width:30px;height:1px;background:var(--border);margin:.25rem 0;flex-shrink:0}
+
+/* ── CANVAS AREA ──────────────────────────────────────── */
+.canvas-area{flex:1;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);padding:.75rem;min-width:0}
+.canvas-wrap{position:relative;border-radius:12px;overflow:hidden;
+  box-shadow:0 0 0 2px var(--border),0 12px 40px rgba(0,0,0,.5);cursor:crosshair}
+#drawCanvas{display:block;touch-action:none}
+
+/* ── SIDE PANEL ───────────────────────────────────────── */
+.side-panel{width:210px;background:var(--bg2);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;gap:0;overflow-y:auto;flex-shrink:0}
+.s-section{padding:.75rem;border-bottom:1px solid var(--border)}
+.s-label{font-size:.62em;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);font-weight:700;margin-bottom:.5rem}
+
+/* ── COLOR PALETTE ────────────────────────────────────── */
+.color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.color-swatch{width:100%;aspect-ratio:1;border-radius:6px;border:2px solid transparent;
+  cursor:pointer;transition:transform .12s,border-color .12s}
+.color-swatch:hover{transform:scale(1.15)}
+.color-swatch.active{border-color:#fff;transform:scale(1.1)}
+.color-custom{display:flex;align-items:center;gap:.4rem;margin-top:.4rem;cursor:pointer}
+.color-custom-swatch{width:26px;height:26px;border-radius:6px;border:2px solid var(--border);
+  overflow:hidden;flex-shrink:0}
+.color-custom-swatch input{width:200%;height:200%;transform:translate(-25%,-25%);
+  border:none;padding:0;cursor:pointer;opacity:0}
+.color-custom-label{font-size:.72em;color:var(--muted)}
+
+/* ── BRUSH SIZE ───────────────────────────────────────── */
+.size-btns{display:flex;gap:.35rem}
+.size-btn{flex:1;padding:.35rem 0;border-radius:7px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--muted);font-size:.75em;font-weight:700;cursor:pointer;
+  transition:all .15s}
+.size-btn:hover{border-color:var(--text);color:var(--text)}
+.size-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ── EXAMPLES ─────────────────────────────────────────── */
+.ex-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.ex-thumb{border-radius:7px;overflow:hidden;cursor:pointer;border:2px solid var(--border);
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  background:#fff;font-size:1.3em;transition:all .15s}
+.ex-thumb:hover{border-color:var(--accent);transform:scale(1.05)}
+.ex-thumb canvas{width:100%;height:100%;display:block}
+
+/* ── MAGIC BUTTON ─────────────────────────────────────── */
+.magic-btn{margin:.75rem;padding:.7rem 1rem;background:linear-gradient(135deg,#a855f7,#FA5D29);
+  border:none;border-radius:10px;color:#fff;font-size:.95em;font-weight:800;cursor:pointer;
+  transition:all .2s;letter-spacing:.01em;font-family:inherit}
+.magic-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(168,85,247,.4)}
+.magic-btn:active{transform:none}
+
+/* ── EFFECT CHIPS ─────────────────────────────────────── */
+.effect-chips{display:flex;flex-wrap:wrap;gap:.35rem;padding:.75rem;padding-top:0}
+.eff-chip{padding:.3rem .6rem;border-radius:20px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--muted);font-size:.72em;font-weight:600;cursor:pointer;
+  transition:all .15s;font-family:inherit}
+.eff-chip:hover{border-color:var(--text);color:var(--text)}
+.eff-chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* ── RESULT OVERLAY ───────────────────────────────────── */
+.result-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;pointer-events:none;transition:opacity .3s}
+.result-overlay.show{opacity:1;pointer-events:all}
+.result-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;
+  width:min(98vw,860px);max-height:calc(100dvh - 2rem);overflow-y:auto;display:flex;
+  flex-direction:column;animation:slideup .3s ease-out}
+@keyframes slideup{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.result-header{display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.result-title{font-size:1.05em;font-weight:800;background:linear-gradient(135deg,#a855f7,#FA5D29);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2em;padding:.2rem}
+.result-close:hover{color:var(--text)}
+.compare-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:1rem 1.25rem}
+@media(max-width:600px){.compare-wrap{grid-template-columns:1fr}}
+.compare-half{display:flex;flex-direction:column;gap:.4rem}
+.compare-label{font-size:.7em;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+  font-weight:600;text-align:center}
+.compare-half canvas{width:100%;border-radius:8px;border:1px solid var(--border);display:block}
+.result-effects{display:flex;gap:.5rem;flex-wrap:wrap;padding:0 1.25rem .75rem;justify-content:center}
+.result-eff{padding:.4rem 1rem;border-radius:20px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--muted);font-size:.8em;font-weight:600;cursor:pointer;
+  transition:all .15s;font-family:inherit}
+.result-eff:hover{border-color:var(--text);color:var(--text)}
+.result-eff.active{background:linear-gradient(135deg,#a855f7,#FA5D29);border-color:transparent;color:#fff}
+.result-actions{display:flex;gap:.75rem;padding:.75rem 1.25rem;border-top:1px solid var(--border);justify-content:flex-end}
+.btn-back{padding:.55rem 1.2rem;border-radius:8px;border:1px solid var(--border);
+  background:none;color:var(--muted);cursor:pointer;font-size:.85em;font-weight:600;font-family:inherit}
+.btn-back:hover{color:var(--text);border-color:var(--text)}
+.btn-save{padding:.55rem 1.4rem;border-radius:8px;background:var(--accent);
+  border:none;color:#fff;cursor:pointer;font-size:.85em;font-weight:700;font-family:inherit;transition:all .2s}
+.btn-save:hover{filter:brightness(1.1)}
+
+/* ── PROCESSING OVERLAY ───────────────────────────────── */
+.proc-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:600;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.proc-overlay.show{opacity:1;pointer-events:all}
+.proc-spinner{font-size:3rem;animation:spin 1.2s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.proc-text{color:var(--text);font-size:1.1em;font-weight:700}
+
+/* ── MOBILE OVERRIDES ─────────────────────────────────── */
+@media(max-width:700px){
+  .side-panel{display:none}
+  .tool-bar{width:100%;height:52px;flex-direction:row;padding:0 .5rem;overflow-x:auto;
+    overflow-y:hidden;border-right:none;border-top:1px solid var(--border);order:2}
+  .tool-btn{width:40px;height:40px;flex-shrink:0}
+  .tool-sep{width:1px;height:28px;margin:.25rem 0}
+  .app-wrap{flex-direction:column}
+  .canvas-area{order:1;padding:.5rem}
+  .mobile-fab{display:flex !important}
+}
+.mobile-fab{display:none;position:fixed;bottom:70px;right:14px;z-index:90;
+  width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;font-size:1.4em;
+  background:linear-gradient(135deg,#a855f7,#FA5D29);color:#fff;
+  box-shadow:0 4px 20px rgba(168,85,247,.5);align-items:center;justify-content:center;
+  transition:transform .2s}
+.mobile-fab:active{transform:scale(.9)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="g-nav">
+  <a class="g-nav-back" href="../../">← Everything</a>
+  <span class="g-nav-sep">/</span>
+  <span class="g-nav-title">✏️ Simply Draw</span>
+  <span class="g-nav-tag">✨ Bring to Life</span>
+</nav>
+
+<!-- Result overlay -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-box">
+    <div class="result-header">
+      <span class="result-title">✨ Your Drawing Came to Life!</span>
+      <button class="result-close" onclick="closeResult()">✕</button>
+    </div>
+    <div class="compare-wrap">
+      <div class="compare-half">
+        <div class="compare-label">Your Drawing</div>
+        <canvas id="beforeCanvas"></canvas>
+      </div>
+      <div class="compare-half">
+        <div class="compare-label" id="afterLabel">✨ Clay Effect</div>
+        <canvas id="afterCanvas"></canvas>
+      </div>
+    </div>
+    <div class="result-effects">
+      <button class="result-eff active" onclick="switchEffect('clay',this)">🏺 Clay</button>
+      <button class="result-eff" onclick="switchEffect('water',this)">🎨 Watercolor</button>
+      <button class="result-eff" onclick="switchEffect('neon',this)">⚡ Neon</button>
+      <button class="result-eff" onclick="switchEffect('sketch',this)">✏️ Sketch</button>
+      <button class="result-eff" onclick="switchEffect('rainbow',this)">🌈 Rainbow</button>
+    </div>
+    <div class="result-actions">
+      <button class="btn-back" onclick="closeResult()">← Draw More</button>
+      <button class="btn-save" onclick="downloadResult()">⬇ Save Drawing</button>
+    </div>
+  </div>
+</div>
+
+<!-- Processing overlay -->
+<div class="proc-overlay" id="procOverlay">
+  <div class="proc-spinner">✨</div>
+  <div class="proc-text">Making magic…</div>
+</div>
+
+<!-- Upload input (hidden) -->
+<input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleUpload(event)">
+
+<div class="app-wrap">
+  <!-- Tool bar (left on desktop, bottom on mobile) -->
+  <div class="tool-bar" id="toolBar">
+    <button class="tool-btn active" id="btn-pencil" onclick="setTool('pencil')" title="Pencil">✏️</button>
+    <button class="tool-btn" id="btn-marker" onclick="setTool('marker')" title="Marker">🖊️</button>
+    <button class="tool-btn" id="btn-brush" onclick="setTool('brush')" title="Brush">🖌️</button>
+    <button class="tool-btn" id="btn-chalk" onclick="setTool('chalk')" title="Chalk">🖍️</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" id="btn-eraser" onclick="setTool('eraser')" title="Eraser">🫧</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="undo()" title="Undo (Ctrl+Z)">↩️</button>
+    <button class="tool-btn" onclick="redo()" title="Redo">↪️</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="clearCanvas()" title="Clear All">🗑️</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" onclick="triggerUpload()" title="Upload / Camera">📸</button>
+  </div>
+
+  <!-- Canvas -->
+  <div class="canvas-area">
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="drawCanvas"></canvas>
+    </div>
+  </div>
+
+  <!-- Side panel -->
+  <div class="side-panel">
+    <!-- Color -->
+    <div class="s-section">
+      <div class="s-label">Color</div>
+      <div class="color-grid" id="colorGrid"></div>
+      <div class="color-custom">
+        <div class="color-custom-swatch">
+          <input type="color" id="colorPicker" value="#1a1a2e" onchange="setColor(this.value)">
+        </div>
+        <span class="color-custom-label">Custom color…</span>
+      </div>
+    </div>
+    <!-- Size -->
+    <div class="s-section">
+      <div class="s-label">Size</div>
+      <div class="size-btns">
+        <button class="size-btn active" onclick="setSize(3,this)">S</button>
+        <button class="size-btn" onclick="setSize(7,this)">M</button>
+        <button class="size-btn" onclick="setSize(14,this)">L</button>
+        <button class="size-btn" onclick="setSize(22,this)">XL</button>
+      </div>
+    </div>
+    <!-- Examples -->
+    <div class="s-section" style="flex:1">
+      <div class="s-label">Draw an example</div>
+      <div class="ex-grid" id="exGrid"></div>
+    </div>
+    <!-- Effect select -->
+    <div class="s-section">
+      <div class="s-label">Effect style</div>
+      <div class="effect-chips" style="padding:0;margin-top:.25rem">
+        <button class="eff-chip active" onclick="setEffect('clay',this)">🏺 Clay</button>
+        <button class="eff-chip" onclick="setEffect('water',this)">🎨 Water</button>
+        <button class="eff-chip" onclick="setEffect('neon',this)">⚡ Neon</button>
+        <button class="eff-chip" onclick="setEffect('sketch',this)">✏️ Sketch</button>
+        <button class="eff-chip" onclick="setEffect('rainbow',this)">🌈 Rainbow</button>
+      </div>
+    </div>
+    <!-- Magic -->
+    <button class="magic-btn" onclick="bringToLife()">✨ Bring to Life!</button>
+  </div>
+</div>
+
+<!-- Mobile FAB -->
+<button class="mobile-fab" onclick="bringToLife()" title="Bring to Life">✨</button>
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  CANVAS SETUP
+// ══════════════════════════════════════════════════════════
+const CW = 560, CH = 560; // internal resolution
+
+const drawCanvas = document.getElementById('drawCanvas');
+const drawCtx    = drawCanvas.getContext('2d');
+drawCanvas.width = CW; drawCanvas.height = CH;
+
+const beforeCanvas = document.getElementById('beforeCanvas');
+const afterCanvas  = document.getElementById('afterCanvas');
+beforeCanvas.width = beforeCanvas.height = CW;
+afterCanvas.width  = afterCanvas.height  = CW;
+
+// Fill white background
+drawCtx.fillStyle = '#ffffff';
+drawCtx.fillRect(0, 0, CW, CH);
+
+// Responsive sizing
+function resizeCanvas() {
+  const wrap = document.getElementById('canvasWrap');
+  const area = document.querySelector('.canvas-area');
+  const maxW  = area.clientWidth  - 24;
+  const maxH  = area.clientHeight - 24;
+  const sz    = Math.min(maxW, maxH, CW);
+  drawCanvas.style.width  = sz + 'px';
+  drawCanvas.style.height = sz + 'px';
+  wrap.style.width  = sz + 'px';
+  wrap.style.height = sz + 'px';
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+// ══════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════
+let tool     = 'pencil';
+let color    = '#1a1a2e';
+let brushSz  = 7;
+let effect   = 'clay';
+let drawing  = false;
+let pts      = [];      // current stroke points
+let penActive = false;  // Apple Pencil palm rejection
+let penTimer  = null;
+
+// Undo / redo stacks (ImageData snapshots)
+const undoStack = [];
+const redoStack = [];
+function saveUndo() {
+  undoStack.push(drawCtx.getImageData(0, 0, CW, CH));
+  if (undoStack.length > 40) undoStack.shift();
+  redoStack.length = 0;
+}
+function undo() {
+  if (!undoStack.length) return;
+  redoStack.push(drawCtx.getImageData(0, 0, CW, CH));
+  drawCtx.putImageData(undoStack.pop(), 0, 0);
+}
+function redo() {
+  if (!redoStack.length) return;
+  undoStack.push(drawCtx.getImageData(0, 0, CW, CH));
+  drawCtx.putImageData(redoStack.pop(), 0, 0);
+}
+
+// ══════════════════════════════════════════════════════════
+//  DRAWING — POINTER EVENTS (Apple Pencil aware)
+// ══════════════════════════════════════════════════════════
+function getCanvasXY(e) {
+  const rect  = drawCanvas.getBoundingClientRect();
+  const scaleX = CW / rect.width;
+  const scaleY = CH / rect.height;
+  return {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top)  * scaleY,
+    p: e.pressure != null ? e.pressure : 0.5,
+  };
+}
+
+drawCanvas.addEventListener('pointerdown', e => {
+  e.preventDefault();
+  if (e.pointerType === 'pen') {
+    penActive = true;
+    clearTimeout(penTimer);
+  }
+  // Palm rejection: ignore touch while pen is active
+  if (e.pointerType === 'touch' && penActive) return;
+  drawCanvas.setPointerCapture(e.pointerId);
+  drawing = true;
+  const pt = getCanvasXY(e);
+  pts = [pt];
+  beginStroke(e, pt);
+}, { passive: false });
+
+drawCanvas.addEventListener('pointermove', e => {
+  if (!drawing) return;
+  e.preventDefault();
+  if (e.pointerType === 'touch' && penActive) return;
+  const pt = getCanvasXY(e);
+  pts.push(pt);
+  continueStroke(e, pt);
+}, { passive: false });
+
+drawCanvas.addEventListener('pointerup', e => {
+  if (!drawing) return;
+  drawing = false;
+  if (e.pointerType === 'pen') {
+    penTimer = setTimeout(() => { penActive = false; }, 600);
+  }
+  drawCtx.closePath();
+  pts = [];
+  saveUndo();
+});
+
+drawCanvas.addEventListener('pointercancel', () => {
+  drawing = false; pts = [];
+});
+
+function lineWidth(pressure) {
+  const p = Math.max(0.05, pressure);
+  if (tool === 'marker') return brushSz * 1.6;
+  if (tool === 'brush')  return brushSz * (0.5 + p * 1.5);
+  if (tool === 'chalk')  return brushSz * (0.4 + p * 0.8);
+  if (tool === 'eraser') return brushSz * 3;
+  return brushSz * (0.3 + p * 0.7);   // pencil
+}
+
+function beginStroke(e, pt) {
+  drawCtx.lineCap = 'round';
+  drawCtx.lineJoin = 'round';
+  applyBrushStyle(pt.p);
+  drawCtx.beginPath();
+  drawCtx.moveTo(pt.x, pt.y);
+}
+
+function continueStroke(e, pt) {
+  const len = pts.length;
+  if (tool === 'chalk') {
+    // Scattered chalk dots
+    for (let i = 0; i < 6; i++) {
+      const cx = pt.x + (Math.random() - .5) * brushSz * 1.4;
+      const cy = pt.y + (Math.random() - .5) * brushSz * 1.4;
+      drawCtx.globalAlpha = 0.15 + Math.random() * 0.25;
+      drawCtx.fillStyle = color;
+      drawCtx.beginPath();
+      drawCtx.arc(cx, cy, lineWidth(pt.p) * .4, 0, Math.PI * 2);
+      drawCtx.fill();
+    }
+    drawCtx.globalAlpha = 1;
+    return;
+  }
+  if (len < 3) {
+    applyBrushStyle(pt.p);
+    drawCtx.beginPath();
+    drawCtx.moveTo(pts[len-2]?.x ?? pt.x, pts[len-2]?.y ?? pt.y);
+    drawCtx.lineTo(pt.x, pt.y);
+    drawCtx.stroke();
+    return;
+  }
+  // Quadratic bezier through midpoints for smooth curves
+  const p0 = pts[len - 3], p1 = pts[len - 2], p2 = pts[len - 1];
+  const mid1 = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2 };
+  const mid2 = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+  applyBrushStyle(p1.p);
+  drawCtx.beginPath();
+  drawCtx.moveTo(mid1.x, mid1.y);
+  drawCtx.quadraticCurveTo(p1.x, p1.y, mid2.x, mid2.y);
+  drawCtx.stroke();
+}
+
+function applyBrushStyle(pressure) {
+  drawCtx.lineWidth = Math.max(1, lineWidth(pressure));
+  if (tool === 'eraser') {
+    drawCtx.globalCompositeOperation = 'source-over';
+    drawCtx.strokeStyle = '#ffffff';
+    drawCtx.globalAlpha = 1;
+  } else {
+    drawCtx.globalCompositeOperation = 'source-over';
+    drawCtx.strokeStyle = color;
+    drawCtx.globalAlpha = tool === 'brush' ? 0.55 : 1;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  TOOL / COLOR / SIZE
+// ══════════════════════════════════════════════════════════
+function setTool(t) {
+  tool = t;
+  document.querySelectorAll('.tool-btn[id]').forEach(b => b.classList.remove('active'));
+  const btn = document.getElementById('btn-' + t);
+  if (btn) btn.classList.add('active');
+  drawCanvas.style.cursor = t === 'eraser' ? 'cell' : 'crosshair';
+}
+
+const PALETTE = [
+  '#e74c3c','#e67e22','#f1c40f','#2ecc71',
+  '#3498db','#9b59b6','#ff69b4','#1abc9c',
+  '#a0522d','#111111','#888888','#ffffff',
+];
+
+function initPalette() {
+  const grid = document.getElementById('colorGrid');
+  PALETTE.forEach((c, i) => {
+    const s = document.createElement('div');
+    s.className = 'color-swatch' + (i === 9 ? ' active' : '');
+    s.style.background = c;
+    s.style.border = c === '#ffffff' ? '2px solid #888' : '';
+    s.onclick = () => {
+      document.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      setColor(c);
+    };
+    grid.appendChild(s);
+  });
+}
+
+function setColor(c) {
+  color = c;
+  if (tool === 'eraser') setTool('pencil');
+}
+
+function setSize(sz, btn) {
+  brushSz = sz;
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function setEffect(ef, btn) {
+  effect = ef;
+  document.querySelectorAll('.eff-chip').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function clearCanvas() {
+  saveUndo();
+  drawCtx.fillStyle = '#ffffff';
+  drawCtx.fillRect(0, 0, CW, CH);
+}
+
+function triggerUpload() {
+  document.getElementById('fileInput').click();
+}
+
+function handleUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const img = new Image();
+  img.onload = () => {
+    saveUndo();
+    // Fit image to canvas maintaining aspect ratio
+    const scale = Math.min(CW / img.width, CH / img.height);
+    const w = img.width * scale, h = img.height * scale;
+    drawCtx.fillStyle = '#ffffff';
+    drawCtx.fillRect(0, 0, CW, CH);
+    drawCtx.drawImage(img, (CW - w) / 2, (CH - h) / 2, w, h);
+    URL.revokeObjectURL(img.src);
+  };
+  img.src = URL.createObjectURL(file);
+  e.target.value = '';
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); undo(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'y') { e.preventDefault(); redo(); }
+});
+
+// ══════════════════════════════════════════════════════════
+//  EXAMPLES — 8 Kid-Friendly Drawings
+// ══════════════════════════════════════════════════════════
+const EXAMPLES = [
+  { name:'Sun',     emoji:'☀️', fn:drawSun },
+  { name:'House',   emoji:'🏠', fn:drawHouse },
+  { name:'Cat',     emoji:'🐱', fn:drawCat },
+  { name:'Flower',  emoji:'🌸', fn:drawFlower },
+  { name:'Star',    emoji:'⭐', fn:drawStar },
+  { name:'Fish',    emoji:'🐟', fn:drawFish },
+  { name:'Robot',   emoji:'🤖', fn:drawRobot },
+  { name:'Balloon', emoji:'🎈', fn:drawBalloon },
+];
+
+function stroke(ctx, s) {
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = Math.max(1.5, s * 0.04);
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+}
+
+function drawSun(ctx, s) {
+  stroke(ctx, s);
+  const cx = s*.5, cy = s*.48, r = s*.22;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  for (let i = 0; i < 8; i++) {
+    const a = (i/8)*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(cx+Math.cos(a)*(r+s*.04), cy+Math.sin(a)*(r+s*.04));
+    ctx.lineTo(cx+Math.cos(a)*(r+s*.18), cy+Math.sin(a)*(r+s*.18));
+    ctx.stroke();
+  }
+  // Smiley face
+  ctx.beginPath(); ctx.arc(cx-r*.3, cy-r*.1, r*.1, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+r*.3, cy-r*.1, r*.1, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy+r*.15, r*.25, 0, Math.PI); ctx.stroke();
+}
+
+function drawHouse(ctx, s) {
+  stroke(ctx, s);
+  // Walls
+  ctx.strokeRect(s*.18, s*.44, s*.64, s*.46);
+  // Roof
+  ctx.beginPath(); ctx.moveTo(s*.1, s*.44); ctx.lineTo(s*.5, s*.08); ctx.lineTo(s*.9, s*.44); ctx.stroke();
+  // Door
+  ctx.strokeRect(s*.41, s*.63, s*.18, s*.27);
+  // Windows
+  ctx.strokeRect(s*.23, s*.52, s*.16, s*.14);
+  ctx.strokeRect(s*.61, s*.52, s*.16, s*.14);
+  // Window cross
+  ctx.beginPath(); ctx.moveTo(s*.31, s*.52); ctx.lineTo(s*.31, s*.66); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(s*.23, s*.59); ctx.lineTo(s*.39, s*.59); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(s*.69, s*.52); ctx.lineTo(s*.69, s*.66); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(s*.61, s*.59); ctx.lineTo(s*.77, s*.59); ctx.stroke();
+  // Chimney
+  ctx.strokeRect(s*.64, s*.19, s*.1, s*.18);
+  // Door knob
+  ctx.beginPath(); ctx.arc(s*.56, s*.77, s*.018, 0, Math.PI*2); ctx.fill();
+}
+
+function drawCat(ctx, s) {
+  stroke(ctx, s);
+  const cx = s*.5, cy = s*.42, r = s*.26;
+  // Head
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  // Ears
+  [[-.72,-.82,-.3,-1.32,0,-.9],[.72,-.82,.3,-1.32,0,-.9]].forEach(([x1,y1,x2,y2,x3,y3]) => {
+    ctx.beginPath();
+    ctx.moveTo(cx+r*x1, cy+r*y1); ctx.lineTo(cx+r*x2, cy+r*y2); ctx.lineTo(cx+r*x3, cy+r*y3);
+    ctx.stroke();
+  });
+  // Eyes
+  ctx.beginPath(); ctx.ellipse(cx-r*.35, cy-r*.05, r*.09, r*.13, 0, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(cx+r*.35, cy-r*.05, r*.09, r*.13, 0, 0, Math.PI*2); ctx.stroke();
+  // Pupils
+  ctx.fillStyle = '#1a1a2e';
+  ctx.beginPath(); ctx.ellipse(cx-r*.35, cy-r*.05, r*.04, r*.09, 0, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(cx+r*.35, cy-r*.05, r*.04, r*.09, 0, 0, Math.PI*2); ctx.fill();
+  // Nose
+  ctx.beginPath();
+  ctx.moveTo(cx, cy+r*.18); ctx.lineTo(cx-r*.07, cy+r*.28); ctx.lineTo(cx+r*.07, cy+r*.28); ctx.closePath();
+  ctx.fill();
+  // Mouth
+  ctx.beginPath(); ctx.moveTo(cx, cy+r*.28); ctx.lineTo(cx-r*.2, cy+r*.42); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy+r*.28); ctx.lineTo(cx+r*.2, cy+r*.42); ctx.stroke();
+  // Whiskers
+  for (const [dx,dy] of [[-1,-1],[-1,0],[-1,1],[1,-1],[1,0],[1,1]]) {
+    ctx.beginPath();
+    ctx.moveTo(cx+dx*r*.12, cy+r*.22); ctx.lineTo(cx+dx*r*.72, cy+r*.17+dy*r*.12); ctx.stroke();
+  }
+  // Body
+  ctx.beginPath(); ctx.ellipse(cx, cy+r*1.35, r*.52, r*.72, 0, 0, Math.PI*2); ctx.stroke();
+  // Tail
+  ctx.beginPath(); ctx.moveTo(cx+r*.52, cy+r*1.8); ctx.quadraticCurveTo(cx+r*1.2, cy+r*1.4, cx+r*1.0, cy+r*.8); ctx.stroke();
+}
+
+function drawFlower(ctx, s) {
+  stroke(ctx, s);
+  const cx = s*.5, cy = s*.4, r = s*.12;
+  // Petals (6)
+  for (let i = 0; i < 6; i++) {
+    const a = (i/6)*Math.PI*2;
+    const px = cx + Math.cos(a)*r*2.1, py = cy + Math.sin(a)*r*2.1;
+    ctx.beginPath(); ctx.ellipse(px, py, r, r*.65, a, 0, Math.PI*2); ctx.stroke();
+  }
+  // Center
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  // Stem
+  ctx.beginPath(); ctx.moveTo(cx, cy+r); ctx.quadraticCurveTo(cx-s*.06, s*.72, cx, s*.92); ctx.stroke();
+  // Leaves
+  ctx.beginPath(); ctx.moveTo(cx, s*.68);
+  ctx.quadraticCurveTo(cx-s*.2, s*.58, cx-s*.22, s*.72);
+  ctx.quadraticCurveTo(cx-s*.14, s*.78, cx, s*.72); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, s*.78);
+  ctx.quadraticCurveTo(cx+s*.2, s*.68, cx+s*.22, s*.82);
+  ctx.quadraticCurveTo(cx+s*.14, s*.88, cx, s*.82); ctx.stroke();
+}
+
+function drawStar(ctx, s) {
+  stroke(ctx, s);
+  const cx = s*.5, cy = s*.45;
+  const R = s*.38, ri = s*.16;
+  ctx.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = (i/10)*Math.PI*2 - Math.PI/2;
+    const r = i%2===0 ? R : ri;
+    i===0 ? ctx.moveTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r) : ctx.lineTo(cx+Math.cos(a)*r, cy+Math.sin(a)*r);
+  }
+  ctx.closePath(); ctx.stroke();
+  // Face in star
+  const fy = cy - s*.04;
+  ctx.beginPath(); ctx.arc(cx-s*.07, fy, s*.03, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+s*.07, fy, s*.03, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, fy+s*.08, s*.06, 0, Math.PI); ctx.stroke();
+}
+
+function drawFish(ctx, s) {
+  stroke(ctx, s);
+  const cx = s*.44, cy = s*.5;
+  // Body
+  ctx.beginPath(); ctx.ellipse(cx, cy, s*.3, s*.18, 0, 0, Math.PI*2); ctx.stroke();
+  // Tail
+  ctx.beginPath();
+  ctx.moveTo(cx+s*.3, cy);
+  ctx.lineTo(cx+s*.5, cy-s*.22);
+  ctx.lineTo(cx+s*.5, cy+s*.22);
+  ctx.closePath(); ctx.stroke();
+  // Eye
+  ctx.beginPath(); ctx.arc(cx-s*.14, cy-s*.03, s*.055, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx-s*.14, cy-s*.03, s*.025, 0, Math.PI*2); ctx.fill();
+  // Mouth
+  ctx.beginPath(); ctx.arc(cx-s*.3, cy+s*.04, s*.04, -0.8, 0.8); ctx.stroke();
+  // Fins
+  ctx.beginPath(); ctx.moveTo(cx-s*.05, cy-s*.18);
+  ctx.quadraticCurveTo(cx+s*.05, cy-s*.35, cx+s*.15, cy-s*.18); ctx.stroke();
+  // Scales (3)
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath(); ctx.arc(cx-s*.05+i*s*.12, cy+s*.02, s*.07, Math.PI, Math.PI*2); ctx.stroke();
+  }
+}
+
+function drawRobot(ctx, s) {
+  stroke(ctx, s);
+  // Head
+  ctx.strokeRect(s*.3, s*.08, s*.4, s*.3);
+  // Antenna
+  ctx.beginPath(); ctx.moveTo(s*.5, s*.08); ctx.lineTo(s*.5, s*.02); ctx.stroke();
+  ctx.beginPath(); ctx.arc(s*.5, s*.02, s*.03, 0, Math.PI*2); ctx.stroke();
+  // Eyes
+  ctx.strokeRect(s*.36, s*.16, s*.1, s*.1);
+  ctx.strokeRect(s*.54, s*.16, s*.1, s*.1);
+  // Pupils
+  ctx.fillStyle='#1a1a2e';
+  ctx.fillRect(s*.39, s*.19, s*.04, s*.04);
+  ctx.fillRect(s*.57, s*.19, s*.04, s*.04);
+  // Mouth
+  ctx.beginPath(); ctx.moveTo(s*.36, s*.3); ctx.lineTo(s*.64, s*.3); ctx.stroke();
+  // Teeth
+  for (let i = 0; i < 4; i++) { ctx.strokeRect(s*.37+i*s*.07, s*.3, s*.06, s*.04); }
+  // Body
+  ctx.strokeRect(s*.2, s*.4, s*.6, s*.36);
+  // Arms
+  ctx.strokeRect(s*.04, s*.42, s*.15, s*.24);
+  ctx.strokeRect(s*.81, s*.42, s*.15, s*.24);
+  // Claws
+  ctx.beginPath(); ctx.moveTo(s*.04, s*.58); ctx.lineTo(s*.0, s*.6); ctx.lineTo(s*.04, s*.64); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(s*.96, s*.58); ctx.lineTo(s*1.0, s*.6); ctx.lineTo(s*.96, s*.64); ctx.stroke();
+  // Legs
+  ctx.strokeRect(s*.28, s*.77, s*.16, s*.2);
+  ctx.strokeRect(s*.56, s*.77, s*.16, s*.2);
+  // Buttons
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath(); ctx.arc(s*.35+i*s*.15, s*.55, s*.04, 0, Math.PI*2); ctx.stroke();
+  }
+  // Panel
+  ctx.strokeRect(s*.28, s*.63, s*.44, s*.12);
+}
+
+function drawBalloon(ctx, s) {
+  stroke(ctx, s);
+  const cx = s*.5, cy = s*.38, r = s*.32;
+  // Balloon
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  // Knot
+  ctx.beginPath(); ctx.arc(cx, cy+r, s*.03, 0, Math.PI*2); ctx.stroke();
+  // Highlight
+  ctx.beginPath(); ctx.arc(cx-r*.35, cy-r*.3, r*.15, 0, Math.PI*2); ctx.stroke();
+  // String
+  ctx.beginPath();
+  ctx.moveTo(cx, cy+r+s*.03);
+  ctx.quadraticCurveTo(cx+s*.08, cy+r+s*.18, cx, cy+r+s*.35);
+  ctx.quadraticCurveTo(cx-s*.08, cy+r+s*.52, cx, cy+r+s*.65); ctx.stroke();
+  // Basket
+  ctx.strokeRect(cx-s*.14, cy+r+s*.68, s*.28, s*.18);
+  ctx.beginPath(); ctx.moveTo(cx-s*.14, cy+r+s*.68); ctx.lineTo(cx-s*.06, cy+r+s*.55); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx+s*.14, cy+r+s*.68); ctx.lineTo(cx+s*.06, cy+r+s*.55); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy+r+s*.68); ctx.lineTo(cx, cy+r+s*.55); ctx.stroke();
+}
+
+function initExamples() {
+  const grid = document.getElementById('exGrid');
+  EXAMPLES.forEach(ex => {
+    const wrap = document.createElement('div');
+    wrap.className = 'ex-thumb';
+    wrap.title = ex.name;
+    const c = document.createElement('canvas');
+    c.width = c.height = 120;
+    const cx = c.getContext('2d');
+    cx.fillStyle = '#fff'; cx.fillRect(0, 0, 120, 120);
+    ex.fn(cx, 120);
+    wrap.appendChild(c);
+    wrap.onclick = () => loadExample(ex);
+    grid.appendChild(wrap);
+  });
+}
+
+function loadExample(ex) {
+  saveUndo();
+  drawCtx.fillStyle = '#ffffff';
+  drawCtx.fillRect(0, 0, CW, CH);
+  ex.fn(drawCtx, CW);
+}
+
+// ══════════════════════════════════════════════════════════
+//  BRING TO LIFE — SHADING ENGINE
+// ══════════════════════════════════════════════════════════
+
+// Fast box blur (single pass, separable, O(n))
+function boxBlurH(src, W, H, r) {
+  const out = new Float32Array(W * H);
+  const inv = 1 / (2*r + 1);
+  for (let y = 0; y < H; y++) {
+    let sum = src[y*W] * (r+1);
+    for (let x = 1; x <= r; x++) sum += src[y*W + Math.min(x, W-1)];
+    for (let x = 0; x < W; x++) {
+      sum += src[y*W + Math.min(x+r, W-1)];
+      sum -= src[y*W + Math.max(x-r-1, 0)];
+      out[y*W + x] = sum * inv;
+    }
+  }
+  return out;
+}
+function boxBlurV(src, W, H, r) {
+  const out = new Float32Array(W * H);
+  const inv = 1 / (2*r + 1);
+  for (let x = 0; x < W; x++) {
+    let sum = src[x] * (r+1);
+    for (let y = 1; y <= r; y++) sum += src[Math.min(y,H-1)*W + x];
+    for (let y = 0; y < H; y++) {
+      sum += src[Math.min(y+r,H-1)*W + x];
+      sum -= src[Math.max(y-r-1,0)*W + x];
+      out[y*W + x] = sum * inv;
+    }
+  }
+  return out;
+}
+function boxBlur(src, W, H, r) { return boxBlurV(boxBlurH(src, W, H, r), W, H, r); }
+
+function hsl(h, s, l) {
+  h = ((h % 360) + 360) % 360;
+  s /= 100; l /= 100;
+  const k = n => (n + h/30) % 12;
+  const a = s * Math.min(l, 1-l);
+  const f = n => l - a * Math.max(-1, Math.min(k(n)-3, Math.min(9-k(n), 1)));
+  return [Math.round(f(0)*255), Math.round(f(8)*255), Math.round(f(4)*255)];
+}
+
+function computeHeightMap(gray, W, H) {
+  let h = gray.slice();
+  // 22 passes of radius-5 blur approximates distance from strokes
+  for (let i = 0; i < 22; i++) h = boxBlur(h, W, H, 5);
+  // Normalize
+  let mn = Infinity, mx = -Infinity;
+  for (const v of h) { if (v<mn) mn=v; if (v>mx) mx=v; }
+  const range = mx - mn || 1;
+  for (let i = 0; i < h.length; i++) h[i] = (h[i]-mn)/range;
+  return h;
+}
+
+function computeNormals(hm, W, H) {
+  const nx = new Float32Array(W*H), ny = new Float32Array(W*H);
+  for (let y = 1; y < H-1; y++) for (let x = 1; x < W-1; x++) {
+    const i = y*W+x;
+    nx[i] = (hm[i+1]   - hm[i-1])   * 0.5 * 5;
+    ny[i] = (hm[i+W]   - hm[i-W])   * 0.5 * 5;
+  }
+  return { nx, ny };
+}
+
+function phong(nx, ny, lx, ly, lz) {
+  const nz = Math.sqrt(Math.max(0, 1 - nx*nx - ny*ny));
+  const ll = Math.sqrt(lx*lx+ly*ly+lz*lz);
+  const diff = Math.max(0, nx*(lx/ll) + ny*(ly/ll) + nz*(lz/ll));
+  const rz = 2*nz*(lz/ll) - (lz/ll);
+  const spec = Math.pow(Math.max(0, rz), 24) * 0.3;
+  return 0.25 + 0.75*diff + spec;
+}
+
+function processEffect(effectName, src, gray, hm, normals, W, H) {
+  const { nx, ny } = normals;
+  const out = new Uint8ClampedArray(W * H * 4);
+  const LX = 1, LY = -1, LZ = 1.5; // top-left-above light
+
+  for (let i = 0; i < W*H; i++) {
+    const idx = i*4;
+    const g   = gray[i];     // 0=dark stroke, 1=white
+    const h   = hm[i];       // 0=near stroke, 1=center of shape
+    const x   = i % W, y = (i/W)|0;
+    const isStroke = g < 0.3;
+    const ao  = 0.25 + 0.75 * h;
+    const lit = phong(nx[i], ny[i], LX, LY, LZ) * ao;
+
+    if (effectName === 'clay') {
+      if (isStroke) { out[idx]=30; out[idx+1]=18; out[idx+2]=12; }
+      else {
+        out[idx]   = Math.min(255, (200 + h*50)  * lit);
+        out[idx+1] = Math.min(255, (150 + h*50)  * lit);
+        out[idx+2] = Math.min(255, (100 + h*40)  * lit);
+      }
+
+    } else if (effectName === 'water') {
+      if (isStroke) { out[idx]=60; out[idx+1]=70; out[idx+2]=100; }
+      else {
+        const hue = (x/W*200 + y/H*160 + h*80) % 360;
+        const [r,gg,b] = hsl(hue, 55, 78);
+        const soft = 0.55 + 0.45*lit;
+        out[idx]=Math.min(255,r*soft); out[idx+1]=Math.min(255,gg*soft); out[idx+2]=Math.min(255,b*soft);
+        // Paper noise
+        const n = (Math.random()-.5)*18;
+        out[idx]=Math.max(0,Math.min(255,out[idx]+n));
+        out[idx+1]=Math.max(0,Math.min(255,out[idx+1]+n));
+        out[idx+2]=Math.max(0,Math.min(255,out[idx+2]+n));
+      }
+
+    } else if (effectName === 'sketch') {
+      if (isStroke) {
+        const v = Math.round(g*60);
+        out[idx]=v; out[idx+1]=v; out[idx+2]=v;
+      } else {
+        // Cream paper
+        const base = 245 + (Math.random()-.5)*10;
+        // Cross-hatch in transition zones
+        const shade = 1-h;
+        const hatch = (shade > 0.15) ? (((x+y)%8<2) ? 1-shade*.6 : 1) : 1;
+        out[idx]  =Math.round(base*hatch); out[idx+1]=Math.round((base-8)*hatch); out[idx+2]=Math.round((base-18)*hatch);
+      }
+
+    } else if (effectName === 'rainbow') {
+      if (isStroke) { out[idx]=20; out[idx+1]=10; out[idx+2]=30; }
+      else {
+        const hue = (x/W*360 + h*120) % 360;
+        const [r,gg,b] = hsl(hue, 70, 65);
+        out[idx]=Math.min(255,r*lit); out[idx+1]=Math.min(255,gg*lit); out[idx+2]=Math.min(255,b*lit);
+      }
+    }
+    out[idx+3] = 255;
+  }
+  return new ImageData(out, W, H);
+}
+
+function applyNeon(srcImgData, W, H, gray) {
+  // Create stroke canvas with rainbow colors
+  const strokeCvs = document.createElement('canvas');
+  strokeCvs.width = W; strokeCvs.height = H;
+  const sCtx = strokeCvs.getContext('2d');
+
+  const strokeImg = new ImageData(W, H);
+  for (let i = 0; i < W*H; i++) {
+    const idx = i*4, x = i%W, y = (i/W)|0;
+    if (gray[i] < 0.55) {
+      const opacity = Math.max(0, (0.55-gray[i])/0.55);
+      const hue = (x/W*320 + y/H*160) % 360;
+      const [r,g,b] = hsl(hue, 100, 60);
+      strokeImg.data[idx]   = r;
+      strokeImg.data[idx+1] = g;
+      strokeImg.data[idx+2] = b;
+      strokeImg.data[idx+3] = Math.round(opacity*255);
+    }
+  }
+  sCtx.putImageData(strokeImg, 0, 0);
+
+  // Compose: black base + glow layers + crisp strokes
+  const rCtx = afterCanvas.getContext('2d');
+  rCtx.fillStyle = '#060010';
+  rCtx.fillRect(0, 0, W, H);
+
+  rCtx.globalCompositeOperation = 'screen';
+  rCtx.filter = 'blur(14px)';
+  rCtx.globalAlpha = 0.7;
+  rCtx.drawImage(strokeCvs, 0, 0);
+
+  rCtx.filter = 'blur(5px)';
+  rCtx.globalAlpha = 0.85;
+  rCtx.drawImage(strokeCvs, 0, 0);
+
+  rCtx.filter = 'none';
+  rCtx.globalAlpha = 1;
+  rCtx.drawImage(strokeCvs, 0, 0);
+  rCtx.globalCompositeOperation = 'source-over';
+}
+
+let savedGray = null, savedHm = null, savedNormals = null;
+
+async function bringToLife() {
+  const proc = document.getElementById('procOverlay');
+  proc.classList.add('show');
+  // Two rAF to ensure repaint before heavy compute
+  await new Promise(r => requestAnimationFrame(r));
+  await new Promise(r => requestAnimationFrame(r));
+
+  const src = drawCtx.getImageData(0, 0, CW, CH);
+
+  // Grayscale
+  const gray = new Float32Array(CW * CH);
+  for (let i = 0; i < CW*CH; i++) {
+    gray[i] = (src.data[i*4]*0.299 + src.data[i*4+1]*0.587 + src.data[i*4+2]*0.114) / 255;
+  }
+
+  savedGray    = gray;
+  savedHm      = computeHeightMap(gray, CW, CH);
+  savedNormals = computeNormals(savedHm, CW, CH);
+
+  // Copy to beforeCanvas
+  beforeCanvas.getContext('2d').putImageData(src, 0, 0);
+
+  // Apply chosen effect
+  applyEffectToResult(effect);
+
+  proc.classList.remove('show');
+  document.getElementById('resultOverlay').classList.add('show');
+}
+
+function applyEffectToResult(eff) {
+  if (!savedGray) return;
+  document.getElementById('afterLabel').textContent =
+    { clay:'🏺 Clay', water:'🎨 Watercolor', neon:'⚡ Neon', sketch:'✏️ Pencil Sketch', rainbow:'🌈 Rainbow' }[eff] || eff;
+
+  if (eff === 'neon') {
+    applyNeon(null, CW, CH, savedGray);
+  } else {
+    const imgData = processEffect(eff, null, savedGray, savedHm, savedNormals, CW, CH);
+    afterCanvas.getContext('2d').putImageData(imgData, 0, 0);
+  }
+}
+
+function switchEffect(eff, btn) {
+  document.querySelectorAll('.result-eff').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  applyEffectToResult(eff);
+}
+
+function closeResult() {
+  document.getElementById('resultOverlay').classList.remove('show');
+}
+
+function downloadResult() {
+  // Composite: side by side
+  const out = document.createElement('canvas');
+  out.width = CW*2 + 40; out.height = CW + 60;
+  const oc = out.getContext('2d');
+  oc.fillStyle = '#111'; oc.fillRect(0, 0, out.width, out.height);
+  oc.drawImage(beforeCanvas, 0, 30, CW, CW);
+  oc.drawImage(afterCanvas, CW+40, 30, CW, CW);
+  oc.fillStyle='rgba(255,255,255,.7)'; oc.font='bold 20px Inter,system-ui';
+  oc.fillText('Your Drawing', 18, 22);
+  oc.fillText('✨ Brought to Life', CW+58, 22);
+  const a = document.createElement('a');
+  a.href = out.toDataURL('image/png');
+  a.download = 'simply-draw.png';
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════
+initPalette();
+initExamples();
+</script>
+</body>
+</html>

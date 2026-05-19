@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simply Draw · Everything Kids</title>
+<style>
+:root{--bg:#fafafa;--bg2:#fff;--border:#e5e7eb;--text1:#111827;--text2:#6b7280;--accent:#FA5D29;--nav:60px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text2);font-family:'Inter',system-ui,sans-serif;padding-top:var(--nav)}
+a{color:inherit;text-decoration:none}
+
+.tp-nav{position:fixed;top:0;left:0;right:0;height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(250,250,250,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:100}
+.tp-nav-back{color:var(--text2);font-size:.85em;transition:color .2s}.tp-nav-back:hover{color:var(--text1)}
+.tp-nav-title{font-weight:700;font-size:1rem;color:var(--text1)}
+.tp-nav-demo{background:linear-gradient(135deg,#a855f7,#FA5D29);color:#fff;padding:.35rem .9rem;border-radius:6px;font-size:.8em;font-weight:700;transition:filter .2s}.tp-nav-demo:hover{filter:brightness(1.1)}
+
+.tp-hero{max-width:1100px;margin:0 auto;padding:4rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+@media(max-width:768px){.tp-hero{grid-template-columns:1fr;gap:2rem}}
+.tp-badge{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(250,93,41,.12));color:#a855f7;font-size:.75em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .85rem;border-radius:20px;margin-bottom:1rem;border:1px solid rgba(168,85,247,.2)}
+.tp-h1{font-size:clamp(2rem,5vw,3.25rem);font-weight:900;color:var(--text1);line-height:1.1;margin-bottom:1rem;letter-spacing:-.03em}
+.tp-h1 span{background:linear-gradient(135deg,#a855f7,#FA5D29);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tp-lead{font-size:1.05em;line-height:1.7;margin-bottom:2rem}
+.tp-feats-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.tp-feats-list li{display:flex;align-items:center;gap:.5rem;font-size:.9em;color:var(--text1)}
+.tp-feats-list li::before{content:'✓';color:var(--accent);font-weight:800;flex-shrink:0}
+.tp-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,#a855f7,#FA5D29);color:#fff;padding:.7rem 1.5rem;border-radius:8px;font-weight:700;font-size:.9em;transition:all .2s}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-ghost{border:1px solid var(--border);color:var(--text1);padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9em;transition:all .2s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+.tp-preview{border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12);border:1px solid var(--border);aspect-ratio:4/3}
+.tp-preview iframe{width:100%;height:100%;border:none;display:block}
+
+/* Effects showcase */
+.effects-section{background:linear-gradient(135deg,#0d1117,#1a0a2e);padding:5rem 2rem;color:#e6edf3}
+.effects-inner{max-width:1100px;margin:0 auto}
+.effects-label{font-size:.75em;text-transform:uppercase;letter-spacing:.1em;color:#a855f7;font-weight:600;margin-bottom:.5rem}
+.effects-title{font-size:clamp(1.5rem,3vw,2.25rem);font-weight:800;margin-bottom:.75rem;letter-spacing:-.02em}
+.effects-sub{color:#8b949e;font-size:.95em;margin-bottom:3rem;line-height:1.6;max-width:520px}
+.effects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.25rem}
+.effect-card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:1.5rem 1.25rem;transition:border-color .2s}
+.effect-card:hover{border-color:#a855f7}
+.effect-icon{font-size:2.2em;margin-bottom:.75rem}
+.effect-name{font-size:.95em;font-weight:700;margin-bottom:.35rem}
+.effect-desc{font-size:.82em;color:#8b949e;line-height:1.6}
+
+/* Features section */
+.tp-feats-section{background:var(--bg2);border-top:1px solid var(--border)}
+.tp-feats-inner{max-width:1100px;margin:0 auto;padding:4rem 2rem}
+.tp-section-label{font-size:.75em;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:600;margin-bottom:.5rem}
+.tp-section-title{font-size:clamp(1.5rem,3vw,2.25rem);font-weight:800;color:var(--text1);margin-bottom:2.5rem;letter-spacing:-.02em}
+.tp-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem}
+.tp-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:1.25rem}
+.tp-card-icon{font-size:1.75em;margin-bottom:.75rem}
+.tp-card-title{font-size:.95em;font-weight:700;color:var(--text1);margin-bottom:.4rem}
+.tp-card-desc{font-size:.83em;line-height:1.6}
+
+footer{background:var(--text1);color:rgba(255,255,255,.5);text-align:center;padding:2rem;font-size:.8em}
+footer a{color:var(--accent)}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="tp-nav">
+  <a class="tp-nav-back" href="../../">← Everything</a>
+  <span class="tp-nav-title">✏️ Simply Draw</span>
+  <a class="tp-nav-demo" href="index.html">✨ Draw Now →</a>
+</nav>
+
+<section class="tp-hero">
+  <div>
+    <div class="tp-badge">🧒 Kids · Creative</div>
+    <h1 class="tp-h1">Draw it. <span>Bring it to Life.</span></h1>
+    <p class="tp-lead">Sketch anything — a sun, a cat, a robot — then watch it transform into a shaded, glowing, or watercolored masterpiece. Works with a finger, mouse, or Apple Pencil on iPad.</p>
+    <ul class="tp-feats-list">
+      <li>Pencil, Marker, Brush &amp; Chalk tools</li>
+      <li>Pressure-sensitive Apple Pencil support</li>
+      <li>Palm rejection for natural iPad drawing</li>
+      <li>8 kid-friendly example drawings to try</li>
+      <li>5 magic effects: Clay, Watercolor, Neon, Sketch, Rainbow</li>
+      <li>Upload a photo or snap one with your camera</li>
+      <li>Save your masterpiece as a PNG</li>
+    </ul>
+    <div class="tp-ctas">
+      <a class="btn-primary" href="index.html">✨ Start Drawing →</a>
+      <a class="btn-ghost" href="../../">Browse More</a>
+    </div>
+  </div>
+  <div class="tp-preview">
+    <iframe src="index.html" title="Simply Draw preview" scrolling="no"></iframe>
+  </div>
+</section>
+
+<!-- Effects showcase -->
+<section class="effects-section">
+  <div class="effects-inner">
+    <div class="effects-label">Magic Effects</div>
+    <h2 class="effects-title">5 Ways to Bring Your Drawing to Life</h2>
+    <p class="effects-sub">Shading is what makes drawings look realistic — it adds depth, dimension, and turns flat sketches into something magical. Pick your style and watch the transformation.</p>
+    <div class="effects-grid">
+      <div class="effect-card">
+        <div class="effect-icon">🏺</div>
+        <div class="effect-name">Clay</div>
+        <div class="effect-desc">3D bump mapping makes your drawing look sculpted in warm terracotta clay, with real directional lighting and shadows.</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-icon">🎨</div>
+        <div class="effect-name">Watercolor</div>
+        <div class="effect-desc">Pastel washes of color fill your shapes, with a subtle paper texture that gives it a hand-painted feel.</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-icon">⚡</div>
+        <div class="effect-name">Neon</div>
+        <div class="effect-desc">Your lines glow with rainbow neon light on a deep dark background — like your drawing came to life in a city at night.</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-icon">✏️</div>
+        <div class="effect-name">Pencil Sketch</div>
+        <div class="effect-desc">Cross-hatching and shading added automatically on warm cream paper, just like a professional artist's sketchbook.</div>
+      </div>
+      <div class="effect-card">
+        <div class="effect-icon">🌈</div>
+        <div class="effect-name">Rainbow</div>
+        <div class="effect-desc">Every region of your drawing gets a different rainbow hue with 3D shading — colorful, vibrant, and joyful.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tp-feats-section">
+  <div class="tp-feats-inner">
+    <div class="tp-section-label">Features</div>
+    <h2 class="tp-section-title">Built for Kids on Any Device</h2>
+    <div class="tp-cards">
+      <div class="tp-card">
+        <div class="tp-card-icon">🍎</div>
+        <div class="tp-card-title">Apple Pencil Ready</div>
+        <div class="tp-card-desc">Full pressure sensitivity and tilt on iPad — the harder you press, the thicker the line. Palm rejection keeps accidental touches away.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">✏️</div>
+        <div class="tp-card-title">4 Drawing Tools</div>
+        <div class="tp-card-desc">Pencil, Marker, Brush, and Chalk — each with a unique feel. Combine them to create interesting textures and styles.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">🎨</div>
+        <div class="tp-card-title">12-Color Palette</div>
+        <div class="tp-card-desc">Kid-friendly color set with red, orange, yellow, green, blue, purple, pink, and more — plus a custom color picker.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">⭐</div>
+        <div class="tp-card-title">8 Example Drawings</div>
+        <div class="tp-card-desc">Sun, House, Cat, Flower, Star, Fish, Robot, and Balloon. Tap any to load it on the canvas and apply effects instantly.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">📸</div>
+        <div class="tp-card-title">Photo Import</div>
+        <div class="tp-card-desc">Upload a photo or take a snap with your camera. The shading effects work on photos too — turn any image into art.</div>
+      </div>
+      <div class="tp-card">
+        <div class="tp-card-icon">↩️</div>
+        <div class="tp-card-title">Undo / Redo</div>
+        <div class="tp-card-desc">Made a mistake? Hit undo. Up to 40 steps of full undo/redo history so kids can experiment freely without fear.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Part of the <a href="../../">Everything Platform</a> · Open-source · Built for curious kids
+</footer>
+</body>
+</html>
