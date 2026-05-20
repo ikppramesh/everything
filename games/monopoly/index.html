@@ -66,52 +66,105 @@ button{cursor:pointer;font-family:inherit}
   display:grid;
   grid-template-columns:var(--corner) repeat(9,var(--sq)) var(--corner);
   grid-template-rows:var(--corner) repeat(9,var(--sq)) var(--corner);
-  background:#c8f0b4;
-  border:3px solid #2a2a2a;
+  background:linear-gradient(135deg,#d4edda 0%,#c3e6cb 40%,#b8dfc9 100%);
+  border:3px solid #1a2a1a;
   flex-shrink:0;
 }
-.board-center{grid-column:2/11;grid-row:2/11;background:#c8f0b4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px}
-.board-logo{font-size:clamp(10px,2.5vmin,26px);font-weight:900;color:#1a5c0a;text-align:center;line-height:1.2}
-.board-sub{font-size:clamp(6px,1.2vmin,11px);color:#2d8a1f;text-align:center}
-.board-rupee{font-size:clamp(20px,6vmin,60px);color:#1a5c0a;line-height:1}
+.board-center{
+  grid-column:2/11;grid-row:2/11;
+  background:linear-gradient(135deg,#ff9933 0%,#ffffff 40%,#138808 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:8px;
+  border:2px solid rgba(0,0,0,.15);
+}
+.board-logo{font-size:clamp(10px,2.5vmin,26px);font-weight:900;color:#00008b;text-align:center;line-height:1.2;text-shadow:0 1px 2px rgba(255,255,255,.6)}
+.board-sub{font-size:clamp(6px,1.2vmin,11px);color:#00008b;text-align:center;font-weight:700}
+.board-rupee{font-size:clamp(24px,7vmin,72px);color:#00008b;line-height:1;font-weight:900;text-shadow:0 2px 8px rgba(0,0,139,.3)}
+.board-flag{font-size:clamp(12px,3vmin,32px);line-height:1}
 
 /* SQUARES */
 .sq{
-  border:1px solid #444;
+  border:1px solid rgba(0,0,0,.3);
   display:flex;flex-direction:column;
   align-items:center;justify-content:center;
   position:relative;overflow:hidden;
   cursor:pointer;
-  background:#c8f0b4;
-  transition:background .15s;
+  background:linear-gradient(180deg,#e8f5e9 0%,#dcedc8 100%);
+  transition:background .15s,box-shadow .15s;
 }
-.sq:hover{background:rgba(255,255,255,.18)}
-.color-band{width:100%;flex-shrink:0;height:26%}
-/* top row: band at bottom (toward center) */
+.sq:hover{background:rgba(255,255,255,.55)}
+
+/* Flash buy animation */
+@keyframes flash-buy{
+  0%{box-shadow:none}
+  30%{box-shadow:0 0 0 4px #fbbf24,0 0 12px #fbbf24}
+  60%{box-shadow:0 0 0 3px #f59e0b,0 0 8px #f59e0b}
+  100%{box-shadow:none}
+}
+.sq.buying{animation:flash-buy .6s ease}
+
+/* Color bands - more vibrant gradients */
+.color-band{width:100%;flex-shrink:0;height:28%}
 .sq-t{flex-direction:column-reverse}
-/* right col: band at left */
 .sq-r{flex-direction:row}
-.sq-r .color-band{width:26%;height:100%}
-/* left col: band at right */
+.sq-r .color-band{width:28%;height:100%}
 .sq-l{flex-direction:row-reverse}
-.sq-l .color-band{width:26%;height:100%}
+.sq-l .color-band{width:28%;height:100%}
+
 .sq-name{font-size:clamp(4px,.75vmin,8px);font-weight:700;color:#111;text-align:center;line-height:1.15;padding:1px 2px;word-break:break-word}
-.sq-price{font-size:clamp(3px,.6vmin,7px);color:#444;text-align:center}
+.sq-price{font-size:clamp(3px,.6vmin,7px);color:#333;text-align:center;font-weight:600}
 .sq-icon{font-size:clamp(7px,1.3vmin,14px);line-height:1}
 .sq-corner{font-size:clamp(6px,1vmin,12px);font-weight:800;color:#111;text-align:center;line-height:1.2}
+
+/* Landmark emoji on squares */
+.sq-landmark{font-size:clamp(6px,1.1vmin,11px);line-height:1;display:block;text-align:center}
+
 /* tokens on square */
 .sq-tokens{display:flex;flex-wrap:wrap;gap:1px;justify-content:center;padding:1px;position:absolute;bottom:2px;left:2px;right:2px}
 .sq-token{font-size:clamp(7px,1.3vmin,13px);line-height:1}
-/* houses */
-.sq-houses{display:flex;gap:1px;justify-content:center;position:absolute;top:28%;left:2px;right:2px}
-.sq-house{width:clamp(3px,.6vmin,7px);height:clamp(3px,.6vmin,7px);background:#22c55e;border-radius:1px;flex-shrink:0}
-.sq-hotel{width:clamp(4px,.8vmin,9px);height:clamp(4px,.8vmin,9px);background:#ef4444;border-radius:1px;flex-shrink:0}
+
+/* CSS 3D mini houses on board squares */
+.sq-houses{display:flex;gap:2px;justify-content:center;position:absolute;top:29%;left:2px;right:2px;flex-wrap:wrap}
+.h3d-mini{
+  position:relative;
+  width:clamp(4px,.9vmin,9px);
+  height:clamp(3px,.7vmin,7px);
+  background:#22c55e;
+  border-radius:0 0 1px 1px;
+  flex-shrink:0;
+  box-shadow:1px 1px 0 rgba(0,0,0,.3);
+}
+.h3d-mini::before{
+  content:'';
+  position:absolute;
+  bottom:100%;
+  left:-2px;
+  right:-2px;
+  border-left:calc(clamp(4px,.9vmin,9px)/2 + 2px) solid transparent;
+  border-right:calc(clamp(4px,.9vmin,9px)/2 + 2px) solid transparent;
+  border-bottom:clamp(3px,.6vmin,6px) solid #16a34a;
+}
+.h3d-mini.hotel{
+  background:#ef4444;
+  width:clamp(5px,1.1vmin,11px);
+  height:clamp(4px,.9vmin,9px);
+  box-shadow:1px 1px 0 rgba(0,0,0,.3);
+}
+.h3d-mini.hotel::before{
+  border-bottom-color:#dc2626;
+  left:-3px;right:-3px;
+  border-left-width:calc(clamp(5px,1.1vmin,11px)/2 + 3px);
+  border-right-width:calc(clamp(5px,1.1vmin,11px)/2 + 3px);
+  border-bottom-width:clamp(4px,.8vmin,8px);
+}
+
 /* owner bar */
 .sq-owner{position:absolute;bottom:0;left:0;right:0;height:3px}
 
 /* PANEL CARDS */
 .pcard{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
 .pcard-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin-bottom:8px}
+
 /* players list */
 .plyr{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:7px;transition:background .15s;margin-bottom:4px}
 .plyr.active-turn{background:rgba(250,93,41,.12);border:1px solid var(--accent)}
@@ -124,12 +177,14 @@ button{cursor:pointer;font-family:inherit}
 .badge-cpu{background:#3b82f6;color:#fff}
 .badge-jail{background:#f59e0b;color:#000}
 .badge-broke{background:#ef4444;color:#fff}
+
 /* dice area */
 .dice-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .die{width:38px;height:38px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.5em;box-shadow:0 2px 6px rgba(0,0,0,.4);flex-shrink:0;transition:transform .2s}
 .die.spin{animation:dieroll .5s ease}
 @keyframes dieroll{0%{transform:rotate(0) scale(1)}30%{transform:rotate(180deg) scale(1.2)}70%{transform:rotate(270deg) scale(1.1)}100%{transform:rotate(360deg) scale(1)}}
 .dice-sum{font-size:.85em;color:var(--muted);font-weight:700}
+
 /* buttons */
 .btn{padding:7px 14px;border:none;border-radius:8px;font-weight:700;font-size:.82em;transition:all .15s}
 .btn-accent{background:var(--accent);color:#fff}.btn-accent:hover{opacity:.88}
@@ -139,16 +194,20 @@ button{cursor:pointer;font-family:inherit}
 .btn-warn{background:#f59e0b;color:#000}
 .btn:disabled{opacity:.35;cursor:not-allowed}
 .btn-row{display:flex;gap:6px;flex-wrap:wrap}
+
 /* log */
 .log-wrap{max-height:160px;overflow-y:auto;display:flex;flex-direction:column-reverse;gap:3px}
 .log-entry{font-size:.72em;color:var(--muted);border-left:2px solid var(--border);padding-left:6px;line-height:1.4}
 .log-hi{color:var(--accent);border-color:var(--accent)}
 .log-good{color:#4ade80;border-color:#4ade80}
 .log-bad{color:#ef4444;border-color:#ef4444}
+
 /* status msg */
 .status-msg{font-size:.82em;color:var(--text);background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:7px 10px;min-height:34px;line-height:1.4}
+
 /* action area */
 .action-btns{display:flex;flex-direction:column;gap:6px}
+
 /* property management */
 .prop-list{max-height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
 .prop-item{display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--bg3);border-radius:6px;cursor:pointer;transition:background .15s;font-size:.76em}
@@ -165,6 +224,53 @@ button{cursor:pointer;font-family:inherit}
 .modal-title{font-size:1.25em;font-weight:900;margin-bottom:4px}
 .modal-sub{color:var(--muted);font-size:.86em;margin-bottom:16px;line-height:1.5}
 .modal-acts{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+
+/* CSS 3D houses in modals (larger) */
+.h3d-wrap{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+.h3d{
+  position:relative;
+  width:18px;
+  height:14px;
+  background:linear-gradient(180deg,#22c55e,#16a34a);
+  border-radius:0 0 2px 2px;
+  box-shadow:2px 2px 0 rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.2);
+}
+.h3d::before{
+  content:'';
+  position:absolute;
+  bottom:100%;
+  left:-4px;
+  right:-4px;
+  border-left:13px solid transparent;
+  border-right:13px solid transparent;
+  border-bottom:10px solid #15803d;
+  filter:drop-shadow(0 -1px 0 rgba(0,0,0,.2));
+}
+.h3d::after{
+  content:'';
+  position:absolute;
+  bottom:2px;
+  left:50%;transform:translateX(-50%);
+  width:6px;height:8px;
+  background:rgba(0,0,0,.25);
+  border-radius:1px 1px 0 0;
+}
+.h3d.hotel{
+  background:linear-gradient(180deg,#ef4444,#dc2626);
+  width:22px;
+  height:18px;
+  box-shadow:2px 2px 0 rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.2);
+}
+.h3d.hotel::before{
+  border-bottom:12px solid #b91c1c;
+  left:-5px;right:-5px;
+  border-left:16px solid transparent;
+  border-right:16px solid transparent;
+}
+.h3d.hotel::after{
+  width:8px;height:11px;
+}
+
 /* property detail */
 .prop-card{background:var(--bg3);border-radius:12px;padding:14px;margin-bottom:12px;text-align:left}
 .prop-card-header{display:flex;align-items:center;gap:10px;margin-bottom:10px}
@@ -175,13 +281,15 @@ button{cursor:pointer;font-family:inherit}
 .rent-tbl td{padding:3px 4px;border-bottom:1px solid var(--border)}
 .rent-tbl td:last-child{text-align:right;color:#4ade80;font-weight:700}
 .rent-tbl tr:last-child td{border-bottom:none}
+
 /* jail modal options */
 .jail-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.jail-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-align:left;cursor:pointer;transition:border-color .15s}
+.jail-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;text-align:left;cursor:pointer;transition:border-color .15s;width:100%}
 .jail-opt:hover{border-color:var(--accent)}
 .jail-opt-icon{font-size:1.4em;flex-shrink:0}
 .jail-opt-label{font-weight:700;font-size:.88em}
 .jail-opt-desc{font-size:.75em;color:var(--muted)}
+
 /* game over */
 .winner-display{padding:20px 0}
 .winner-trophy{font-size:3.5em;margin-bottom:8px}
@@ -192,17 +300,20 @@ button{cursor:pointer;font-family:inherit}
 .standing-rank{font-weight:900;color:var(--muted);width:20px}
 .standing-name{flex:1;font-weight:700}
 .standing-money{color:#4ade80;font-weight:700}
+
 /* mortgage list */
 .mort-list{display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;margin-bottom:12px;text-align:left}
 .mort-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .15s;font-size:.82em}
 .mort-item:hover{border-color:#f59e0b}
-.mort-item.mortgaged{opacity:.5;cursor:not-allowed}
+.mort-item.mortgaged-item{opacity:.65;border-style:dashed}
 .mort-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
 .mort-name{flex:1}
 .mort-val{color:#f59e0b;font-weight:700}
+
 /* toast */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-size:.86em;font-weight:700;z-index:600;transition:transform .3s;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
+
 /* scrollbar */
 ::-webkit-scrollbar{width:4px;height:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -211,19 +322,20 @@ button{cursor:pointer;font-family:inherit}
 </head>
 <body>
 
-<!-- SETUP SCREEN -->
+<!-- NAV -->
 <nav class="ev-nav">
-  <a class="ev-nav-back" href="../../">← Everything</a>
-  <span class="ev-nav-title">🇮🇳 India Business</span>
+  <a class="ev-nav-back" href="../../">&#8592; Everything</a>
+  <span class="ev-nav-title">&#127470;&#127475; India Business</span>
   <div class="ev-nav-right"></div>
 </nav>
 
+<!-- SETUP SCREEN -->
 <div id="setup-screen">
   <div class="setup-box">
     <div class="setup-hero">
-      <div class="setup-hero-icon">🇮🇳</div>
+      <div class="setup-hero-icon">&#127470;&#127475;</div>
       <div class="setup-title">India Business</div>
-      <div class="setup-sub">Property trading across Indian states &amp; cities · ₹ Indian Rupees</div>
+      <div class="setup-sub">Property trading across Indian states &amp; cities &middot; &#8377; Indian Rupees</div>
     </div>
     <div class="setup-section">
       <span class="setup-label">Number of Players</span>
@@ -237,7 +349,7 @@ button{cursor:pointer;font-family:inherit}
       <span class="setup-label">Players</span>
       <div class="player-rows" id="player-rows"></div>
     </div>
-    <button class="start-btn" id="start-btn">🎲 Start Game</button>
+    <button class="start-btn" id="start-btn">&#127922; Start Game</button>
   </div>
 </div>
 
@@ -254,13 +366,13 @@ button{cursor:pointer;font-family:inherit}
       </div>
       <div class="pcard">
         <div class="pcard-title">Status</div>
-        <div class="status-msg" id="status-msg">Loading…</div>
+        <div class="status-msg" id="status-msg">Loading&#8230;</div>
       </div>
       <div class="pcard" id="action-card">
         <div class="pcard-title">Actions</div>
         <div class="dice-row">
-          <div class="die" id="die1">🎲</div>
-          <div class="die" id="die2">🎲</div>
+          <div class="die" id="die1">&#127922;</div>
+          <div class="die" id="die2">&#127922;</div>
           <span class="dice-sum" id="dice-sum"></span>
         </div>
         <div class="action-btns" id="action-btns"></div>
@@ -280,7 +392,7 @@ button{cursor:pointer;font-family:inherit}
 <!-- BUY MODAL -->
 <div class="modal-overlay" id="buy-modal">
   <div class="modal-box">
-    <div class="modal-icon" id="buy-icon">🏙️</div>
+    <div class="modal-icon" id="buy-icon">&#127961;&#65039;</div>
     <div class="modal-title" id="buy-title">Buy Property?</div>
     <div class="modal-sub" id="buy-sub"></div>
     <div class="prop-card" id="buy-prop-card"></div>
@@ -294,7 +406,7 @@ button{cursor:pointer;font-family:inherit}
 <!-- CARD MODAL -->
 <div class="modal-overlay" id="card-modal">
   <div class="modal-box">
-    <div class="modal-icon" id="card-icon">🃏</div>
+    <div class="modal-icon" id="card-icon">&#127183;</div>
     <div class="modal-title" id="card-title"></div>
     <div class="modal-sub" id="card-desc"></div>
     <div class="modal-acts">
@@ -306,7 +418,7 @@ button{cursor:pointer;font-family:inherit}
 <!-- JAIL MODAL -->
 <div class="modal-overlay" id="jail-modal">
   <div class="modal-box">
-    <div class="modal-icon">⛓️</div>
+    <div class="modal-icon">&#9939;&#65039;</div>
     <div class="modal-title">You're in Jail!</div>
     <div class="modal-sub" id="jail-sub">What do you want to do?</div>
     <div class="jail-opts" id="jail-opts"></div>
@@ -319,7 +431,7 @@ button{cursor:pointer;font-family:inherit}
 <!-- MORTGAGE MODAL -->
 <div class="modal-overlay" id="mort-modal">
   <div class="modal-box">
-    <div class="modal-icon">🏦</div>
+    <div class="modal-icon">&#127974;</div>
     <div class="modal-title" id="mort-title">Mortgage Properties</div>
     <div class="modal-sub" id="mort-sub">Select a property to mortgage or unmortgage</div>
     <div class="mort-list" id="mort-list"></div>
@@ -332,7 +444,7 @@ button{cursor:pointer;font-family:inherit}
 <!-- BUILD MODAL -->
 <div class="modal-overlay" id="build-modal">
   <div class="modal-box">
-    <div class="modal-icon">🏗️</div>
+    <div class="modal-icon">&#127959;&#65039;</div>
     <div class="modal-title">Build Houses / Hotels</div>
     <div class="modal-sub">Select a property to build on</div>
     <div class="mort-list" id="build-list"></div>
@@ -345,7 +457,7 @@ button{cursor:pointer;font-family:inherit}
 <!-- PROPERTY INFO MODAL -->
 <div class="modal-overlay" id="info-modal">
   <div class="modal-box">
-    <div class="modal-icon" id="info-icon">🏙️</div>
+    <div class="modal-icon" id="info-icon">&#127961;&#65039;</div>
     <div class="modal-title" id="info-title"></div>
     <div class="modal-sub" id="info-sub"></div>
     <div class="prop-card" id="info-prop-card"></div>
@@ -359,7 +471,7 @@ button{cursor:pointer;font-family:inherit}
 <div class="modal-overlay" id="gameover-modal">
   <div class="modal-box">
     <div class="winner-display">
-      <div class="winner-trophy" id="winner-trophy">🏆</div>
+      <div class="winner-trophy" id="winner-trophy">&#127942;</div>
       <div style="font-size:1.1em;color:var(--muted);margin-bottom:4px">Winner!</div>
       <div class="winner-name" id="winner-name"></div>
       <div class="winner-money" id="winner-money"></div>
@@ -367,7 +479,7 @@ button{cursor:pointer;font-family:inherit}
     <div class="final-standings" id="final-standings"></div>
     <div class="modal-acts" style="margin-top:20px">
       <button class="btn btn-accent" onclick="location.reload()">Play Again</button>
-      <a href="../../" class="btn btn-sec">← Home</a>
+      <a href="../../" class="btn btn-sec">&#8592; Home</a>
     </div>
   </div>
 </div>
@@ -377,92 +489,102 @@ button{cursor:pointer;font-family:inherit}
 <script>
 // ===================== BOARD DATA =====================
 const BOARD = [
-  {id:0,  type:'go',      name:'GO',              icon:'▶'},
-  {id:1,  type:'prop',    name:'Patna',      state:'Bihar',       group:'brown',    price:600,  rents:[20,40,200,600,1800,3200,4500],  hcost:500,  mort:300},
-  {id:2,  type:'chest',   name:'Janta Card',      icon:'📦'},
-  {id:3,  type:'prop',    name:'Bodh Gaya',  state:'Bihar',       group:'brown',    price:600,  rents:[40,80,400,1200,3600,6400,9000], hcost:500,  mort:300},
-  {id:4,  type:'tax',     name:'Income Tax',       icon:'💰', amount:2000},
-  {id:5,  type:'rail',    name:'Howrah Stn',  state:'W.Bengal',   price:2000, mort:1000},
-  {id:6,  type:'prop',    name:'Jaipur',     state:'Rajasthan',   group:'lblue',    price:1000, rents:[60,120,300,900,2700,4000,5500], hcost:500,  mort:500},
-  {id:7,  type:'chance',  name:'Kismat Card',     icon:'🃏'},
-  {id:8,  type:'prop',    name:'Udaipur',    state:'Rajasthan',   group:'lblue',    price:1000, rents:[60,120,300,900,2700,4000,5500], hcost:500,  mort:500},
-  {id:9,  type:'prop',    name:'Jodhpur',    state:'Rajasthan',   group:'lblue',    price:1200, rents:[80,160,400,1000,3000,4500,6000],hcost:500,  mort:600},
-  {id:10, type:'jail',    name:'Jail',            icon:'⛓️'},
-  {id:11, type:'prop',    name:'Bengaluru',  state:'Karnataka',   group:'pink',     price:1400, rents:[100,200,500,1500,4500,6250,7500],hcost:1000, mort:700},
-  {id:12, type:'util',    name:'BSNL',       state:'Telecom',     price:1500, mort:750,  icon:'📡'},
-  {id:13, type:'prop',    name:'Mysuru',     state:'Karnataka',   group:'pink',     price:1400, rents:[100,200,500,1500,4500,6250,7500],hcost:1000, mort:700},
-  {id:14, type:'prop',    name:'Mangaluru',  state:'Karnataka',   group:'pink',     price:1600, rents:[120,240,600,1800,5000,7000,9000],hcost:1000, mort:800},
-  {id:15, type:'rail',    name:'Mumbai CST', state:'Maharashtra', price:2000, mort:1000},
-  {id:16, type:'prop',    name:'Chennai',    state:'Tamil Nadu',  group:'orange',   price:1800, rents:[140,280,700,2000,5500,7500,9500],hcost:1000, mort:900},
-  {id:17, type:'chest',   name:'Janta Card',      icon:'📦'},
-  {id:18, type:'prop',    name:'Coimbatore', state:'Tamil Nadu',  group:'orange',   price:1800, rents:[140,280,700,2000,5500,7500,9500],hcost:1000, mort:900},
-  {id:19, type:'prop',    name:'Madurai',    state:'Tamil Nadu',  group:'orange',   price:2000, rents:[160,320,800,2200,6000,8000,10000],hcost:1000,mort:1000},
-  {id:20, type:'parking', name:'Free Park',       icon:'🅿'},
-  {id:21, type:'prop',    name:'Mumbai',     state:'Maharashtra', group:'red',      price:2200, rents:[180,360,900,2500,7000,8750,10500],hcost:1500,mort:1100},
-  {id:22, type:'chance',  name:'Kismat Card',     icon:'🃏'},
-  {id:23, type:'prop',    name:'Pune',       state:'Maharashtra', group:'red',      price:2200, rents:[180,360,900,2500,7000,8750,10500],hcost:1500,mort:1100},
-  {id:24, type:'prop',    name:'Nagpur',     state:'Maharashtra', group:'red',      price:2400, rents:[200,400,1000,3000,7500,9250,11000],hcost:1500,mort:1200},
-  {id:25, type:'rail',    name:'Delhi Stn',  state:'Delhi',       price:2000, mort:1000},
-  {id:26, type:'prop',    name:'Ahmedabad',  state:'Gujarat',     group:'yellow',   price:2600, rents:[220,440,1100,3300,8000,9750,11500],hcost:1500,mort:1300},
-  {id:27, type:'prop',    name:'Surat',      state:'Gujarat',     group:'yellow',   price:2600, rents:[220,440,1100,3300,8000,9750,11500],hcost:1500,mort:1300},
-  {id:28, type:'util',    name:'NTPC',       state:'Power',       price:1500, mort:750,  icon:'⚡'},
-  {id:29, type:'prop',    name:'Vadodara',   state:'Gujarat',     group:'yellow',   price:2800, rents:[240,480,1200,3600,8500,10250,12000],hcost:1500,mort:1400},
-  {id:30, type:'gotojail',name:'Go To Jail', icon:'👮'},
-  {id:31, type:'prop',    name:'New Delhi',  state:'Delhi',       group:'green',    price:3000, rents:[260,520,1300,3900,9000,11000,12750],hcost:2000,mort:1500},
-  {id:32, type:'prop',    name:'Gurugram',   state:'Haryana',     group:'green',    price:3000, rents:[260,520,1300,3900,9000,11000,12750],hcost:2000,mort:1500},
-  {id:33, type:'chest',   name:'Janta Card',      icon:'📦'},
-  {id:34, type:'prop',    name:'Noida',      state:'U.P.',        group:'green',    price:3200, rents:[280,560,1500,4500,10000,12000,14000],hcost:2000,mort:1600},
-  {id:35, type:'rail',    name:'Chennai Cen',state:'Tamil Nadu',  price:2000, mort:1000},
-  {id:36, type:'chance',  name:'Kismat Card',     icon:'🃏'},
-  {id:37, type:'prop',    name:'Mumbai BKC', state:'Maharashtra', group:'dblue',    price:3500, rents:[350,700,1750,5000,11000,13000,15000],hcost:2000,mort:1750},
-  {id:38, type:'tax',     name:'Luxury Tax',       icon:'💎', amount:1000},
-  {id:39, type:'prop',    name:'Connaught Pl',state:'Delhi',      group:'dblue',    price:4000, rents:[500,1000,2500,7000,14000,17000,20000],hcost:2000,mort:2000},
+  {id:0,  type:'go',      name:'GO',              icon:'\u25B6'},
+  {id:1,  type:'prop',    name:'Patna',      state:'Bihar',       group:'brown',    price:600,  rents:[20,40,200,600,1800,3200,4500],   hcost:500,  mort:300,  landmark:'\u{1F3DB}\uFE0F'},
+  {id:2,  type:'chest',   name:'Janta Card',      icon:'\u{1F4E6}'},
+  {id:3,  type:'prop',    name:'Bodh Gaya',  state:'Bihar',       group:'brown',    price:600,  rents:[40,80,400,1200,3600,6400,9000],  hcost:500,  mort:300,  landmark:'\u2638\uFE0F'},
+  {id:4,  type:'tax',     name:'Income Tax',      icon:'\u{1F4B0}', amount:2000},
+  {id:5,  type:'rail',    name:'Howrah Stn', state:'W.Bengal',   price:2000, mort:1000, landmark:'\u{1F682}'},
+  {id:6,  type:'prop',    name:'Jaipur',     state:'Rajasthan',   group:'lblue',    price:1000, rents:[60,120,300,900,2700,4000,5500],  hcost:500,  mort:500,  landmark:'\u{1F3EF}'},
+  {id:7,  type:'chance',  name:'Kismat Card',     icon:'\u{1F0CF}'},
+  {id:8,  type:'prop',    name:'Udaipur',    state:'Rajasthan',   group:'lblue',    price:1000, rents:[60,120,300,900,2700,4000,5500],  hcost:500,  mort:500,  landmark:'\u{1F3F0}'},
+  {id:9,  type:'prop',    name:'Jodhpur',    state:'Rajasthan',   group:'lblue',    price:1200, rents:[80,160,400,1000,3000,4500,6000], hcost:500,  mort:600,  landmark:'\u{1F535}'},
+  {id:10, type:'jail',    name:'Jail',            icon:'\u26D3\uFE0F'},
+  {id:11, type:'prop',    name:'Bengaluru',  state:'Karnataka',   group:'pink',     price:1400, rents:[100,200,500,1500,4500,6250,7500],hcost:1000, mort:700,  landmark:'\u{1F4BB}'},
+  {id:12, type:'util',    name:'BSNL',       state:'Telecom',     price:1500, mort:750,  icon:'\u{1F4E1}', landmark:'\u{1F4E1}'},
+  {id:13, type:'prop',    name:'Mysuru',     state:'Karnataka',   group:'pink',     price:1400, rents:[100,200,500,1500,4500,6250,7500],hcost:1000, mort:700,  landmark:'\u{1F3EF}'},
+  {id:14, type:'prop',    name:'Mangaluru',  state:'Karnataka',   group:'pink',     price:1600, rents:[120,240,600,1800,5000,7000,9000],hcost:1000, mort:800,  landmark:'\u26F5'},
+  {id:15, type:'rail',    name:'Mumbai CST', state:'Maharashtra', price:2000, mort:1000, landmark:'\u{1F682}'},
+  {id:16, type:'prop',    name:'Chennai',    state:'Tamil Nadu',  group:'orange',   price:1800, rents:[140,280,700,2000,5500,7500,9500],hcost:1000, mort:900,  landmark:'\u{1F30A}'},
+  {id:17, type:'chest',   name:'Janta Card',      icon:'\u{1F4E6}'},
+  {id:18, type:'prop',    name:'Coimbatore', state:'Tamil Nadu',  group:'orange',   price:1800, rents:[140,280,700,2000,5500,7500,9500],hcost:1000, mort:900,  landmark:'\u2699\uFE0F'},
+  {id:19, type:'prop',    name:'Madurai',    state:'Tamil Nadu',  group:'orange',   price:2000, rents:[160,320,800,2200,6000,8000,10000],hcost:1000,mort:1000, landmark:'\u{1F33A}'},
+  {id:20, type:'parking', name:'Free Park',       icon:'\u{1F17F}'},
+  {id:21, type:'prop',    name:'Mumbai',     state:'Maharashtra', group:'red',      price:2200, rents:[180,360,900,2500,7000,8750,10500],hcost:1500,mort:1100, landmark:'\u{1F309}'},
+  {id:22, type:'chance',  name:'Kismat Card',     icon:'\u{1F0CF}'},
+  {id:23, type:'prop',    name:'Pune',       state:'Maharashtra', group:'red',      price:2200, rents:[180,360,900,2500,7000,8750,10500],hcost:1500,mort:1100, landmark:'\u{1F393}'},
+  {id:24, type:'prop',    name:'Nagpur',     state:'Maharashtra', group:'red',      price:2400, rents:[200,400,1000,3000,7500,9250,11000],hcost:1500,mort:1200,landmark:'\u{1F34A}'},
+  {id:25, type:'rail',    name:'Delhi Stn',  state:'Delhi',       price:2000, mort:1000, landmark:'\u{1F682}'},
+  {id:26, type:'prop',    name:'Ahmedabad',  state:'Gujarat',     group:'yellow',   price:2600, rents:[220,440,1100,3300,8000,9750,11500],hcost:1500,mort:1300,landmark:'\u{1F54C}'},
+  {id:27, type:'prop',    name:'Surat',      state:'Gujarat',     group:'yellow',   price:2600, rents:[220,440,1100,3300,8000,9750,11500],hcost:1500,mort:1300,landmark:'\u{1F48E}'},
+  {id:28, type:'util',    name:'NTPC',       state:'Power',       price:1500, mort:750,  icon:'\u26A1', landmark:'\u26A1'},
+  {id:29, type:'prop',    name:'Vadodara',   state:'Gujarat',     group:'yellow',   price:2800, rents:[240,480,1200,3600,8500,10250,12000],hcost:1500,mort:1400,landmark:'\u{1F3A8}'},
+  {id:30, type:'gotojail',name:'Go To Jail', icon:'\u{1F46E}'},
+  {id:31, type:'prop',    name:'New Delhi',  state:'Delhi',       group:'green',    price:3000, rents:[260,520,1300,3900,9000,11000,12750],hcost:2000,mort:1500,landmark:'\u{1F3DB}\uFE0F'},
+  {id:32, type:'prop',    name:'Gurugram',   state:'Haryana',     group:'green',    price:3000, rents:[260,520,1300,3900,9000,11000,12750],hcost:2000,mort:1500,landmark:'\u{1F3E2}'},
+  {id:33, type:'chest',   name:'Janta Card',      icon:'\u{1F4E6}'},
+  {id:34, type:'prop',    name:'Noida',      state:'U.P.',        group:'green',    price:3200, rents:[280,560,1500,4500,10000,12000,14000],hcost:2000,mort:1600,landmark:'\u{1F5A5}\uFE0F'},
+  {id:35, type:'rail',    name:'Chennai Cen',state:'Tamil Nadu',  price:2000, mort:1000, landmark:'\u{1F682}'},
+  {id:36, type:'chance',  name:'Kismat Card',     icon:'\u{1F0CF}'},
+  {id:37, type:'prop',    name:'Mumbai BKC', state:'Maharashtra', group:'dblue',    price:3500, rents:[350,700,1750,5000,11000,13000,15000],hcost:2000,mort:1750,landmark:'\u{1F3E6}'},
+  {id:38, type:'tax',     name:'Luxury Tax',      icon:'\u{1F48E}', amount:1000},
+  {id:39, type:'prop',    name:'Connaught Pl',state:'Delhi',      group:'dblue',    price:4000, rents:[500,1000,2500,7000,14000,17000,20000],hcost:2000,mort:2000,landmark:'\u{1F3AA}'},
 ];
 
 const GC = {
-  brown:'#8B4513', lblue:'#56b4e9', pink:'#e91e8c',
-  orange:'#FF8C00', red:'#DC143C', yellow:'#FFD700',
-  green:'#228B22', dblue:'#0033cc'
+  brown:'linear-gradient(135deg,#8B4513,#a0522d)',
+  lblue:'linear-gradient(135deg,#1e90ff,#56b4e9)',
+  pink:'linear-gradient(135deg,#e91e8c,#ff69b4)',
+  orange:'linear-gradient(135deg,#FF6000,#FF8C00)',
+  red:'linear-gradient(135deg,#DC143C,#ff4444)',
+  yellow:'linear-gradient(135deg,#DAA520,#FFD700)',
+  green:'linear-gradient(135deg,#1a6b1a,#228B22)',
+  dblue:'linear-gradient(135deg,#00008b,#0044cc)'
 };
-const TOKENS = ['🔴','🔵','🟡','🟢'];
+const GC_SOLID = {
+  brown:'#8B4513', lblue:'#1e90ff', pink:'#e91e8c',
+  orange:'#FF6000', red:'#DC143C', yellow:'#DAA520',
+  green:'#228B22', dblue:'#00008b'
+};
+const TOKENS = ['\u{1F534}','\u{1F535}','\u{1F7E1}','\u{1F7E2}'];
 const TOKEN_COLORS = ['#ef4444','#3b82f6','#f59e0b','#22c55e'];
-const DICE_FACES = ['','⚀','⚁','⚂','⚃','⚄','⚅'];
+const DICE_FACES = ['','\u2680','\u2681','\u2682','\u2683','\u2684','\u2685'];
 
 const CHANCE_CARDS = [
-  {text:'Advance to GO. Collect ₹2,000.',       action:'goto',    val:0},
-  {text:'Advance to Mumbai BKC.',               action:'goto',    val:37},
-  {text:'Advance to Connaught Place.',          action:'goto',    val:39},
-  {text:'Advance to Howrah Station.',           action:'gotorail',val:5},
-  {text:'Advance to nearest railway station. Pay 2× rent if owned.', action:'nearrail', val:0},
-  {text:'Bank dividend — collect ₹500.',        action:'collect', val:500},
-  {text:'Get Out of Jail Free.',                action:'jailfree',val:0},
-  {text:'Go back 3 spaces.',                    action:'back',    val:3},
-  {text:'Go to Jail. Do not pass GO.',          action:'jail',    val:0},
-  {text:'Street repairs: pay ₹1,000 per house, ₹2,500 per hotel.', action:'repairs', val:[1000,2500]},
-  {text:'Speeding fine — pay ₹300.',            action:'pay',     val:300},
-  {text:'Trip to Chennai Central.',             action:'goto',    val:35},
-  {text:'Elected chairman — pay each player ₹500.', action:'payall', val:500},
-  {text:'Building loan matures — collect ₹1,500.', action:'collect',val:1500},
-  {text:'Advance to Mumbai. Collect ₹2,000 if you pass GO.', action:'goto', val:21},
+  {text:'Advance to GO. Collect \u20B92,000.',              action:'goto',    val:0},
+  {text:'Advance to Mumbai BKC.',                           action:'goto',    val:37},
+  {text:'Advance to Connaught Place.',                      action:'goto',    val:39},
+  {text:'Advance to Howrah Station.',                       action:'gotorail',val:5},
+  {text:'Advance to nearest railway station. Pay 2\xD7 rent if owned.', action:'nearrail', val:0},
+  {text:'Bank dividend \u2014 collect \u20B9500.',          action:'collect', val:500},
+  {text:'Get Out of Jail Free.',                            action:'jailfree',val:0},
+  {text:'Go back 3 spaces.',                                action:'back',    val:3},
+  {text:'Go to Jail. Do not pass GO.',                      action:'jail',    val:0},
+  {text:'Street repairs: pay \u20B91,000 per house, \u20B92,500 per hotel.', action:'repairs', val:[1000,2500]},
+  {text:'Speeding fine \u2014 pay \u20B9300.',              action:'pay',     val:300},
+  {text:'Trip to Chennai Central.',                         action:'goto',    val:35},
+  {text:'Elected chairman \u2014 pay each player \u20B9500.', action:'payall',val:500},
+  {text:'Building loan matures \u2014 collect \u20B91,500.',action:'collect', val:1500},
+  {text:'Advance to Mumbai. Collect \u20B92,000 if you pass GO.', action:'goto', val:21},
 ];
 const CHEST_CARDS = [
-  {text:'Advance to GO. Collect ₹2,000.',        action:'goto',    val:0},
-  {text:'Bank error in your favour — collect ₹2,000.', action:'collect', val:2000},
-  {text:'Doctor\'s fee — pay ₹500.',              action:'pay',     val:500},
-  {text:'Sale of stock — collect ₹500.',          action:'collect', val:500},
-  {text:'Get Out of Jail Free.',                  action:'jailfree',val:0},
-  {text:'Go to Jail. Do not pass GO.',            action:'jail',    val:0},
-  {text:'Grand Opera Night — collect ₹500 from every player.', action:'collectall', val:500},
-  {text:'Festival fund matures — receive ₹1,000.',action:'collect', val:1000},
-  {text:'Income tax refund — collect ₹200.',      action:'collect', val:200},
-  {text:'Birthday! Collect ₹100 from each player.', action:'collectall', val:100},
-  {text:'Life insurance matures — collect ₹1,000.',action:'collect', val:1000},
-  {text:'Pay hospital fees — ₹1,000.',            action:'pay',     val:1000},
-  {text:'Pay school fees — ₹500.',                action:'pay',     val:500},
-  {text:'Consultancy fee received — ₹2,500.',     action:'collect', val:2500},
-  {text:'Street repairs: ₹400 per house, ₹1,150 per hotel.', action:'repairs', val:[400,1150]},
-  {text:'Won second prize — collect ₹100.',       action:'collect', val:100},
-  {text:'You inherit ₹1,000.',                    action:'collect', val:1000},
+  {text:'Advance to GO. Collect \u20B92,000.',              action:'goto',    val:0},
+  {text:'Bank error in your favour \u2014 collect \u20B92,000.', action:'collect', val:2000},
+  {text:"Doctor's fee \u2014 pay \u20B9500.",               action:'pay',     val:500},
+  {text:'Sale of stock \u2014 collect \u20B9500.',          action:'collect', val:500},
+  {text:'Get Out of Jail Free.',                            action:'jailfree',val:0},
+  {text:'Go to Jail. Do not pass GO.',                      action:'jail',    val:0},
+  {text:'Grand Opera Night \u2014 collect \u20B9500 from every player.', action:'collectall', val:500},
+  {text:'Festival fund matures \u2014 receive \u20B91,000.',action:'collect', val:1000},
+  {text:'Income tax refund \u2014 collect \u20B9200.',      action:'collect', val:200},
+  {text:'Birthday! Collect \u20B9100 from each player.',    action:'collectall', val:100},
+  {text:'Life insurance matures \u2014 collect \u20B91,000.',action:'collect',val:1000},
+  {text:'Pay hospital fees \u2014 \u20B91,000.',            action:'pay',     val:1000},
+  {text:'Pay school fees \u2014 \u20B9500.',                action:'pay',     val:500},
+  {text:'Consultancy fee received \u2014 \u20B92,500.',     action:'collect', val:2500},
+  {text:'Street repairs: \u20B9400 per house, \u20B91,150 per hotel.', action:'repairs', val:[400,1150]},
+  {text:'Won second prize \u2014 collect \u20B9100.',       action:'collect', val:100},
+  {text:'You inherit \u20B91,000.',                         action:'collect', val:1000},
 ];
 
 // ===================== GRID POSITIONS =====================
@@ -478,10 +600,10 @@ function gridPos(id) {
 }
 function sqSide(id) {
   if ([0,10,20,30].includes(id)) return 'corner';
-  if (id>=1  && id<=9)  return 'b'; // bottom
-  if (id>=11 && id<=19) return 'r'; // right
-  if (id>=21 && id<=29) return 't'; // top
-  return 'l'; // left
+  if (id>=1  && id<=9)  return 'b';
+  if (id>=11 && id<=19) return 'r';
+  if (id>=21 && id<=29) return 't';
+  return 'l';
 }
 
 // ===================== GAME STATE =====================
@@ -510,22 +632,19 @@ function renderSetupRows() {
     const disabled = i >= setupPlayerCount;
     const row = document.createElement('div');
     row.className = 'prow';
-    row.id = `prow-${i}`;
+    row.id = 'prow-'+i;
     row.style.opacity = disabled ? '0.3' : '1';
-    row.innerHTML = `
-      <span class="prow-num">${TOKENS[i]}</span>
-      <input class="prow-name" id="pname-${i}" value="${defaultNames[i]}" placeholder="Player ${i+1}" ${disabled?'disabled':''}>
-      <button class="prow-cpu${i===0?' ':'  on'}" id="pcpu-${i}" ${disabled?'disabled':''} onclick="toggleCPU(${i})">${i===0?'Human':'CPU'}</button>
-    `;
+    row.innerHTML =
+      '<span class="prow-num">'+TOKENS[i]+'</span>'+
+      '<input class="prow-name" id="pname-'+i+'" value="'+defaultNames[i]+'" placeholder="Player '+(i+1)+'" '+(disabled?'disabled':'')+'>'+
+      '<button class="prow-cpu'+(i===0?'':' on')+'" id="pcpu-'+i+'" '+(disabled?'disabled':'')+' onclick="toggleCPU('+i+')">'+(i===0?'Human':'CPU')+'</button>';
     el.appendChild(row);
-    // First player always human
-    if (i===0) document.getElementById(`pcpu-0`).classList.remove('on');
   }
 }
 
 function toggleCPU(i) {
-  if (i===0) return; // first player always human
-  const btn = document.getElementById(`pcpu-${i}`);
+  if (i===0) return;
+  const btn = document.getElementById('pcpu-'+i);
   const isCPU = btn.classList.toggle('on');
   btn.textContent = isCPU ? 'CPU' : 'Human';
 }
@@ -533,36 +652,32 @@ function toggleCPU(i) {
 function startGame() {
   const players = [];
   for (let i=0; i<setupPlayerCount; i++) {
-    const name = document.getElementById(`pname-${i}`).value.trim() || `Player ${i+1}`;
-    const isCPU = i===0 ? false : document.getElementById(`pcpu-${i}`).classList.contains('on');
+    const name = document.getElementById('pname-'+i).value.trim() || 'Player '+(i+1);
+    const isCPU = i===0 ? false : document.getElementById('pcpu-'+i).classList.contains('on');
     players.push({
-      id: i, name, token: TOKENS[i], color: TOKEN_COLORS[i],
-      money: 15000, position: 0, jailTurns: -1,
-      jailFreeCards: 0, houses: {}, hotels: {},
-      mortgaged: {}, properties: [],
-      isCPU, isBankrupt: false
+      id:i, name, token:TOKENS[i], color:TOKEN_COLORS[i],
+      money:15000, position:0, jailTurns:-1,
+      jailFreeCards:0, houses:{}, hotels:{},
+      mortgaged:{}, properties:[],
+      isCPU, isBankrupt:false
     });
   }
   G = {
-    players,
-    current: 0,
-    phase: 'roll', // roll | action | end
-    doublesCount: 0,
-    dice: [0,0],
-    chanceCards: shuffle([...CHANCE_CARDS]),
-    chestCards:  shuffle([...CHEST_CARDS]),
-    pendingAction: null,
-    bankHouses: 32,
-    bankHotels: 12,
-    log: [],
-    gameOver: false,
-    skipRender: false,
+    players, current:0,
+    phase:'roll',
+    doublesCount:0,
+    dice:[0,0],
+    chanceCards:shuffle([...CHANCE_CARDS]),
+    chestCards: shuffle([...CHEST_CARDS]),
+    pendingAction:null,
+    bankHouses:32, bankHotels:12,
+    log:[], gameOver:false,
   };
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('game-screen').style.display = 'block';
+  document.getElementById('setup-screen').style.display='none';
+  document.getElementById('game-screen').style.display='block';
   buildBoard();
   renderAll();
-  addLog(`🇮🇳 India Business started! ${players.map(p=>p.name).join(', ')} — Best of luck!`, 'hi');
+  addLog('\u{1F1EE}\u{1F1F3} India Business started! '+players.map(p=>p.name).join(', ')+' \u2014 Best of luck!','hi');
   if (currentPlayer().isCPU) setTimeout(doComputerTurn, 1200);
 }
 
@@ -570,33 +685,47 @@ function startGame() {
 function buildBoard() {
   const board = document.getElementById('board');
   board.innerHTML = '';
-  // center
   const center = document.createElement('div');
   center.className = 'board-center';
-  center.innerHTML = `<div class="board-rupee">₹</div><div class="board-logo">INDIA<br>BUSINESS</div><div class="board-sub">🏙️ Property Trading Game</div>`;
   center.style.gridColumn = '2/11';
   center.style.gridRow = '2/11';
+  center.innerHTML =
+    '<div class="board-flag">\u{1F1EE}\u{1F1F3}</div>'+
+    '<div class="board-rupee">\u20B9</div>'+
+    '<div class="board-logo">INDIA<br>BUSINESS</div>'+
+    '<div class="board-sub">\u{1F3D9}\uFE0F Property Trading Game</div>';
   board.appendChild(center);
 
-  // squares
   BOARD.forEach(sq => {
     const pos = gridPos(sq.id);
     const side = sqSide(sq.id);
     const el = document.createElement('div');
-    el.className = `sq sq-${side}`;
-    el.id = `sq-${sq.id}`;
+    el.className = 'sq sq-'+side;
+    el.id = 'sq-'+sq.id;
     el.style.gridColumn = pos.c;
     el.style.gridRow = pos.r;
-    el.title = sq.name + (sq.price ? ` · ₹${fmt(sq.price)}` : '');
+    el.title = sq.name + (sq.price ? ' \xB7 \u20B9'+fmt(sq.price) : '');
     el.addEventListener('click', () => onSquareClick(sq.id));
     board.appendChild(el);
   });
   renderSquares();
 }
 
+function makeH3dHtml(houses, hotel) {
+  if (hotel > 0) {
+    return '<div class="h3d-wrap"><div class="h3d hotel" title="Hotel"></div></div>';
+  }
+  let html = '<div class="h3d-wrap">';
+  for (let i=0; i<houses; i++) {
+    html += '<div class="h3d" title="House"></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
 function renderSquares() {
   BOARD.forEach(sq => {
-    const el = document.getElementById(`sq-${sq.id}`);
+    const el = document.getElementById('sq-'+sq.id);
     if (!el) return;
     const side = sqSide(sq.id);
     el.innerHTML = '';
@@ -604,24 +733,25 @@ function renderSquares() {
     if (side === 'corner') {
       el.innerHTML = renderCorner(sq);
     } else {
-      const inner = renderSqInner(sq, side);
-      el.innerHTML = inner;
+      el.innerHTML = renderSqInner(sq, side);
     }
+
     // owner bar
-    if (sq.type === 'prop' || sq.type === 'rail' || sq.type === 'util') {
-      const owner = getOwner(sq.id);
-      if (owner !== null) {
+    if (sq.type==='prop'||sq.type==='rail'||sq.type==='util') {
+      const ownerIdx = getOwner(sq.id);
+      if (ownerIdx !== null) {
         const bar = document.createElement('div');
         bar.className = 'sq-owner';
-        bar.style.background = TOKEN_COLORS[owner];
+        bar.style.background = TOKEN_COLORS[ownerIdx];
         el.appendChild(bar);
       }
     }
+
     // tokens
     const tokDiv = document.createElement('div');
     tokDiv.className = 'sq-tokens';
     G.players.forEach(p => {
-      if (!p.isBankrupt && p.position === sq.id) {
+      if (!p.isBankrupt && p.position===sq.id) {
         const t = document.createElement('span');
         t.className = 'sq-token';
         t.textContent = p.token;
@@ -629,24 +759,25 @@ function renderSquares() {
       }
     });
     el.appendChild(tokDiv);
-    // houses
-    if (sq.type === 'prop') {
-      const p = getOwner(sq.id);
-      if (p !== null) {
-        const pl = G.players[p];
-        const hotels = pl.hotels[sq.id] || 0;
-        const houses = pl.houses[sq.id] || 0;
-        if (hotels > 0 || houses > 0) {
+
+    // houses (mini 3D)
+    if (sq.type==='prop') {
+      const ownerIdx = getOwner(sq.id);
+      if (ownerIdx !== null) {
+        const pl = G.players[ownerIdx];
+        const hotels = pl.hotels[sq.id]||0;
+        const houses = pl.houses[sq.id]||0;
+        if (hotels>0||houses>0) {
           const hDiv = document.createElement('div');
           hDiv.className = 'sq-houses';
-          if (hotels > 0) {
+          if (hotels>0) {
             const h = document.createElement('div');
-            h.className = 'sq-hotel';
+            h.className = 'h3d-mini hotel';
             hDiv.appendChild(h);
           } else {
             for (let i=0;i<houses;i++) {
               const h = document.createElement('div');
-              h.className = 'sq-house';
+              h.className = 'h3d-mini';
               hDiv.appendChild(h);
             }
           }
@@ -657,42 +788,58 @@ function renderSquares() {
   });
 }
 
+function flashSquare(sqId) {
+  const el = document.getElementById('sq-'+sqId);
+  if (!el) return;
+  el.classList.add('buying');
+  setTimeout(()=>el.classList.remove('buying'), 600);
+}
+
 function renderCorner(sq) {
-  if (sq.type==='go')      return `<div class="sq-corner">▶ GO<br>Collect<br>₹2,000</div>`;
-  if (sq.type==='jail')    return `<div class="sq-corner">⛓️<br>JAIL<br>Visit</div>`;
-  if (sq.type==='parking') return `<div class="sq-corner">🅿<br>Free<br>Parking</div>`;
-  if (sq.type==='gotojail')return `<div class="sq-corner">👮<br>GO TO<br>JAIL</div>`;
-  return `<div class="sq-corner">${sq.name}</div>`;
+  if (sq.type==='go')      return '<div class="sq-corner">\u25B6 GO<br>Collect<br>\u20B92,000</div>';
+  if (sq.type==='jail')    return '<div class="sq-corner">\u26D3\uFE0F<br>JAIL<br>Visit</div>';
+  if (sq.type==='parking') return '<div class="sq-corner">\u{1F17F}<br>Free<br>Parking</div>';
+  if (sq.type==='gotojail')return '<div class="sq-corner">\u{1F46E}<br>GO TO<br>JAIL</div>';
+  return '<div class="sq-corner">'+sq.name+'</div>';
 }
 
 function renderSqInner(sq, side) {
-  let band = '';
-  const color = sq.group ? GC[sq.group] : null;
+  const color = sq.group ? GC_SOLID[sq.group] : null;
+  let bandStyle = '';
   if (color) {
-    band = `<div class="color-band" style="background:${color}"></div>`;
+    const grad = sq.group ? GC[sq.group] : null;
+    bandStyle = 'background:'+( grad || color )+';';
   } else if (sq.type==='rail') {
-    band = `<div class="color-band" style="background:#222"></div>`;
+    bandStyle = 'background:linear-gradient(135deg,#111,#444);';
   } else if (sq.type==='util') {
-    band = `<div class="color-band" style="background:#888"></div>`;
+    bandStyle = 'background:linear-gradient(135deg,#555,#888);';
   }
+
+  let band = '';
+  if (bandStyle) band = '<div class="color-band" style="'+bandStyle+'"></div>';
+
   let content = '';
+  const lm = sq.landmark ? '<span class="sq-landmark">'+sq.landmark+'</span>' : '';
+
   if (sq.type==='prop'||sq.type==='rail'||sq.type==='util') {
     const mortgaged = isAnyMortgaged(sq.id);
-    content = `<div class="sq-name" style="${mortgaged?'text-decoration:line-through;opacity:.5':''}">${abbr(sq.name)}</div><div class="sq-price">${sq.price?'₹'+fmt(sq.price):''}</div>`;
+    content = lm+
+      '<div class="sq-name" style="'+(mortgaged?'text-decoration:line-through;opacity:.5':'')+'">'+abbr(sq.name)+'</div>'+
+      '<div class="sq-price">'+(sq.price?'\u20B9'+fmt(sq.price):'')+'</div>';
   } else if (sq.type==='chance') {
-    content = `<div class="sq-icon">🃏</div><div class="sq-name">Kismat</div>`;
+    content = '<div class="sq-icon">\u{1F0CF}</div><div class="sq-name">Kismat</div>';
   } else if (sq.type==='chest') {
-    content = `<div class="sq-icon">📦</div><div class="sq-name">Janta</div>`;
+    content = '<div class="sq-icon">\u{1F4E6}</div><div class="sq-name">Janta</div>';
   } else if (sq.type==='tax') {
-    content = `<div class="sq-icon">${sq.icon}</div><div class="sq-name">${abbr(sq.name)}</div><div class="sq-price">₹${fmt(sq.amount)}</div>`;
+    content = '<div class="sq-icon">'+sq.icon+'</div><div class="sq-name">'+abbr(sq.name)+'</div><div class="sq-price">'+'\u20B9'+fmt(sq.amount)+'</div>';
   }
   return band + content;
 }
 
-function abbr(s) { return s.length > 8 ? s.slice(0,8) : s; }
+function abbr(s) { return s.length>8 ? s.slice(0,8) : s; }
 function isAnyMortgaged(id) {
   if (!G) return false;
-  return G.players.some(p => p.mortgaged[id]);
+  return G.players.some(p=>p.mortgaged[id]);
 }
 
 // ===================== SIDE PANEL =====================
@@ -700,7 +847,6 @@ function renderAll() {
   renderSquares();
   renderSidePanel();
 }
-
 function renderSidePanel() {
   renderPlayersList();
   renderPropList();
@@ -710,18 +856,21 @@ function renderSidePanel() {
 function renderPlayersList() {
   const el = document.getElementById('players-list');
   el.innerHTML = '';
-  G.players.forEach((p, i) => {
-    const isActive = i === G.current && !G.gameOver;
+  G.players.forEach((p,i) => {
+    const isActive = i===G.current && !G.gameOver;
     const div = document.createElement('div');
-    div.className = `plyr${isActive?' active-turn':''}${p.isBankrupt?' bankrupt-plyr':''}`;
-    div.innerHTML = `
-      <span class="plyr-tok">${p.token}</span>
-      <div class="plyr-info">
-        <div class="plyr-name">${esc(p.name)}${p.isCPU?'<span class="plyr-badge badge-cpu">CPU</span>':''}${p.jailTurns>=0?'<span class="plyr-badge badge-jail">Jail</span>':''}${p.isBankrupt?'<span class="plyr-badge badge-broke">Bankrupt</span>':''}</div>
-        <div class="plyr-money">${fmtMoney(p.money)}</div>
-      </div>
-      <div style="font-size:.72em;color:var(--muted)">${p.properties.length} prop</div>
-    `;
+    div.className = 'plyr'+(isActive?' active-turn':'')+(p.isBankrupt?' bankrupt-plyr':'');
+    div.innerHTML =
+      '<span class="plyr-tok">'+p.token+'</span>'+
+      '<div class="plyr-info">'+
+        '<div class="plyr-name">'+esc(p.name)+
+          (p.isCPU?'<span class="plyr-badge badge-cpu">CPU</span>':'')+
+          (p.jailTurns>=0?'<span class="plyr-badge badge-jail">Jail</span>':'')+
+          (p.isBankrupt?'<span class="plyr-badge badge-broke">Bankrupt</span>':'')+
+        '</div>'+
+        '<div class="plyr-money">'+fmtMoney(p.money)+'</div>'+
+      '</div>'+
+      '<div style="font-size:.72em;color:var(--muted)">'+p.properties.length+' prop</div>';
     el.appendChild(div);
   });
 }
@@ -731,24 +880,24 @@ function renderPropList() {
   const p = humanPlayer();
   el.innerHTML = '';
   if (!p) return;
-  if (p.properties.length === 0) {
+  if (p.properties.length===0) {
     el.innerHTML = '<div style="font-size:.76em;color:var(--muted);padding:4px">No properties yet</div>';
     return;
   }
   p.properties.forEach(sqId => {
     const sq = BOARD[sqId];
-    const color = sq.group ? GC[sq.group] : sq.type==='rail'?'#222':'#888';
+    const color = sq.group ? GC_SOLID[sq.group] : sq.type==='rail'?'#222':'#888';
     const mortgaged = p.mortgaged[sqId];
     const houses = p.houses[sqId]||0;
     const hotels = p.hotels[sqId]||0;
     const item = document.createElement('div');
     item.className = 'prop-item';
-    item.onclick = () => showInfoModal(sqId);
-    item.innerHTML = `
-      <div class="prop-dot" style="background:${color}${mortgaged?';opacity:.4':''}"></div>
-      <span class="prop-item-name" style="${mortgaged?'text-decoration:line-through;opacity:.5':''}">${sq.name}</span>
-      <span class="prop-item-info">${hotels?'🏨':houses?'🏠'.repeat(houses):''}</span>
-    `;
+    item.onclick = ()=>showInfoModal(sqId);
+    const hinfo = hotels?'\u{1F3E8}':houses?'\u{1F3E0}'.repeat(Math.min(houses,4)):'';
+    item.innerHTML =
+      '<div class="prop-dot" style="background:'+color+(mortgaged?';opacity:.4':'')+'"></div>'+
+      '<span class="prop-item-name" style="'+(mortgaged?'text-decoration:line-through;opacity:.5':'')+'">'+sq.name+'</span>'+
+      '<span class="prop-item-info">'+hinfo+'</span>';
     el.appendChild(item);
   });
 }
@@ -758,807 +907,731 @@ function renderActionArea() {
   const status = document.getElementById('status-msg');
   if (G.gameOver) {
     btns.innerHTML = '';
-    status.textContent = '🏆 Game over!';
+    status.textContent = '\u{1F3C6} Game over!';
     return;
   }
   const p = currentPlayer();
   if (p.isBankrupt) { nextTurn(); return; }
   if (p.isCPU) {
-    status.textContent = `${p.token} ${p.name} is thinking…`;
+    status.textContent = p.token+' '+p.name+' is thinking\u2026';
     btns.innerHTML = '';
     return;
   }
-
-  // Human turn
-  if (G.phase === 'roll') {
+  if (G.phase==='roll') {
     let jailMsg = '';
-    if (p.jailTurns >= 0) {
-      jailMsg = ` (Jail: turn ${p.jailTurns+1}/3)`;
-    }
-    status.textContent = `${p.token} ${p.name}'s turn${jailMsg}. Roll the dice!`;
-    let html = `<div class="btn-row">`;
-    if (p.jailTurns >= 0) {
-      html += `<button class="btn btn-accent" onclick="openJailModal()">⛓️ Jail Options</button>`;
+    if (p.jailTurns>=0) jailMsg = ' (Jail: turn '+(p.jailTurns+1)+'/3)';
+    status.textContent = p.token+' '+p.name+"'s turn"+jailMsg+'. Roll the dice!';
+    let html = '<div class="btn-row">';
+    if (p.jailTurns>=0) {
+      html += '<button class="btn btn-accent" onclick="openJailModal()">\u26D3\uFE0F Jail Options</button>';
     } else {
-      html += `<button class="btn btn-accent" onclick="rollDice()">🎲 Roll Dice</button>`;
+      html += '<button class="btn btn-accent" onclick="rollDice()">\u{1F3B2} Roll Dice</button>';
     }
-    html += `<button class="btn btn-sec" onclick="openMortModal()">🏦 Mortgage</button>`;
-    if (canBuildAny(p)) html += `<button class="btn btn-ok" onclick="openBuildModal()">🏗 Build</button>`;
-    html += `</div>`;
+    html += '<button class="btn btn-sec" onclick="openMortModal()">\u{1F3E6} Mortgage</button>';
+    if (canBuildAny(p)) html += '<button class="btn btn-ok" onclick="openBuildModal()">\u{1F3D7} Build</button>';
+    html += '</div>';
     btns.innerHTML = html;
-  } else if (G.phase === 'action') {
+  } else if (G.phase==='action') {
     const sq = BOARD[p.position];
-    status.textContent = `Landed on ${sq.name}.`;
-    btns.innerHTML = `<div class="btn-row"><button class="btn btn-accent" onclick="endTurn()">End Turn</button><button class="btn btn-sec" onclick="openMortModal()">🏦 Mortgage</button>${canBuildAny(p)?`<button class="btn btn-ok" onclick="openBuildModal()">🏗 Build</button>`:''}</div>`;
+    status.textContent = 'Landed on '+sq.name+'.';
+    btns.innerHTML = '<div class="btn-row">'+
+      '<button class="btn btn-accent" onclick="endTurn()">End Turn</button>'+
+      '<button class="btn btn-sec" onclick="openMortModal()">\u{1F3E6} Mortgage</button>'+
+      (canBuildAny(p)?'<button class="btn btn-ok" onclick="openBuildModal()">\u{1F3D7} Build</button>':'')+
+      '</div>';
   } else {
-    btns.innerHTML = `<div class="btn-row"><button class="btn btn-accent" onclick="endTurn()">End Turn</button></div>`;
+    btns.innerHTML = '<div class="btn-row"><button class="btn btn-accent" onclick="endTurn()">End Turn</button></div>';
   }
 }
 
 // ===================== GAME FLOW =====================
 function currentPlayer() { return G.players[G.current]; }
-function humanPlayer() { return G.players.find(p => !p.isCPU && !p.isBankrupt); }
+function humanPlayer() { return G.players.find(p=>!p.isCPU&&!p.isBankrupt); }
 
 function rollDice() {
   const d1 = Math.ceil(Math.random()*6);
   const d2 = Math.ceil(Math.random()*6);
-  G.dice = [d1, d2];
-  const die1 = document.getElementById('die1');
-  const die2 = document.getElementById('die2');
-  die1.classList.add('spin'); die2.classList.add('spin');
-  die1.textContent = DICE_FACES[d1]; die2.textContent = DICE_FACES[d2];
-  setTimeout(()=>{die1.classList.remove('spin');die2.classList.remove('spin');},500);
-  document.getElementById('dice-sum').textContent = `= ${d1+d2}`;
+  G.dice = [d1,d2];
+  const die1El = document.getElementById('die1');
+  const die2El = document.getElementById('die2');
+  die1El.classList.remove('spin'); void die1El.offsetWidth; die1El.classList.add('spin');
+  die2El.classList.remove('spin'); void die2El.offsetWidth; die2El.classList.add('spin');
+  setTimeout(()=>{
+    die1El.textContent = DICE_FACES[d1];
+    die2El.textContent = DICE_FACES[d2];
+    document.getElementById('dice-sum').textContent = 'Sum: '+(d1+d2)+(d1===d2?' \u2605 Doubles!':'');
+  }, 300);
 
-  const doubles = d1===d2;
+  const isDoubles = d1===d2;
   const p = currentPlayer();
 
-  if (p.jailTurns >= 0) {
-    if (doubles) {
-      addLog(`${p.token} ${p.name} rolled doubles (${d1}+${d2}) — out of jail!`, 'good');
+  // Jail handling
+  if (p.jailTurns>=0) {
+    if (isDoubles) {
       p.jailTurns = -1;
-      G.doublesCount = 0;
-      movePlayer(p, d1+d2);
+      addLog(p.name+' rolled doubles and escaped jail!','good');
+      movePlayer(p, d1+d2, true);
     } else {
       p.jailTurns++;
-      if (p.jailTurns >= 3) {
+      if (p.jailTurns>=3) {
         p.jailTurns = -1;
-        payToBank(p.id, 500);
-        addLog(`${p.token} ${p.name} paid ₹500 bail after 3 turns in jail.`);
-        movePlayer(p, d1+d2);
+        p.money -= 500;
+        addLog(p.name+' paid \u20B9500 fine to leave jail.','bad');
+        if (p.money<0) declareBankruptcy(p);
+        else { G.phase='action'; renderAll(); }
       } else {
-        addLog(`${p.token} ${p.name} rolled ${d1}+${d2}. Staying in jail (turn ${p.jailTurns}).`);
-        G.phase = 'end';
+        addLog(p.name+' is stuck in jail (turn '+p.jailTurns+'/3).','');
+        G.phase='action';
         renderAll();
       }
     }
     return;
   }
 
-  if (doubles) {
+  if (isDoubles) {
     G.doublesCount++;
-    if (G.doublesCount >= 3) {
-      addLog(`${p.token} ${p.name} rolled 3 doubles — Go to Jail!`, 'bad');
+    if (G.doublesCount>=3) {
+      addLog(p.name+' rolled 3 doubles \u2014 Go to Jail!','bad');
       sendToJail(p);
+      G.doublesCount = 0;
       G.phase = 'end';
       renderAll();
+      if (!p.isCPU) {
+        document.getElementById('action-btns').innerHTML =
+          '<div class="btn-row"><button class="btn btn-accent" onclick="endTurn()">End Turn</button></div>';
+      } else {
+        setTimeout(endTurn, 800);
+      }
       return;
     }
-    addLog(`${p.token} ${p.name} rolled doubles (${d1}+${d2})! Roll again.`, 'good');
+    addLog(p.name+' rolled doubles ('+(d1+d2)+')! Extra turn.','good');
   } else {
     G.doublesCount = 0;
   }
-  movePlayer(p, d1+d2);
+  movePlayer(p, d1+d2, true);
 }
 
-function movePlayer(p, steps) {
-  const prev = p.position;
-  const next = (prev + steps) % 40;
-  if (next < prev || (prev + steps) >= 40) {
-    // passed GO
+function movePlayer(p, steps, animate) {
+  const oldPos = p.position;
+  const newPos = (oldPos + steps) % 40;
+  // collect GO bonus if passed GO
+  if (newPos < oldPos || steps === 40) {
     p.money += 2000;
-    addLog(`${p.token} ${p.name} passed GO — collected ₹2,000!`, 'good');
+    addLog(p.name+' passed GO and collected \u20B92,000!','good');
   }
-  p.position = next;
-  renderSquares();
-  setTimeout(() => landOn(p), 300);
+  p.position = newPos;
+  G.phase = 'action';
+  renderAll();
+  setTimeout(()=>landOn(p), 350);
 }
 
 function landOn(p) {
   const sq = BOARD[p.position];
-  addLog(`${p.token} ${p.name} landed on ${sq.name}`);
-  processSquare(p, sq);
+  addLog(p.name+' landed on '+sq.name,'');
+
+  if (sq.type==='go') {
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  } else if (sq.type==='gotojail') {
+    sendToJail(p);
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  } else if (sq.type==='jail'||sq.type==='parking') {
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  } else if (sq.type==='tax') {
+    p.money -= sq.amount;
+    addLog(p.name+' paid tax \u20B9'+fmt(sq.amount),'bad');
+    if (p.money<0) declareBankruptcy(p);
+    else { G.phase='end'; renderAll(); autoEndIfCPU(); }
+  } else if (sq.type==='chance') {
+    drawCard('chance', p);
+  } else if (sq.type==='chest') {
+    drawCard('chest', p);
+  } else if (sq.type==='prop'||sq.type==='rail'||sq.type==='util') {
+    handlePropertyLanding(p, sq);
+  }
 }
 
-function processSquare(p, sq) {
-  if (sq.type === 'go') {
-    G.phase = 'action'; renderAll(); return;
-  }
-  if (sq.type === 'jail') {
-    G.phase = 'action'; renderAll(); return;
-  }
-  if (sq.type === 'parking') {
-    G.phase = 'action'; renderAll(); return;
-  }
-  if (sq.type === 'gotojail') {
-    sendToJail(p);
-    G.phase = 'end'; renderAll(); return;
-  }
-  if (sq.type === 'tax') {
-    payToBank(p.id, sq.amount);
-    addLog(`${p.token} ${p.name} paid ${sq.name} ₹${fmt(sq.amount)}`, 'bad');
-    G.phase = 'action'; renderAll(); return;
-  }
-  if (sq.type === 'chance') {
-    drawCard(p, 'chance'); return;
-  }
-  if (sq.type === 'chest') {
-    drawCard(p, 'chest'); return;
-  }
-  if (sq.type === 'prop' || sq.type === 'rail' || sq.type === 'util') {
-    const owner = getOwner(sq.id);
-    if (owner === null) {
-      // unowned — offer to buy
-      if (p.money >= sq.price) {
-        if (p.isCPU) {
-          // CPU decides
-          if (aiWantsBuy(p, sq)) {
-            buyProperty(p, sq);
-            G.phase = 'action';
-            renderAll();
-          } else {
-            G.phase = 'action'; renderAll();
-          }
-        } else {
-          showBuyModal(sq.id);
-        }
+function handlePropertyLanding(p, sq) {
+  const ownerIdx = getOwner(sq.id);
+  if (ownerIdx===null) {
+    // Unowned
+    if (p.isCPU) {
+      if (p.money >= sq.price * 1.2) {
+        buyProperty(p, sq);
+        G.phase='end'; renderAll(); autoEndIfCPU();
       } else {
-        addLog(`${p.token} ${p.name} can't afford ${sq.name}`, 'bad');
-        G.phase = 'action'; renderAll();
+        addLog(p.name+' passed on buying '+sq.name,'');
+        G.phase='end'; renderAll(); autoEndIfCPU();
       }
-    } else if (owner === p.id) {
-      addLog(`${p.token} ${p.name} owns ${sq.name}`);
-      G.phase = 'action'; renderAll();
     } else {
-      const ownerP = G.players[owner];
-      if (ownerP.mortgaged[sq.id]) {
-        addLog(`${sq.name} is mortgaged — no rent`);
-        G.phase = 'action'; renderAll(); return;
-      }
-      const rent = calcRent(sq, ownerP, G.dice[0]+G.dice[1]);
-      payRent(p, ownerP, rent, sq);
+      showBuyModal(p, sq);
     }
-    return;
+  } else if (ownerIdx===p.id) {
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  } else {
+    const owner = G.players[ownerIdx];
+    if (owner.mortgaged[sq.id]) {
+      addLog(sq.name+' is mortgaged, no rent.','');
+      G.phase='end'; renderAll(); autoEndIfCPU();
+      return;
+    }
+    const rent = calcRent(sq, p);
+    p.money -= rent;
+    owner.money += rent;
+    addLog(p.name+' paid \u20B9'+fmt(rent)+' rent to '+owner.name,'bad');
+    if (p.money<0) declareBankruptcy(p);
+    else { G.phase='end'; renderAll(); autoEndIfCPU(); }
   }
-  G.phase = 'action'; renderAll();
 }
 
 function sendToJail(p) {
   p.position = 10;
   p.jailTurns = 0;
-  addLog(`${p.token} ${p.name} is in Jail!`, 'bad');
-  renderSquares();
+  G.doublesCount = 0;
+  addLog(p.name+' sent to Jail!','bad');
 }
 
-function drawCard(p, type) {
-  const deck = type==='chance' ? G.chanceCards : G.chestCards;
-  const card = deck.shift();
-  deck.push(card);
-  const label = type==='chance' ? '🃏 Kismat' : '📦 Janta';
-  addLog(`${p.token} ${p.name} drew ${label}: ${card.text}`);
-  applyCard(p, card, type);
-}
-
-function applyCard(p, card, type) {
-  const {action, val, text} = card;
-  if (action === 'goto') {
-    const target = val;
-    if (p.position > target && target !== 0) p.money += 2000; // passed GO? Only if going backward would cross
-    // Simple: if target < current, passed GO
-    if (target < p.position || (target===0)) {
-      if (target === 0) p.money += 2000;
-    }
-    p.position = target;
-    renderSquares();
-    showCardModal(text, () => { setTimeout(()=>landOn(p),300); });
-    return;
+function autoEndIfCPU() {
+  if (currentPlayer().isCPU && !G.gameOver) {
+    setTimeout(endTurn, 700);
   }
-  if (action === 'gotorail') {
-    p.position = val;
-    renderSquares();
-    showCardModal(text, () => { setTimeout(()=>landOn(p),300); });
-    return;
-  }
-  if (action === 'nearrail') {
-    const rails = [5,15,25,35];
-    let nearest = rails.reduce((a,b) => ((b-p.position+40)%40 < (a-p.position+40)%40 ? b : a));
-    if (nearest < p.position) p.money += 2000;
-    p.position = nearest;
-    renderSquares();
-    showCardModal(text, () => { setTimeout(()=>landOnDouble(p),300); });
-    return;
-  }
-  if (action === 'collect') {
-    p.money += val;
-    addLog(`${p.token} ${p.name} collected ₹${fmt(val)}`, 'good');
-    showCardModal(text, finish);
-    return;
-  }
-  if (action === 'pay') {
-    payToBank(p.id, val);
-    showCardModal(text, finish);
-    return;
-  }
-  if (action === 'jailfree') {
-    p.jailFreeCards++;
-    showCardModal(text, finish);
-    return;
-  }
-  if (action === 'jail') {
-    sendToJail(p);
-    showCardModal(text, () => { G.phase='end'; renderAll(); });
-    return;
-  }
-  if (action === 'back') {
-    p.position = (p.position - val + 40) % 40;
-    renderSquares();
-    showCardModal(text, () => { setTimeout(()=>landOn(p),300); });
-    return;
-  }
-  if (action === 'repairs') {
-    const [hc, htc] = val;
-    let total = 0;
-    p.properties.forEach(sid => {
-      total += (p.houses[sid]||0)*hc + (p.hotels[sid]||0)*htc;
-    });
-    payToBank(p.id, total);
-    addLog(`${p.token} ${p.name} paid ₹${fmt(total)} for repairs`,'bad');
-    showCardModal(text + ` Total: ₹${fmt(total)}`, finish);
-    return;
-  }
-  if (action === 'payall') {
-    G.players.forEach(other => {
-      if (other.id !== p.id && !other.isBankrupt) {
-        transferMoney(p.id, other.id, val);
-      }
-    });
-    showCardModal(text, finish);
-    return;
-  }
-  if (action === 'collectall') {
-    G.players.forEach(other => {
-      if (other.id !== p.id && !other.isBankrupt) {
-        transferMoney(other.id, p.id, val);
-      }
-    });
-    showCardModal(text, finish);
-    return;
-  }
-  showCardModal(text, finish);
-
-  function finish() { G.phase = 'action'; renderAll(); }
-}
-
-function landOnDouble(p) {
-  // Land with 2× rent rule for nearest rail card
-  const sq = BOARD[p.position];
-  const owner = getOwner(sq.id);
-  if (owner !== null && owner !== p.id && !G.players[owner].mortgaged[sq.id]) {
-    const ownerP = G.players[owner];
-    const rent = calcRent(sq, ownerP, G.dice[0]+G.dice[1]) * 2;
-    payRent(p, ownerP, rent, sq);
-  } else {
-    processSquare(p, sq);
-  }
-}
-
-function calcRent(sq, ownerP, diceSum) {
-  if (sq.type === 'rail') {
-    const railCount = ownerP.properties.filter(id => BOARD[id].type==='rail').length;
-    return [0,250,500,1000,2000][railCount] || 250;
-  }
-  if (sq.type === 'util') {
-    const utilCount = ownerP.properties.filter(id => BOARD[id].type==='util').length;
-    return diceSum * (utilCount >= 2 ? 10 : 4) * 10;
-  }
-  // property
-  const hotels = ownerP.hotels[sq.id] || 0;
-  const houses = ownerP.houses[sq.id] || 0;
-  if (hotels > 0) return sq.rents[6];
-  if (houses > 0) return sq.rents[houses+1]; // rents[2..5]
-  // Check full set
-  if (ownsFullSet(ownerP, sq.group)) return sq.rents[1];
-  return sq.rents[0];
-}
-
-function payRent(payer, owner, amount, sq) {
-  const actual = Math.min(amount, payer.money);
-  addLog(`${payer.token} ${payer.name} paid ₹${fmt(actual)} rent to ${owner.token} ${owner.name} for ${sq.name}`, actual<amount?'bad':'');
-  transferMoney(payer.id, owner.id, actual);
-  if (payer.money <= 0) {
-    checkBankruptcy(payer.id);
-    return;
-  }
-  G.phase = 'action';
-  renderAll();
-}
-
-function buyProperty(p, sq) {
-  p.money -= sq.price;
-  p.properties.push(sq.id);
-  addLog(`${p.token} ${p.name} bought ${sq.name} for ₹${fmt(sq.price)}`, 'good');
 }
 
 function endTurn() {
+  if (G.gameOver) return;
   const p = currentPlayer();
-  const doubles = G.dice[0]===G.dice[1];
-  if (doubles && G.doublesCount > 0 && p.jailTurns < 0 && !G.gameOver) {
-    // rolled doubles, get another turn
-    G.phase = 'roll';
+  // If rolled doubles and not in jail and not phase==='end' (jail-by-3-doubles guard)
+  if (G.doublesCount>0 && p.jailTurns<0 && G.phase!=='end') {
+    G.phase='roll';
     renderAll();
-    if (p.isCPU) setTimeout(doComputerTurn, 1000);
+    if (p.isCPU) setTimeout(doComputerTurn, 900);
     return;
   }
+  G.doublesCount = 0;
   nextTurn();
 }
 
 function nextTurn() {
-  let next = (G.current + 1) % G.players.length;
+  if (G.gameOver) return;
+  let next = (G.current+1) % G.players.length;
   let loops = 0;
-  while (G.players[next].isBankrupt && loops < G.players.length) {
-    next = (next+1) % G.players.length;
-    loops++;
-  }
-  // Check win condition
-  const active = G.players.filter(p => !p.isBankrupt);
-  if (active.length <= 1) {
-    showGameOver();
-    return;
-  }
+  while (G.players[next].isBankrupt && loops<G.players.length) { next=(next+1)%G.players.length; loops++; }
   G.current = next;
   G.phase = 'roll';
-  G.doublesCount = 0;
-  G.dice = [0,0];
-  document.getElementById('die1').textContent = '🎲';
-  document.getElementById('die2').textContent = '🎲';
-  document.getElementById('dice-sum').textContent = '';
   renderAll();
-  if (currentPlayer().isCPU) setTimeout(doComputerTurn, 1200);
+  if (currentPlayer().isCPU) setTimeout(doComputerTurn, 1000);
 }
 
-// ===================== FINANCIAL =====================
-function transferMoney(fromId, toId, amount) {
-  if (fromId === -1) { G.players[toId].money += amount; return; }
-  if (toId === -1)   { G.players[fromId].money -= amount; return; }
-  G.players[fromId].money -= amount;
-  G.players[toId].money += amount;
+function checkGameOver() {
+  const active = G.players.filter(p=>!p.isBankrupt);
+  if (active.length<=1) {
+    G.gameOver = true;
+    showGameOver(active[0]||G.players[0]);
+    return true;
+  }
+  return false;
 }
-function payToBank(id, amount) {
-  G.players[id].money = Math.max(0, G.players[id].money - amount);
+
+function declareBankruptcy(p) {
+  p.isBankrupt = true;
+  p.money = 0;
+  addLog(p.name+' is bankrupt!','bad');
+  showToast(p.name+' is bankrupt!');
+  if (!checkGameOver()) {
+    G.phase='end';
+    renderAll();
+    setTimeout(nextTurn, 1200);
+  }
 }
+
+// ===================== PROPERTIES =====================
 function getOwner(sqId) {
   for (let i=0;i<G.players.length;i++) {
     if (G.players[i].properties.includes(sqId)) return i;
   }
   return null;
 }
-function ownsFullSet(p, group) {
-  const groupProps = BOARD.filter(s => s.group===group).map(s=>s.id);
-  return groupProps.every(id => p.properties.includes(id));
-}
-function checkBankruptcy(playerId) {
-  const p = G.players[playerId];
-  // try to raise money by mortgaging
-  let raised = false;
-  p.properties.forEach(sid => {
-    if (!p.mortgaged[sid] && p.money <= 0) {
-      const sq = BOARD[sid];
-      p.mortgaged[sid] = true;
-      p.money += sq.mort;
-      raised = true;
-    }
-  });
-  if (p.money > 0) { G.phase='action'; renderAll(); return; }
-  // bankrupt
-  p.isBankrupt = true;
-  p.properties.forEach(sid => {
-    const sq = BOARD[sid];
-    delete p.mortgaged[sid];
-    p.houses[sid]=0; p.hotels[sid]=0;
-  });
-  p.properties = [];
-  addLog(`${p.token} ${p.name} is BANKRUPT!`, 'bad');
-  showToast(`${p.token} ${p.name} went bankrupt!`);
-  const active = G.players.filter(x=>!x.isBankrupt);
-  if (active.length===1) { showGameOver(); return; }
-  G.phase = 'end';
+
+function buyProperty(p, sq) {
+  p.money -= sq.price;
+  p.properties.push(sq.id);
+  addLog(p.name+' bought '+sq.name+' for \u20B9'+fmt(sq.price),'good');
+  flashSquare(sq.id);
   renderAll();
 }
 
-// ===================== MORTGAGES =====================
-function openMortModal() {
-  const p = currentPlayer();
-  if (p.isCPU) return;
-  const el = document.getElementById('mort-list');
-  el.innerHTML = '';
-  if (p.properties.length === 0) {
-    el.innerHTML = '<div style="font-size:.8em;color:var(--muted);padding:4px">No properties.</div>';
-  } else {
-    p.properties.forEach(sid => {
-      const sq = BOARD[sid];
-      const mortgaged = p.mortgaged[sid];
-      const color = sq.group?GC[sq.group]:sq.type==='rail'?'#222':'#888';
-      const val = mortgaged ? Math.round(sq.mort*1.1) : sq.mort;
-      const item = document.createElement('div');
-      item.className = `mort-item${mortgaged?' mortgaged':''}`;
-      item.innerHTML = `<div class="mort-dot" style="background:${color}"></div><span class="mort-name">${sq.name}</span><span class="mort-val">${mortgaged?'Unmortgage ₹'+fmt(val):'Mortgage ₹'+fmt(val)}</span>`;
-      if (!mortgaged) {
-        item.onclick = () => doMortgage(sid, false);
-      } else {
-        if (p.money >= val) item.onclick = () => doMortgage(sid, true);
-        else item.style.cursor='not-allowed';
-      }
-      el.appendChild(item);
-    });
+function calcRent(sq, p) {
+  const ownerIdx = getOwner(sq.id);
+  if (ownerIdx===null) return 0;
+  const owner = G.players[ownerIdx];
+  if (sq.type==='rail') {
+    const railCount = owner.properties.filter(id=>BOARD[id].type==='rail').length;
+    return [0,500,1000,2000,4000][railCount]||500;
   }
-  document.getElementById('mort-title').textContent = `Mortgage · ${fmtMoney(p.money)}`;
-  document.getElementById('mort-modal').classList.add('show');
-}
-document.getElementById('mort-close-btn').onclick = () => { document.getElementById('mort-modal').classList.remove('show'); renderAll(); };
-
-function doMortgage(sid, unmortgage) {
-  const p = currentPlayer();
-  const sq = BOARD[sid];
-  if (unmortgage) {
-    const cost = Math.round(sq.mort*1.1);
-    if (p.money < cost) { showToast('Not enough money!'); return; }
-    p.mortgaged[sid] = false;
-    p.money -= cost;
-    addLog(`${p.token} ${p.name} unmortgaged ${sq.name} for ₹${fmt(cost)}`);
-  } else {
-    p.mortgaged[sid] = true;
-    p.money += sq.mort;
-    addLog(`${p.token} ${p.name} mortgaged ${sq.name} for ₹${fmt(sq.mort)}`);
+  if (sq.type==='util') {
+    const utilCount = owner.properties.filter(id=>BOARD[id].type==='util').length;
+    const diceSum = G.dice[0]+G.dice[1];
+    return utilCount===1 ? diceSum*40 : diceSum*100;
   }
-  openMortModal(); // re-render
+  const hotels = owner.hotels[sq.id]||0;
+  const houses = owner.houses[sq.id]||0;
+  const groupOwned = ownsGroup(owner, sq.group);
+  if (hotels>0) return sq.rents[6];
+  if (houses>0) return sq.rents[houses];
+  return groupOwned ? sq.rents[1] : sq.rents[0];
 }
 
-// ===================== BUILD =====================
+function ownsGroup(p, group) {
+  if (!group) return false;
+  const groupSquares = BOARD.filter(s=>s.group===group).map(s=>s.id);
+  return groupSquares.every(id=>p.properties.includes(id));
+}
+
 function canBuildAny(p) {
-  if (!p) return false;
-  return p.properties.some(sid => {
-    const sq = BOARD[sid];
-    if (sq.type !== 'prop') return false;
-    if (!ownsFullSet(p, sq.group)) return false;
-    if (p.mortgaged[sid]) return false;
-    const houses = p.houses[sid]||0;
-    const hotels = p.hotels[sid]||0;
-    return hotels===0 && (houses<4 || (houses===4 && G.bankHotels>0));
+  return BOARD.some(sq=>{
+    if (sq.type!=='prop'||!sq.group) return false;
+    if (!p.properties.includes(sq.id)) return false;
+    if (p.mortgaged[sq.id]) return false;
+    if (!ownsGroup(p,sq.group)) return false;
+    return (p.hotels[sq.id]||0)<1;
   });
 }
-function openBuildModal() {
-  const p = currentPlayer();
-  if (p.isCPU) return;
-  const el = document.getElementById('build-list');
-  el.innerHTML = '';
-  const buildable = p.properties.filter(sid => {
-    const sq = BOARD[sid];
-    if (sq.type!=='prop') return false;
-    if (!ownsFullSet(p,sq.group)) return false;
-    if (p.mortgaged[sid]) return false;
-    return (p.hotels[sid]||0)===0;
-  });
-  if (buildable.length===0) {
-    el.innerHTML='<div style="font-size:.8em;color:var(--muted);padding:4px">No eligible properties (need full color set).</div>';
-  } else {
-    buildable.forEach(sid => {
-      const sq = BOARD[sid];
-      const houses = p.houses[sid]||0;
-      const hotels = p.hotels[sid]||0;
-      const color = GC[sq.group];
-      const item = document.createElement('div');
-      item.className = 'mort-item';
-      const nextCost = sq.hcost;
-      const canBuild = houses<4 ? p.money>=nextCost && G.bankHouses>0 : p.money>=nextCost && G.bankHotels>0;
-      item.innerHTML = `<div class="mort-dot" style="background:${color}"></div><span class="mort-name">${sq.name} ${'🏠'.repeat(houses)}${hotels?'🏨':''}</span><span class="mort-val">${houses<4?'+ House':'+ Hotel'} ₹${fmt(nextCost)}</span>`;
-      if (canBuild) {
-        item.onclick = () => doBuild(sid);
-      } else {
-        item.style.opacity='.4'; item.style.cursor='not-allowed';
-      }
-      el.appendChild(item);
-    });
-  }
-  document.getElementById('build-modal').classList.add('show');
-}
-document.getElementById('build-close-btn').onclick = () => { document.getElementById('build-modal').classList.remove('show'); renderAll(); };
 
-function doBuild(sid) {
-  const p = currentPlayer();
-  const sq = BOARD[sid];
-  const houses = p.houses[sid]||0;
-  if (houses < 4) {
-    if (p.money < sq.hcost || G.bankHouses<=0) { showToast('Cannot build house!'); return; }
-    p.money -= sq.hcost;
-    p.houses[sid] = houses+1;
-    G.bankHouses--;
-    addLog(`${p.token} ${p.name} built a house on ${sq.name} (₹${fmt(sq.hcost)})`, 'good');
+function canBuildOn(p, sq) {
+  if (!p.properties.includes(sq.id)) return false;
+  if (p.mortgaged[sq.id]) return false;
+  if (!ownsGroup(p,sq.group)) return false;
+  const hotels = p.hotels[sq.id]||0;
+  const houses = p.houses[sq.id]||0;
+  if (hotels>=1) return false;
+  if (houses>=4) return true; // can upgrade to hotel
+  return true;
+}
+
+// ===================== CARD LOGIC =====================
+function drawCard(type, p) {
+  let card;
+  if (type==='chance') {
+    card = G.chanceCards.shift();
+    G.chanceCards.push(card);
   } else {
-    if (p.money < sq.hcost || G.bankHotels<=0) { showToast('Cannot build hotel!'); return; }
-    p.money -= sq.hcost;
-    p.houses[sid] = 0;
-    p.hotels[sid] = 1;
-    G.bankHouses += 4; // return houses
-    G.bankHotels--;
-    addLog(`${p.token} ${p.name} built a HOTEL on ${sq.name}!`, 'good');
+    card = G.chestCards.shift();
+    G.chestCards.push(card);
   }
-  openBuildModal();
-  renderSquares();
+  const icon = type==='chance' ? '\u{1F0CF}' : '\u{1F4E6}';
+  addLog(p.name+' drew: '+card.text,'');
+  showCardModal(icon+' '+card.text, ()=>applyCard(card, p));
+}
+
+function showCardModal(text, callback) {
+  const overlay = document.getElementById('card-modal');
+  const iconEl = document.getElementById('card-icon');
+  const titleEl = document.getElementById('card-title');
+  const descEl = document.getElementById('card-desc');
+  const okBtn = document.getElementById('card-ok-btn');
+
+  // Split icon from text for display
+  const parts = text.split(' ');
+  iconEl.textContent = parts[0]||'\u{1F0CF}';
+  titleEl.textContent = 'Card Drawn';
+  descEl.textContent = parts.slice(1).join(' ');
+
+  overlay.classList.add('show');
+
+  const cleanup = () => {
+    overlay.classList.remove('show');
+    okBtn.onclick = null;
+    if (callback) callback();
+  };
+
+  const p = currentPlayer();
+  if (p.isCPU) {
+    // CPU: auto-close after 1500ms, no click needed
+    setTimeout(cleanup, 1500);
+  } else {
+    // Human: wait for button click
+    okBtn.onclick = cleanup;
+  }
+}
+
+function applyCard(card, p) {
+  const act = card.action;
+  const val = card.val;
+
+  if (act==='collect') {
+    p.money += val;
+    addLog(p.name+' collected \u20B9'+fmt(val),'good');
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  } else if (act==='pay') {
+    p.money -= val;
+    addLog(p.name+' paid \u20B9'+fmt(val),'bad');
+    if (p.money<0) declareBankruptcy(p);
+    else { G.phase='end'; renderAll(); autoEndIfCPU(); }
+  } else if (act==='goto') {
+    const target = val;
+    const oldPos = p.position;
+    // Collect GO bonus if passing GO going forward
+    if (target < oldPos && target !== oldPos) {
+      p.money += 2000;
+      addLog(p.name+' passed GO and collected \u20B92,000!','good');
+    }
+    p.position = target;
+    addLog(p.name+' moved to '+BOARD[target].name,'');
+    G.phase='action';
+    renderAll();
+    setTimeout(()=>landOn(p), 350);
+  } else if (act==='gotorail') {
+    const target = val;
+    const oldPos = p.position;
+    if (target < oldPos) {
+      p.money += 2000;
+      addLog(p.name+' passed GO and collected \u20B92,000!','good');
+    }
+    p.position = target;
+    addLog(p.name+' moved to '+BOARD[target].name,'');
+    G.phase='action';
+    renderAll();
+    setTimeout(()=>landOn(p), 350);
+  } else if (act==='nearrail') {
+    const rails = [5,15,25,35];
+    const pos = p.position;
+    // Find nearest rail ahead
+    let nearest = rails.find(r=>r>pos) || rails[0];
+    const oldPos = p.position;
+    // Pass GO check: if nearest rail is behind current position (wrapped around)
+    if (nearest <= oldPos) {
+      p.money += 2000;
+      addLog(p.name+' passed GO and collected \u20B92,000!','good');
+    }
+    p.position = nearest;
+    addLog(p.name+' moved to nearest rail: '+BOARD[nearest].name,'');
+    // Double rent flag
+    G.doubleRentNextLanding = true;
+    G.phase='action';
+    renderAll();
+    setTimeout(()=>landOn(p), 350);
+  } else if (act==='back') {
+    p.position = (p.position - val + 40) % 40;
+    addLog(p.name+' moved back '+val+' spaces to '+BOARD[p.position].name,'');
+    G.phase='action';
+    renderAll();
+    setTimeout(()=>landOn(p), 350);
+  } else if (act==='jail') {
+    sendToJail(p);
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  } else if (act==='jailfree') {
+    p.jailFreeCards++;
+    addLog(p.name+' got a Get Out of Jail Free card!','good');
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  } else if (act==='repairs') {
+    const [hCost, htCost] = val;
+    let total = 0;
+    G.players.forEach(pl=>{ if(!pl.isBankrupt) {
+      Object.keys(pl.houses).forEach(k=>total+=pl.houses[k]*hCost);
+      Object.keys(pl.hotels).forEach(k=>total+=pl.hotels[k]*htCost);
+    }});
+    // only charge current player
+    let charge = 0;
+    Object.keys(p.houses).forEach(k=>charge+=(p.houses[k]||0)*hCost);
+    Object.keys(p.hotels).forEach(k=>charge+=(p.hotels[k]||0)*htCost);
+    p.money -= charge;
+    addLog(p.name+' paid \u20B9'+fmt(charge)+' for street repairs','bad');
+    if (p.money<0) declareBankruptcy(p);
+    else { G.phase='end'; renderAll(); autoEndIfCPU(); }
+  } else if (act==='payall') {
+    let total = 0;
+    G.players.forEach(other=>{
+      if (other.id!==p.id && !other.isBankrupt) {
+        other.money += val;
+        p.money -= val;
+        total += val;
+      }
+    });
+    addLog(p.name+' paid \u20B9'+fmt(val)+' to each player (\u20B9'+fmt(total)+' total)','bad');
+    if (p.money<0) declareBankruptcy(p);
+    else { G.phase='end'; renderAll(); autoEndIfCPU(); }
+  } else if (act==='collectall') {
+    let total = 0;
+    G.players.forEach(other=>{
+      if (other.id!==p.id && !other.isBankrupt) {
+        other.money -= val;
+        p.money += val;
+        total += val;
+      }
+    });
+    addLog(p.name+' collected \u20B9'+fmt(val)+' from each player (\u20B9'+fmt(total)+' total)','good');
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  }
+}
+
+// ===================== BUY MODAL =====================
+function showBuyModal(p, sq) {
+  document.getElementById('buy-icon').textContent = sq.landmark || '\u{1F3D9}\uFE0F';
+  document.getElementById('buy-title').textContent = 'Buy '+sq.name+'?';
+  document.getElementById('buy-sub').textContent = 'Cost: \u20B9'+fmt(sq.price)+' \u00B7 You have: '+fmtMoney(p.money);
+  document.getElementById('buy-prop-card').innerHTML = buildPropCard(sq, p);
+  const overlay = document.getElementById('buy-modal');
+  overlay.classList.add('show');
+  document.getElementById('buy-yes-btn').onclick = ()=>{
+    overlay.classList.remove('show');
+    buyProperty(p, sq);
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  };
+  document.getElementById('buy-no-btn').onclick = ()=>{
+    overlay.classList.remove('show');
+    addLog(p.name+' passed on buying '+sq.name,'');
+    G.phase='end'; renderAll(); autoEndIfCPU();
+  };
+}
+
+function buildPropCard(sq, p) {
+  const color = sq.group ? GC_SOLID[sq.group] : sq.type==='rail'?'#222':'#888';
+  const grad = sq.group ? GC[sq.group] : null;
+  let html = '<div class="prop-card-header">'+
+    '<div class="prop-card-band" style="background:'+(grad||color)+'"></div>'+
+    '<div>'+
+      '<div class="prop-card-name">'+(sq.landmark||'')+'  '+sq.name+'</div>'+
+      '<div class="prop-card-state">'+(sq.state||'')+'</div>'+
+    '</div>'+
+  '</div>';
+  if (sq.type==='prop') {
+    const groupOwned = p ? ownsGroup(p, sq.group) : false;
+    html += '<table class="rent-tbl">'+
+      '<tr><td>Base rent</td><td>\u20B9'+fmt(sq.rents[0])+'</td></tr>'+
+      '<tr><td>Full group</td><td>\u20B9'+fmt(sq.rents[1])+'</td></tr>'+
+      '<tr><td>1 house</td><td>\u20B9'+fmt(sq.rents[2])+'</td></tr>'+
+      '<tr><td>2 houses</td><td>\u20B9'+fmt(sq.rents[3])+'</td></tr>'+
+      '<tr><td>3 houses</td><td>\u20B9'+fmt(sq.rents[4])+'</td></tr>'+
+      '<tr><td>4 houses</td><td>\u20B9'+fmt(sq.rents[5])+'</td></tr>'+
+      '<tr><td>Hotel</td><td>\u20B9'+fmt(sq.rents[6])+'</td></tr>'+
+      '<tr><td>House cost</td><td>\u20B9'+fmt(sq.hcost)+'</td></tr>'+
+      '<tr><td>Mortgage</td><td>\u20B9'+fmt(sq.mort)+'</td></tr>'+
+    '</table>';
+  } else if (sq.type==='rail') {
+    html += '<table class="rent-tbl">'+
+      '<tr><td>1 station</td><td>\u20B9500</td></tr>'+
+      '<tr><td>2 stations</td><td>\u20B91,000</td></tr>'+
+      '<tr><td>3 stations</td><td>\u20B92,000</td></tr>'+
+      '<tr><td>4 stations</td><td>\u20B94,000</td></tr>'+
+      '<tr><td>Mortgage</td><td>\u20B9'+fmt(sq.mort)+'</td></tr>'+
+    '</table>';
+  } else if (sq.type==='util') {
+    html += '<table class="rent-tbl">'+
+      '<tr><td>1 utility</td><td>40\xD7 dice</td></tr>'+
+      '<tr><td>2 utilities</td><td>100\xD7 dice</td></tr>'+
+      '<tr><td>Mortgage</td><td>\u20B9'+fmt(sq.mort)+'</td></tr>'+
+    '</table>';
+  }
+  return html;
+}
+
+// ===================== INFO MODAL =====================
+function showInfoModal(sqId) {
+  const sq = BOARD[sqId];
+  const ownerIdx = getOwner(sqId);
+  const owner = ownerIdx!==null ? G.players[ownerIdx] : null;
+  document.getElementById('info-icon').textContent = sq.landmark||'\u{1F3D9}\uFE0F';
+  document.getElementById('info-title').textContent = sq.name;
+  let sub = sq.state||'';
+  if (owner) sub += ' \u00B7 Owned by '+owner.name;
+  document.getElementById('info-sub').textContent = sub;
+  // Show houses in info
+  let hHtml = '';
+  if (owner && sq.type==='prop') {
+    const houses = owner.houses[sqId]||0;
+    const hotels = owner.hotels[sqId]||0;
+    if (houses>0||hotels>0) {
+      hHtml = makeH3dHtml(houses, hotels);
+    }
+  }
+  document.getElementById('info-prop-card').innerHTML = hHtml + buildPropCard(sq, owner);
+  document.getElementById('info-modal').classList.add('show');
+  document.getElementById('info-close-btn').onclick = ()=>{
+    document.getElementById('info-modal').classList.remove('show');
+  };
+}
+
+function onSquareClick(sqId) {
+  if (!G||G.gameOver) return;
+  const sq = BOARD[sqId];
+  if (sq.type==='prop'||sq.type==='rail'||sq.type==='util') showInfoModal(sqId);
 }
 
 // ===================== JAIL MODAL =====================
 function openJailModal() {
   const p = currentPlayer();
-  if (p.isCPU) return;
-  document.getElementById('jail-sub').textContent = `Turn ${p.jailTurns+1} of 3 in jail. Choose an option:`;
-  const el = document.getElementById('jail-opts');
-  el.innerHTML = '';
-  const opts = [
-    {icon:'🎲', label:'Roll for Doubles', desc:'Roll dice — doubles gets you out free', action: () => { closeModal('jail-modal'); rollForJail(); }},
-    {icon:'💰', label:'Pay ₹500 Bail',    desc:`Pay ₹500 and move normally (${fmtMoney(p.money)})`, action: () => { closeModal('jail-modal'); payJailFine(); }, disabled: p.money<500},
-    p.jailFreeCards>0 ? {icon:'🃏', label:'Use Get Out Free Card', desc:'Use your Jail Free card', action: () => { closeModal('jail-modal'); useJailCard(); }} : null,
-  ].filter(Boolean);
-  opts.forEach(opt => {
-    const div = document.createElement('div');
-    div.className = 'jail-opt';
-    div.style.opacity = opt.disabled?'.4':'1';
-    div.innerHTML = `<span class="jail-opt-icon">${opt.icon}</span><div><div class="jail-opt-label">${opt.label}</div><div class="jail-opt-desc">${opt.desc}</div></div>`;
-    if (!opt.disabled) div.onclick = opt.action;
-    el.appendChild(div);
+  if (p.isCPU||p.jailTurns<0) return;
+  const opts = document.getElementById('jail-opts');
+  opts.innerHTML = '';
+  document.getElementById('jail-sub').textContent = 'Turn '+(p.jailTurns+1)+'/3 in jail. Choose:';
+
+  const addOpt = (icon, label, desc, fn) => {
+    const btn = document.createElement('button');
+    btn.className = 'jail-opt';
+    btn.innerHTML = '<span class="jail-opt-icon">'+icon+'</span>'+
+      '<div><div class="jail-opt-label">'+label+'</div><div class="jail-opt-desc">'+desc+'</div></div>';
+    btn.onclick = ()=>{ document.getElementById('jail-modal').classList.remove('show'); fn(); };
+    opts.appendChild(btn);
+  };
+
+  addOpt('\u{1F4B0}','Pay \u20B9500 Fine','Pay and move normally.', ()=>{
+    p.money -= 500; p.jailTurns = -1;
+    addLog(p.name+' paid jail fine.','bad');
+    if (p.money<0) declareBankruptcy(p);
+    else { G.phase='roll'; renderAll(); }
   });
-  document.getElementById('jail-modal').classList.add('show');
-}
-document.getElementById('jail-close-btn').onclick = () => closeModal('jail-modal');
 
-function rollForJail() {
-  const p = currentPlayer();
-  const d1=Math.ceil(Math.random()*6), d2=Math.ceil(Math.random()*6);
-  G.dice=[d1,d2];
-  document.getElementById('die1').textContent=DICE_FACES[d1];
-  document.getElementById('die2').textContent=DICE_FACES[d2];
-  document.getElementById('dice-sum').textContent=`= ${d1+d2}`;
-  if (d1===d2) {
-    p.jailTurns=-1; G.doublesCount=0;
-    addLog(`${p.token} ${p.name} rolled doubles (${d1}+${d2}) — out of jail!`,'good');
-    movePlayer(p,d1+d2);
-  } else {
-    p.jailTurns++;
-    if (p.jailTurns>=3) {
-      p.jailTurns=-1; payToBank(p.id,500);
-      addLog(`${p.token} ${p.name} paid ₹500 after 3 turns in jail`);
-      movePlayer(p,d1+d2);
-    } else {
-      addLog(`${p.token} ${p.name} rolled ${d1}+${d2} — stays in jail (turn ${p.jailTurns}).`);
-      G.phase='end'; renderAll();
-    }
-  }
-}
-function payJailFine() {
-  const p=currentPlayer(); if(p.money<500){showToast('Not enough money!');return;}
-  payToBank(p.id,500); p.jailTurns=-1;
-  addLog(`${p.token} ${p.name} paid ₹500 bail — out of jail!`,'good');
-  G.phase='roll'; renderAll();
-}
-function useJailCard() {
-  const p=currentPlayer(); p.jailFreeCards--; p.jailTurns=-1;
-  addLog(`${p.token} ${p.name} used a Jail Free card!`,'good');
-  G.phase='roll'; renderAll();
-}
-
-// ===================== MODALS =====================
-function showBuyModal(sqId) {
-  const sq = BOARD[sqId];
-  const p = currentPlayer();
-  const color = sq.group?GC[sq.group]:sq.type==='rail'?'#222':'#888';
-  document.getElementById('buy-icon').textContent = sq.group?'🏙️':sq.type==='rail'?'🚂':'🏭';
-  document.getElementById('buy-title').textContent = `Buy ${sq.name}?`;
-  document.getElementById('buy-sub').textContent = `Price: ₹${fmt(sq.price)} · Your balance: ${fmtMoney(p.money)}`;
-  document.getElementById('buy-prop-card').innerHTML = buildPropCard(sq, color);
-  document.getElementById('buy-yes-btn').onclick = () => {
-    closeModal('buy-modal');
-    buyProperty(p, sq);
-    G.phase='action'; renderAll();
-  };
-  document.getElementById('buy-no-btn').onclick = () => {
-    closeModal('buy-modal');
-    addLog(`${p.token} ${p.name} passed on ${sq.name}`);
-    G.phase='action'; renderAll();
-  };
-  document.getElementById('buy-modal').classList.add('show');
-}
-
-function showCardModal(text, callback) {
-  document.getElementById('card-title').textContent = 'Card Drawn';
-  document.getElementById('card-desc').textContent = text;
-  document.getElementById('card-ok-btn').onclick = () => {
-    closeModal('card-modal');
-    if (callback) callback();
-  };
-  document.getElementById('card-modal').classList.add('show');
-}
-
-function showInfoModal(sqId) {
-  const sq = BOARD[sqId];
-  const color = sq.group?GC[sq.group]:sq.type==='rail'?'#222':'#888';
-  const owner = getOwner(sqId);
-  document.getElementById('info-icon').textContent = sq.group?'🏙️':sq.type==='rail'?'🚂':'🏭';
-  document.getElementById('info-title').textContent = sq.name;
-  document.getElementById('info-sub').textContent = owner!==null ? `Owned by ${G.players[owner].name}` : 'Available';
-  document.getElementById('info-prop-card').innerHTML = buildPropCard(sq, color);
-  document.getElementById('info-modal').classList.add('show');
-}
-document.getElementById('info-close-btn').onclick = () => closeModal('info-modal');
-
-function onSquareClick(sqId) {
-  const sq = BOARD[sqId];
-  if (sq.type==='prop'||sq.type==='rail'||sq.type==='util') showInfoModal(sqId);
-}
-
-function buildPropCard(sq, color) {
-  if (sq.type==='prop') {
-    return `<div class="prop-card-header">
-      <div class="prop-card-band" style="background:${color}"></div>
-      <div><div class="prop-card-name">${sq.name}</div><div class="prop-card-state">${sq.state}</div></div>
-    </div>
-    <table class="rent-tbl">
-      <tr><td>Rent</td><td>₹${fmt(sq.rents[0])}</td></tr>
-      <tr><td>Rent (full set)</td><td>₹${fmt(sq.rents[1])}</td></tr>
-      <tr><td>1 House</td><td>₹${fmt(sq.rents[2])}</td></tr>
-      <tr><td>2 Houses</td><td>₹${fmt(sq.rents[3])}</td></tr>
-      <tr><td>3 Houses</td><td>₹${fmt(sq.rents[4])}</td></tr>
-      <tr><td>4 Houses</td><td>₹${fmt(sq.rents[5])}</td></tr>
-      <tr><td>Hotel</td><td>₹${fmt(sq.rents[6])}</td></tr>
-      <tr><td>House cost</td><td>₹${fmt(sq.hcost)}</td></tr>
-      <tr><td>Mortgage</td><td>₹${fmt(sq.mort)}</td></tr>
-    </table>`;
-  }
-  if (sq.type==='rail') {
-    return `<div class="prop-card-header">
-      <div class="prop-card-band" style="background:${color}"></div>
-      <div><div class="prop-card-name">${sq.name}</div><div class="prop-card-state">${sq.state||'Railway'}</div></div>
-    </div>
-    <table class="rent-tbl">
-      <tr><td>1 Station owned</td><td>₹250</td></tr>
-      <tr><td>2 Stations owned</td><td>₹500</td></tr>
-      <tr><td>3 Stations owned</td><td>₹1,000</td></tr>
-      <tr><td>4 Stations owned</td><td>₹2,000</td></tr>
-      <tr><td>Mortgage</td><td>₹${fmt(sq.mort)}</td></tr>
-    </table>`;
-  }
-  if (sq.type==='util') {
-    return `<div class="prop-card-header">
-      <div class="prop-card-band" style="background:${color}"></div>
-      <div><div class="prop-card-name">${sq.name}</div><div class="prop-card-state">${sq.state||'Utility'}</div></div>
-    </div>
-    <table class="rent-tbl">
-      <tr><td>1 Utility owned</td><td>4 × dice roll × ₹10</td></tr>
-      <tr><td>Both utilities owned</td><td>10 × dice roll × ₹10</td></tr>
-      <tr><td>Mortgage</td><td>₹${fmt(sq.mort)}</td></tr>
-    </table>`;
-  }
-  return '';
-}
-
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-function showGameOver() {
-  G.gameOver = true;
-  const active = G.players.filter(p=>!p.isBankrupt);
-  // Calculate net worth
-  const netWorth = (p) => {
-    let total = p.money;
-    p.properties.forEach(sid=>{
-      const sq=BOARD[sid];
-      total += (p.mortgaged[sid]?sq.mort:sq.price||0);
-      total += (p.houses[sid]||0)*sq.hcost + (p.hotels[sid]||0)*sq.hcost;
+  if (p.jailFreeCards>0) {
+    addOpt('\u{1F39F}','Use Jail Free Card','Use your card to escape.', ()=>{
+      p.jailFreeCards--; p.jailTurns=-1;
+      addLog(p.name+' used Get Out of Jail Free card.','good');
+      G.phase='roll'; renderAll();
     });
-    return total;
-  };
-  const sorted = [...G.players].sort((a,b)=>netWorth(b)-netWorth(a));
-  const winner = sorted[0];
-  document.getElementById('winner-trophy').textContent = winner.token;
-  document.getElementById('winner-name').textContent = winner.name;
-  document.getElementById('winner-money').textContent = `Net Worth: ${fmtMoney(netWorth(winner))}`;
-  const standings = document.getElementById('final-standings');
-  standings.innerHTML = '';
-  const ranks=['🥇','🥈','🥉','4️⃣'];
-  sorted.forEach((p,i)=>{
-    const row=document.createElement('div');
-    row.className='standing-row';
-    row.innerHTML=`<span class="standing-rank">${ranks[i]||''}</span><span>${p.token}</span><span class="standing-name">${esc(p.name)}</span><span class="standing-money">${fmtMoney(netWorth(p))}</span>`;
-    standings.appendChild(row);
+  }
+
+  addOpt('\u{1F3B2}','Roll for Doubles','Roll doubles to escape free.', ()=>{
+    G.phase='roll'; renderAll(); rollDice();
   });
-  document.getElementById('gameover-modal').classList.add('show');
+
+  document.getElementById('jail-modal').classList.add('show');
+  document.getElementById('jail-close-btn').onclick = ()=>{
+    document.getElementById('jail-modal').classList.remove('show');
+  };
 }
 
-// ===================== COMPUTER AI =====================
+// ===================== MORTGAGE MODAL =====================
+function openMortModal() {
+  const p = currentPlayer();
+  if (p.isCPU) return;
+  const list = document.getElementById('mort-list');
+  list.innerHTML = '';
+  if (p.properties.length===0) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:.82em;padding:8px">No properties to mortgage.</div>';
+  }
+  p.properties.forEach(sqId=>{
+    const sq = BOARD[sqId];
+    const isMort = !!p.mortgaged[sqId];
+    const color = sq.group ? GC_SOLID[sq.group] : '#888';
+    const item = document.createElement('div');
+    item.className = 'mort-item'+(isMort?' mortgaged-item':'');
+    item.innerHTML =
+      '<div class="mort-dot" style="background:'+color+'"></div>'+
+      '<span class="mort-name">'+(isMort?'[M] ':'')+sq.name+'</span>'+
+      '<span class="mort-val">'+(isMort?'Unmort: \u20B9'+fmt(Math.floor(sq.mort*1.1)):'Mort: \u20B9'+fmt(sq.mort))+'</span>';
+    item.onclick = ()=>{
+      if (isMort) {
+        const cost = Math.floor(sq.mort*1.1);
+        if (p.money>=cost) { p.money-=cost; delete p.mortgaged[sqId]; addLog(p.name+' unmortgaged '+sq.name,'good'); renderAll(); openMortModal(); }
+        else showToast('Not enough money to unmortgage!');
+      } else {
+        p.money += sq.mort; p.mortgaged[sqId]=true;
+        addLog(p.name+' mortgaged '+sq.name+' for \u20B9'+fmt(sq.mort),'');
+        renderAll(); openMortModal();
+      }
+    };
+    list.appendChild(item);
+  });
+  document.getElementById('mort-modal').classList.add('show');
+  document.getElementById('mort-close-btn').onclick = ()=>{
+    document.getElementById('mort-modal').classList.remove('show');
+  };
+}
+
+// ===================== BUILD MODAL =====================
+function openBuildModal() {
+  const p = currentPlayer();
+  if (p.isCPU) return;
+  const list = document.getElementById('build-list');
+  list.innerHTML = '';
+  const buildable = BOARD.filter(sq=>sq.type==='prop'&&sq.group&&canBuildOn(p,sq));
+  if (buildable.length===0) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:.82em;padding:8px">No properties to build on. Own all in a group first.</div>';
+  }
+  buildable.forEach(sq=>{
+    const houses = p.houses[sq.id]||0;
+    const hotels = p.hotels[sq.id]||0;
+    const color = GC_SOLID[sq.group];
+    const item = document.createElement('div');
+    item.className = 'mort-item';
+    const nextCost = sq.hcost;
+    const nextLabel = houses>=4 ? 'Hotel \u20B9'+fmt(nextCost) : 'House \u20B9'+fmt(nextCost);
+    item.innerHTML =
+      '<div class="mort-dot" style="background:'+color+'"></div>'+
+      '<span class="mort-name">'+sq.name+' ('+(hotels?'Hotel':houses+'H')+')</span>'+
+      '<span class="mort-val">+'+nextLabel+'</span>';
+    item.onclick = ()=>{
+      if (p.money<sq.hcost) { showToast('Not enough money!'); return; }
+      p.money -= sq.hcost;
+      if (houses>=4) {
+        G.bankHotels--;
+        if (!p.hotels[sq.id]) p.hotels[sq.id]=0;
+        p.hotels[sq.id]++;
+        p.houses[sq.id]=0;
+        G.bankHouses += 4;
+        addLog(p.name+' built a hotel on '+sq.name,'good');
+      } else {
+        G.bankHouses--;
+        if (!p.houses[sq.id]) p.houses[sq.id]=0;
+        p.houses[sq.id]++;
+        addLog(p.name+' built house '+(p.houses[sq.id])+' on '+sq.name,'good');
+      }
+      flashSquare(sq.id);
+      renderAll();
+      openBuildModal();
+    };
+    list.appendChild(item);
+  });
+  document.getElementById('build-modal').classList.add('show');
+  document.getElementById('build-close-btn').onclick = ()=>{
+    document.getElementById('build-modal').classList.remove('show');
+  };
+}
+
+// ===================== COMPUTER TURN =====================
 function doComputerTurn() {
   if (G.gameOver) return;
   const p = currentPlayer();
-  if (!p.isCPU || p.isBankrupt) return;
-  // Build houses if possible
-  aiBuild(p);
-  // Roll
-  const d1=Math.ceil(Math.random()*6), d2=Math.ceil(Math.random()*6);
-  G.dice=[d1,d2];
-  document.getElementById('die1').textContent=DICE_FACES[d1];
-  document.getElementById('die2').textContent=DICE_FACES[d2];
-  document.getElementById('dice-sum').textContent=`= ${d1+d2}`;
-  const doubles=d1===d2;
-  if (doubles) G.doublesCount++; else G.doublesCount=0;
-  if (G.doublesCount>=3) {
-    addLog(`${p.token} ${p.name} rolled 3 doubles — Go to Jail!`,'bad');
-    sendToJail(p); G.phase='end'; renderAll();
-    setTimeout(()=>endTurn(),1000); return;
-  }
-  addLog(`${p.token} ${p.name} rolled ${d1}+${d2}=${d1+d2}${doubles?' (doubles!)':''}`);
+  if (!p.isCPU||p.isBankrupt) { nextTurn(); return; }
 
-  // Jail logic
+  // CPU jail handling
   if (p.jailTurns>=0) {
-    if (doubles) {
-      p.jailTurns=-1; G.doublesCount=0;
-      addLog(`${p.token} ${p.name} rolled doubles — out of jail!`,'good');
-      movePlayer(p,d1+d2);
-      setTimeout(()=>setTimeout(endTurn,1500),200); return;
+    if (p.jailFreeCards>0) {
+      p.jailFreeCards--; p.jailTurns=-1;
+      addLog(p.name+' (CPU) used jail free card.','good');
+    } else if (p.money>3000) {
+      p.money -= 500; p.jailTurns=-1;
+      addLog(p.name+' (CPU) paid jail fine.','bad');
     }
-    p.jailTurns++;
-    if (p.jailTurns>=3) {
-      p.jailTurns=-1;
-      if (p.money>=500) { payToBank(p.id,500); addLog(`${p.token} ${p.name} paid ₹500 bail`); }
-      else if (p.jailFreeCards>0) { p.jailFreeCards--; addLog(`${p.token} ${p.name} used jail free card`); }
-      movePlayer(p,d1+d2);
-      setTimeout(()=>setTimeout(endTurn,1500),200); return;
-    }
-    addLog(`${p.token} ${p.name} stays in jail (turn ${p.jailTurns}).`);
-    G.phase='end'; renderAll();
-    setTimeout(endTurn,1000); return;
+    // Just roll (will handle jail roll logic in rollDice)
+    setTimeout(()=>{ rollDice(); setTimeout(()=>{ if(G.phase!=='roll') setTimeout(endTurn,600); },800); }, 600);
+    return;
   }
-
-  movePlayer(p,d1+d2);
   setTimeout(()=>{
-    if (G.gameOver) return;
-    if (doubles && G.doublesCount>0 && G.phase!=='end') {
-      setTimeout(doComputerTurn,1200); return;
-    }
-    setTimeout(endTurn,1200);
-  },1500);
+    rollDice();
+    setTimeout(()=>{
+      if (G.phase==='roll') return; // still rolling (doubles)
+      setTimeout(endTurn, 800);
+    }, 900);
+  }, 600);
 }
 
-function aiWantsBuy(p, sq) {
-  // Buy if has enough money and it's a good deal
-  if (p.money < sq.price) return false;
-  if (p.money - sq.price < 2000) return false; // keep ₹2000 reserve
-  return true;
-}
-
-function aiBuild(p) {
-  p.properties.forEach(sid => {
-    const sq = BOARD[sid];
-    if (sq.type!=='prop') return;
-    if (!ownsFullSet(p,sq.group)) return;
-    if (p.mortgaged[sid]) return;
-    const houses = p.houses[sid]||0;
-    const hotels = p.hotels[sid]||0;
-    if (hotels>0) return;
-    if (houses<4 && p.money >= sq.hcost*2 && G.bankHouses>0) {
-      p.money -= sq.hcost; p.houses[sid]=houses+1; G.bankHouses--;
-      addLog(`${p.token} ${p.name} built a house on ${sq.name}`,'good');
-    } else if (houses===4 && p.money >= sq.hcost*2 && G.bankHotels>0) {
-      p.money -= sq.hcost; p.houses[sid]=0; p.hotels[sid]=1;
-      G.bankHouses+=4; G.bankHotels--;
-      addLog(`${p.token} ${p.name} built a HOTEL on ${sq.name}!`,'good');
-    }
+// ===================== GAME OVER =====================
+function showGameOver(winner) {
+  document.getElementById('winner-trophy').textContent = winner?'\u{1F3C6}':'\u{1F3C1}';
+  document.getElementById('winner-name').textContent = winner ? winner.token+' '+winner.name : 'Draw!';
+  document.getElementById('winner-money').textContent = winner ? fmtMoney(winner.money) : '';
+  const sorted = [...G.players].sort((a,b)=>b.money-a.money);
+  const stands = document.getElementById('final-standings');
+  stands.innerHTML = '';
+  sorted.forEach((p,i)=>{
+    const row = document.createElement('div');
+    row.className = 'standing-row';
+    row.innerHTML =
+      '<span class="standing-rank">'+(i+1)+'.</span>'+
+      '<span class="standing-name">'+p.token+' '+esc(p.name)+(p.isBankrupt?' \u{1F4B8}':''+(p.isCPU?' (CPU)':''))+'</span>'+
+      '<span class="standing-money">'+fmtMoney(p.money)+'</span>';
+    stands.appendChild(row);
   });
+  document.getElementById('gameover-modal').classList.add('show');
 }
 
 // ===================== UTILITIES =====================
@@ -1569,23 +1642,30 @@ function shuffle(arr) {
   }
   return arr;
 }
-function fmt(n) { return n>=100000?`${(n/100000).toFixed(1)}L`:n>=1000?`${(n/1000).toFixed(n%1000===0?0:1)}K`:n.toString(); }
-function fmtMoney(n) { return `₹${fmt(n)}`; }
-function esc(s) { return s.replace(/[<>&"]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
-function addLog(msg, type='') {
-  if (!G) return;
-  const el = document.getElementById('log-wrap');
-  if (!el) return;
-  const entry = document.createElement('div');
-  entry.className = `log-entry${type?' log-'+type:''}`;
-  entry.textContent = msg;
-  el.insertBefore(entry, el.firstChild);
-  if (el.children.length > 60) el.removeChild(el.lastChild);
+function fmt(n) {
+  if (n===undefined||n===null) return '0';
+  return n.toLocaleString('en-IN');
+}
+function fmtMoney(n) { return '\u20B9'+fmt(n); }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function addLog(msg, cls) {
+  G.log.unshift({msg,cls});
+  if (G.log.length>60) G.log.pop();
+  const wrap = document.getElementById('log-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = '';
+  G.log.forEach(entry=>{
+    const div = document.createElement('div');
+    div.className = 'log-entry'+(entry.cls?' log-'+entry.cls:'');
+    div.textContent = entry.msg;
+    wrap.appendChild(div);
+  });
 }
 function showToast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
 }
 
 // ===================== INIT =====================
