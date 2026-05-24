@@ -66,33 +66,42 @@ button{cursor:pointer;font-family:inherit}
   display:grid;
   grid-template-columns:var(--corner) repeat(9,var(--sq)) var(--corner);
   grid-template-rows:var(--corner) repeat(9,var(--sq)) var(--corner);
-  background:linear-gradient(135deg,#d4edda 0%,#c3e6cb 40%,#b8dfc9 100%);
-  border:3px solid #1a2a1a;
+  background:repeating-linear-gradient(45deg,#f5deb3 0px,#f5deb3 10px,#f0d8a8 10px,#f0d8a8 20px);
+  border:5px solid #7a3b0a;
+  outline:2px solid #c8961a;
+  box-shadow:0 6px 32px rgba(122,59,10,.45),inset 0 0 0 3px #e8c97a;
   flex-shrink:0;
 }
 .board-center{
   grid-column:2/11;grid-row:2/11;
-  background:linear-gradient(135deg,#ff9933 0%,#ffffff 40%,#138808 100%);
+  background:linear-gradient(160deg,#ff9933 0%,#fff8e7 35%,#ffffff 50%,#e8fbe8 65%,#138808 100%);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:4px;padding:8px;
-  border:2px solid rgba(0,0,0,.15);
+  gap:2px;padding:6px;
+  border:2px solid rgba(122,59,10,.25);
+  position:relative;overflow:hidden;
 }
-.board-logo{font-size:clamp(10px,2.5vmin,26px);font-weight:900;color:#00008b;text-align:center;line-height:1.2;text-shadow:0 1px 2px rgba(255,255,255,.6)}
-.board-sub{font-size:clamp(6px,1.2vmin,11px);color:#00008b;text-align:center;font-weight:700}
-.board-rupee{font-size:clamp(24px,7vmin,72px);color:#00008b;line-height:1;font-weight:900;text-shadow:0 2px 8px rgba(0,0,139,.3)}
+.board-center::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at center,rgba(255,215,0,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.board-logo{font-size:clamp(10px,2.4vmin,24px);font-weight:900;color:#7a3b0a;text-align:center;line-height:1.15;letter-spacing:.03em;text-shadow:0 1px 0 rgba(255,255,255,.8)}
+.board-sub{font-size:clamp(5px,1vmin,10px);color:#7a3b0a;text-align:center;font-weight:700;opacity:.8}
+.board-rupee{font-size:clamp(22px,6vmin,64px);color:#7a3b0a;line-height:1;font-weight:900;text-shadow:0 2px 6px rgba(122,59,10,.25),0 0 20px rgba(255,152,0,.3)}
 .board-flag{font-size:clamp(12px,3vmin,32px);line-height:1}
+.board-chakra{font-size:clamp(8px,1.8vmin,20px);line-height:1;opacity:.7}
 
 /* SQUARES */
 .sq{
-  border:1px solid rgba(0,0,0,.3);
+  border:1px solid rgba(122,59,10,.35);
   display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
+  align-items:center;justify-content:space-evenly;
   position:relative;overflow:hidden;
   cursor:pointer;
-  background:linear-gradient(180deg,#e8f5e9 0%,#dcedc8 100%);
+  background:linear-gradient(180deg,#fef6e4 0%,#faebd7 100%);
   transition:background .15s,box-shadow .15s;
 }
-.sq:hover{background:rgba(255,255,255,.55)}
+.sq:hover{background:rgba(255,240,200,.85);box-shadow:inset 0 0 0 2px rgba(122,59,10,.3)}
 
 /* Flash buy animation */
 @keyframes flash-buy{
@@ -104,20 +113,21 @@ button{cursor:pointer;font-family:inherit}
 .sq.buying{animation:flash-buy .6s ease}
 
 /* Color bands - more vibrant gradients */
-.color-band{width:100%;flex-shrink:0;height:28%}
+.color-band{width:100%;flex-shrink:0;height:33%;border-bottom:1px solid rgba(0,0,0,.18)}
 .sq-t{flex-direction:column-reverse}
+.sq-t .color-band{border-bottom:none;border-top:1px solid rgba(0,0,0,.18)}
 .sq-r{flex-direction:row}
-.sq-r .color-band{width:28%;height:100%}
+.sq-r .color-band{width:33%;height:100%;border-bottom:none;border-right:1px solid rgba(0,0,0,.18)}
 .sq-l{flex-direction:row-reverse}
-.sq-l .color-band{width:28%;height:100%}
+.sq-l .color-band{width:33%;height:100%;border-bottom:none;border-left:1px solid rgba(0,0,0,.18)}
 
-.sq-name{font-size:clamp(4px,.75vmin,8px);font-weight:700;color:#111;text-align:center;line-height:1.15;padding:1px 2px;word-break:break-word}
-.sq-price{font-size:clamp(3px,.6vmin,7px);color:#333;text-align:center;font-weight:600}
-.sq-icon{font-size:clamp(7px,1.3vmin,14px);line-height:1}
-.sq-corner{font-size:clamp(6px,1vmin,12px);font-weight:800;color:#111;text-align:center;line-height:1.2}
+.sq-name{font-size:clamp(4.5px,.82vmin,9px);font-weight:800;color:#3d1f00;text-align:center;line-height:1.1;padding:0 2px;word-break:break-word}
+.sq-price{font-size:clamp(3.5px,.65vmin,7.5px);color:#7a3b0a;text-align:center;font-weight:700}
+.sq-icon{font-size:clamp(8px,1.5vmin,16px);line-height:1}
+.sq-corner{font-size:clamp(6px,1vmin,12px);font-weight:800;color:#3d1f00;text-align:center;line-height:1.25;padding:2px}
 
-/* Landmark emoji on squares */
-.sq-landmark{font-size:clamp(6px,1.1vmin,11px);line-height:1;display:block;text-align:center}
+/* Landmark emoji on squares — bigger to fill space */
+.sq-landmark{font-size:clamp(10px,2vmin,22px);line-height:1;display:block;text-align:center;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
 
 /* tokens on square */
 .sq-tokens{display:flex;flex-wrap:wrap;gap:1px;justify-content:center;padding:1px;position:absolute;bottom:2px;left:2px;right:2px}
@@ -513,7 +523,7 @@ const BOARD = [
   {id:21, type:'prop',    name:'Mumbai',     state:'Maharashtra', group:'red',      price:2200, rents:[180,360,900,2500,7000,8750,10500],hcost:1500,mort:1100, landmark:'\u{1F309}'},
   {id:22, type:'chance',  name:'Kismat Card',     icon:'\u{1F0CF}'},
   {id:23, type:'prop',    name:'Pune',       state:'Maharashtra', group:'red',      price:2200, rents:[180,360,900,2500,7000,8750,10500],hcost:1500,mort:1100, landmark:'\u{1F393}'},
-  {id:24, type:'prop',    name:'Nagpur',     state:'Maharashtra', group:'red',      price:2400, rents:[200,400,1000,3000,7500,9250,11000],hcost:1500,mort:1200,landmark:'\u{1F34A}'},
+  {id:24, type:'prop',    name:'Hyderabad',  state:'Telangana',   group:'red',      price:2400, rents:[200,400,1000,3000,7500,9250,11000],hcost:1500,mort:1200,landmark:'\u{1F54C}'},
   {id:25, type:'rail',    name:'Delhi Stn',  state:'Delhi',       price:2000, mort:1000, landmark:'\u{1F682}'},
   {id:26, type:'prop',    name:'Ahmedabad',  state:'Gujarat',     group:'yellow',   price:2600, rents:[220,440,1100,3300,8000,9750,11500],hcost:1500,mort:1300,landmark:'\u{1F54C}'},
   {id:27, type:'prop',    name:'Surat',      state:'Gujarat',     group:'yellow',   price:2600, rents:[220,440,1100,3300,8000,9750,11500],hcost:1500,mort:1300,landmark:'\u{1F48E}'},
@@ -690,10 +700,11 @@ function buildBoard() {
   center.style.gridColumn = '2/11';
   center.style.gridRow = '2/11';
   center.innerHTML =
-    '<div class="board-flag">\u{1F1EE}\u{1F1F3}</div>'+
+    '<div class="board-flag">\u{1F1EE}\u{1F1F3} \u{1F1EE}\u{1F1F3}</div>'+
     '<div class="board-rupee">\u20B9</div>'+
-    '<div class="board-logo">INDIA<br>BUSINESS</div>'+
-    '<div class="board-sub">\u{1F3D9}\uFE0F Property Trading Game</div>';
+    '<div class="board-logo">\u{1F3DB}\uFE0F INDIA\u{1F3DB}\uFE0F<br>BUSINESS</div>'+
+    '<div class="board-chakra">\u2638\uFE0F \u2014 \u{1F3EF} \u2014 \u{1F54C} \u2014 \u26F5 \u2014 \u2638\uFE0F</div>'+
+    '<div class="board-sub">Mumbai \u00B7 Delhi \u00B7 Bengaluru \u00B7 Hyderabad<br>\u{1F3D9}\uFE0F Property Trading Across Bharat</div>';
   board.appendChild(center);
 
   BOARD.forEach(sq => {
@@ -732,8 +743,16 @@ function renderSquares() {
 
     if (side === 'corner') {
       el.innerHTML = renderCorner(sq);
+      el.style.background = '';
     } else {
       el.innerHTML = renderSqInner(sq, side);
+      // Distinct backgrounds for special square types
+      if      (sq.type==='chance')  el.style.background='linear-gradient(180deg,#fff8dc,#ffe4a0)';
+      else if (sq.type==='chest')   el.style.background='linear-gradient(180deg,#e0f7fa,#b2ebf2)';
+      else if (sq.type==='tax')     el.style.background='linear-gradient(180deg,#fce4ec,#f8bbd9)';
+      else if (sq.type==='rail')    el.style.background='linear-gradient(180deg,#eceff1,#cfd8dc)';
+      else if (sq.type==='util')    el.style.background='linear-gradient(180deg,#e8f5e9,#c8e6c9)';
+      else                          el.style.background='';
     }
 
     // owner bar
@@ -796,10 +815,15 @@ function flashSquare(sqId) {
 }
 
 function renderCorner(sq) {
-  if (sq.type==='go')      return '<div class="sq-corner">\u25B6 GO<br>Collect<br>\u20B92,000</div>';
-  if (sq.type==='jail')    return '<div class="sq-corner">\u26D3\uFE0F<br>JAIL<br>Visit</div>';
-  if (sq.type==='parking') return '<div class="sq-corner">\u{1F17F}<br>Free<br>Parking</div>';
-  if (sq.type==='gotojail')return '<div class="sq-corner">\u{1F46E}<br>GO TO<br>JAIL</div>';
+  const s=(style,icon,line1,line2)=>
+    `<div style="width:100%;height:100%;${style}display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px">
+      <span style="font-size:clamp(14px,3vmin,36px);line-height:1">${icon}</span>
+      <div class="sq-corner" style="font-size:clamp(7px,1.25vmin,13px)">${line1}${line2?'<br><span style="font-size:.82em;opacity:.8">'+line2+'</span>':''}</div>
+    </div>`;
+  if (sq.type==='go')       return s('background:linear-gradient(135deg,#ff9933,#ffb84d);color:#7a1a00;','🏁','GO','Collect \u20B92,000');
+  if (sq.type==='jail')     return s('background:linear-gradient(135deg,#1a1a1a,#3d3d3d);color:#ffd700;','\u26D3\uFE0F','JAIL','Just Visiting');
+  if (sq.type==='parking')  return s('background:linear-gradient(135deg,#138808,#1db31d);color:#fff;','\u{1F333}','FREE','Parking');
+  if (sq.type==='gotojail') return s('background:linear-gradient(135deg,#b71c1c,#e53935);color:#fff;','\u{1F46E}','GO TO','JAIL');
   return '<div class="sq-corner">'+sq.name+'</div>';
 }
 
@@ -827,11 +851,17 @@ function renderSqInner(sq, side) {
       '<div class="sq-name" style="'+(mortgaged?'text-decoration:line-through;opacity:.5':'')+'">'+abbr(sq.name)+'</div>'+
       '<div class="sq-price">'+(sq.price?'\u20B9'+fmt(sq.price):'')+'</div>';
   } else if (sq.type==='chance') {
-    content = '<div class="sq-icon">\u{1F0CF}</div><div class="sq-name">Kismat</div>';
+    content = '<div class="sq-icon" style="font-size:clamp(13px,2.4vmin,26px)">\u{1F0CF}</div>'+
+              '<div class="sq-name" style="color:#7a4800;font-weight:800">Kismat</div>'+
+              '<div class="sq-price" style="color:#7a4800">Card</div>';
   } else if (sq.type==='chest') {
-    content = '<div class="sq-icon">\u{1F4E6}</div><div class="sq-name">Janta</div>';
+    content = '<div class="sq-icon" style="font-size:clamp(13px,2.4vmin,26px)">\u{1F4E6}</div>'+
+              '<div class="sq-name" style="color:#0c4a5a;font-weight:800">Janta</div>'+
+              '<div class="sq-price" style="color:#0c4a5a">Card</div>';
   } else if (sq.type==='tax') {
-    content = '<div class="sq-icon">'+sq.icon+'</div><div class="sq-name">'+abbr(sq.name)+'</div><div class="sq-price">'+'\u20B9'+fmt(sq.amount)+'</div>';
+    content = '<div class="sq-icon" style="font-size:clamp(12px,2.2vmin,24px)">'+sq.icon+'</div>'+
+              '<div class="sq-name" style="color:#7a0000;font-weight:800">'+abbr(sq.name)+'</div>'+
+              '<div class="sq-price" style="color:#7a0000">\u20B9'+fmt(sq.amount)+'</div>';
   }
   return band + content;
 }
