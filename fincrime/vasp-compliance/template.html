@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VASP Compliance Tool — FinCrime | Everything</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #ffffff; color: #111827; font-size: 15px; line-height: 1.6; }
+  a { text-decoration: none; }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0 32px;
+    height: 56px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .nav-back {
+    display: flex; align-items: center; gap: 6px;
+    color: #6b7280; font-size: 13px; font-weight: 500;
+    transition: color .2s;
+  }
+  .nav-back:hover { color: #111827; }
+  .nav-back svg { width: 14px; height: 14px; flex-shrink: 0; }
+  .nav-sep { color: #d1d5db; font-size: 18px; line-height: 1; }
+  .nav-title { font-weight: 600; font-size: 15px; color: #111827; }
+  .nav-demo {
+    margin-left: auto;
+    background: #0891b2; color: #fff;
+    padding: 6px 16px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    transition: opacity .2s;
+  }
+  .nav-demo:hover { opacity: .85; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 50%, #fef9f0 100%);
+    padding: 80px 32px 72px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .hero-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46;
+    font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 20px; letter-spacing: .4px;
+  }
+  .hero h1 {
+    font-size: 42px; font-weight: 800; line-height: 1.15;
+    color: #111827; margin-bottom: 20px;
+  }
+  .hero h1 span { color: #0891b2; }
+  .hero-desc {
+    font-size: 16px; color: #4b5563; line-height: 1.7; margin-bottom: 32px;
+  }
+  .hero-features { list-style: none; margin-bottom: 36px; }
+  .hero-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 14px; color: #374151; margin-bottom: 10px;
+  }
+  .hero-features li::before {
+    content: '✓';
+    color: #0891b2; font-weight: 700; flex-shrink: 0;
+    width: 18px; height: 18px;
+    background: #e0f2fe; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; margin-top: 2px;
+  }
+  .hero-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .btn-cta {
+    background: #0891b2; color: #fff;
+    padding: 12px 28px; border-radius: 8px;
+    font-size: 15px; font-weight: 600;
+    transition: background .2s, transform .1s;
+    display: inline-block;
+  }
+  .btn-cta:hover { background: #0e7490; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent; color: #374151;
+    padding: 12px 24px; border-radius: 8px;
+    font-size: 15px; font-weight: 500;
+    border: 1px solid #d1d5db;
+    transition: border-color .2s, color .2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: #9ca3af; color: #111827; }
+
+  /* IFRAME PREVIEW */
+  .hero-preview {
+    position: relative;
+    background: #1a1f2e;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18), 0 4px 16px rgba(0,0,0,.1);
+    border: 1px solid #30363d;
+  }
+  .preview-bar {
+    background: #161b22;
+    padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #30363d;
+  }
+  .preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .preview-url {
+    flex: 1; background: #21262d; border-radius: 4px;
+    padding: 3px 10px; font-size: 11px; color: #8b949e;
+    font-family: monospace;
+  }
+  .preview-iframe-wrap {
+    position: relative; width: 100%; height: 340px;
+    overflow: hidden;
+  }
+  .preview-iframe-wrap iframe {
+    width: 160%; height: 160%;
+    transform: scale(0.625) translateX(-30%) translateY(-30%);
+    transform-origin: top left;
+    border: none; pointer-events: none;
+  }
+  .preview-overlay {
+    position: absolute; inset: 0;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 16px;
+    background: linear-gradient(to bottom, transparent 60%, rgba(13,17,23,.8));
+  }
+  .preview-cta {
+    background: rgba(8,145,178,.9); color: #fff;
+    padding: 8px 20px; border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background .2s;
+  }
+  .preview-cta:hover { background: #0891b2; }
+
+  /* TRUST BAR */
+  .trust-bar {
+    background: #f9fafb; border-top: 1px solid #e5e7eb; border-bottom: 1px solid #e5e7eb;
+    padding: 16px 32px;
+  }
+  .trust-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; gap: 32px; flex-wrap: wrap;
+  }
+  .trust-label { font-size: 12px; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; flex-shrink: 0; }
+  .trust-items { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .trust-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: #6b7280; font-weight: 500;
+  }
+  .trust-item svg { width: 14px; height: 14px; color: #0891b2; }
+
+  /* FEATURES */
+  .features {
+    background: #111827;
+    padding: 80px 32px;
+  }
+  .features-inner { max-width: 1100px; margin: 0 auto; }
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    color: #0891b2; margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: 32px; font-weight: 800; color: #f9fafb;
+    margin-bottom: 14px; line-height: 1.25;
+  }
+  .section-desc {
+    font-size: 15px; color: #9ca3af; max-width: 560px; line-height: 1.7; margin-bottom: 48px;
+  }
+  .features-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+  }
+  .feature-card {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 12px;
+    padding: 28px;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+    cursor: default;
+  }
+  .feature-card:hover {
+    border-color: #0891b2;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(8,145,178,.15);
+  }
+  .feature-icon {
+    font-size: 28px; margin-bottom: 14px; display: block;
+  }
+  .feature-title {
+    font-size: 17px; font-weight: 700; color: #f9fafb; margin-bottom: 10px;
+  }
+  .feature-desc {
+    font-size: 14px; color: #9ca3af; line-height: 1.65; margin-bottom: 16px;
+  }
+  .feature-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .feature-tag {
+    font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 600;
+    background: #111827; border: 1px solid #374151; color: #6b7280;
+  }
+  .feature-tag.accent { border-color: #0e7490; color: #0891b2; background: #0c1e24; }
+  .feature-tag.purple { border-color: #5b21b6; color: #8b5cf6; background: #1a1030; }
+  .feature-tag.red    { border-color: #7f1d1d; color: #ef4444; background: #1a0e0e; }
+  .feature-tag.green  { border-color: #14532d; color: #22c55e; background: #0d1f0d; }
+
+  /* HOW IT WORKS */
+  .how {
+    background: #f9fafb;
+    padding: 80px 32px;
+    border-top: 1px solid #e5e7eb;
+  }
+  .how-inner { max-width: 900px; margin: 0 auto; text-align: center; }
+  .how h2 { font-size: 30px; font-weight: 800; color: #111827; margin-bottom: 12px; }
+  .how .desc { font-size: 15px; color: #6b7280; margin-bottom: 52px; }
+  .steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; position: relative; }
+  .steps::before {
+    content: '';
+    position: absolute; top: 28px; left: 12.5%; right: 12.5%; height: 2px;
+    background: linear-gradient(to right, #0891b2, #6366f1);
+    z-index: 0;
+  }
+  .step { position: relative; z-index: 1; padding: 0 12px; text-align: center; }
+  .step-num {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: #0891b2; color: #fff;
+    font-size: 18px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    border: 4px solid #f9fafb;
+    box-shadow: 0 0 0 2px #0891b2;
+  }
+  .step h4 { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 6px; }
+  .step p  { font-size: 12px; color: #6b7280; line-height: 1.5; }
+
+  /* COMPLIANCE CALLOUT */
+  .compliance {
+    background: #0c1e24;
+    padding: 64px 32px;
+    border-top: 1px solid #0e3442;
+  }
+  .compliance-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;
+  }
+  .compliance h2 { font-size: 28px; font-weight: 800; color: #f0f9ff; margin-bottom: 12px; }
+  .compliance .desc { font-size: 14px; color: #7dd3fc; line-height: 1.65; margin-bottom: 28px; }
+  .reg-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+  .reg-chip {
+    padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 700;
+    border: 1px solid #0e4d6a; background: #0a2f40; color: #38bdf8;
+  }
+  .compliance-list { list-style: none; }
+  .compliance-list li {
+    display: flex; gap: 12px; padding: 14px 0;
+    border-bottom: 1px solid #0e3442; font-size: 14px;
+  }
+  .compliance-list li:last-child { border-bottom: none; }
+  .cl-tag {
+    font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 4px;
+    background: #0891b2; color: #fff; white-space: nowrap; align-self: flex-start;
+    margin-top: 2px;
+  }
+  .cl-text { color: #bae6fd; line-height: 1.55; }
+
+  /* FOOTER */
+  footer {
+    background: #0d1117; border-top: 1px solid #21262d;
+    padding: 40px 32px;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+  }
+  .footer-left { display: flex; flex-direction: column; gap: 6px; }
+  .footer-brand { font-size: 15px; font-weight: 700; color: #e6edf3; }
+  .footer-tagline { font-size: 12px; color: #8b949e; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 13px; color: #8b949e; transition: color .2s; }
+  .footer-links a:hover { color: #e6edf3; }
+  .footer-right { font-size: 12px; color: #8b949e; }
+
+  @media (max-width: 768px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .compliance-inner { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: repeat(2,1fr); gap: 24px; }
+    .steps::before { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="../../index.html" class="nav-back">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2L4 7l5 5"/></svg>
+    Everything
+  </a>
+  <span class="nav-sep">|</span>
+  <span class="nav-title">VASP Compliance Tool</span>
+  <a href="index.html" class="nav-demo">Demo →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <!-- Left: Copy -->
+    <div>
+      <div class="hero-badge">
+        🕵️ FinCrime · Crypto AML
+      </div>
+      <h1>Crypto AML.<br><span style="color:#0891b2">No Guesswork.</span></h1>
+      <p class="hero-desc">
+        A browser-based compliance simulator for Virtual Asset Service Providers (VASPs).
+        Visualise transaction flows, check Travel Rule obligations, screen wallet addresses,
+        and monitor risk exposure — all in one tool.
+      </p>
+      <ul class="hero-features">
+        <li>Directed transaction graph with node-level risk colouring</li>
+        <li>FATF Recommendation 16 Travel Rule checker with 15-VASP registry</li>
+        <li>Wallet risk scorer (0–100) with category breakdown bars</li>
+        <li>Live risk dashboard with animated stats and stacked bar charts</li>
+        <li>Sanction screening, EDD triggers, and STR guidance built-in</li>
+      </ul>
+      <div class="hero-actions">
+        <a href="index.html" class="btn-cta">Launch Tool →</a>
+        <a href="#features" class="btn-outline">See Features</a>
+      </div>
+    </div>
+
+    <!-- Right: Preview -->
+    <div class="hero-preview">
+      <div class="preview-bar">
+        <div class="preview-dot" style="background:#ef4444;"></div>
+        <div class="preview-dot" style="background:#f59e0b;"></div>
+        <div class="preview-dot" style="background:#22c55e;"></div>
+        <div class="preview-url">everything/fincrime/vasp-compliance/</div>
+      </div>
+      <div class="preview-iframe-wrap">
+        <iframe src="index.html" title="VASP Compliance Tool preview" loading="lazy"></iframe>
+        <div class="preview-overlay">
+          <a href="index.html" class="preview-cta">Open Full Tool →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-inner">
+    <span class="trust-label">Covers</span>
+    <div class="trust-items">
+      <div class="trust-item">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,8 5,11 12,3"/></svg>
+        FATF R.15 &amp; R.16
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,8 5,11 12,3"/></svg>
+        OFAC SDN Screening
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,8 5,11 12,3"/></svg>
+        Travel Rule ($1,000 threshold)
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,8 5,11 12,3"/></svg>
+        Unhosted Wallet EDD
+      </div>
+      <div class="trust-item">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="2,8 5,11 12,3"/></svg>
+        STR Filing Guidance
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="features-inner">
+    <div class="section-eyebrow">Core Modules</div>
+    <h2 class="section-title">Four tools. One compliance workflow.</h2>
+    <p class="section-desc">
+      Each tab in the simulator covers a distinct compliance use-case,
+      from on-chain forensics to regulatory reporting guidance.
+    </p>
+    <div class="features-grid">
+
+      <!-- Card 1 -->
+      <div class="feature-card">
+        <span class="feature-icon">🔗</span>
+        <div class="feature-title">Transaction Graph</div>
+        <p class="feature-desc">
+          Visualise an eight-node blockchain transaction flow rendered on HTML5 Canvas.
+          Nodes are risk-coloured (low / medium / high / critical) with pulsing borders for
+          sanctioned addresses. Flagged edges are drawn in red with directional arrowheads.
+          Click any transaction edge to inspect full details — amount, timestamp, risk flags,
+          and recommended compliance action — in the side panel.
+        </p>
+        <div class="feature-tags">
+          <span class="feature-tag accent">Canvas 2D</span>
+          <span class="feature-tag red">Mixer Detection</span>
+          <span class="feature-tag red">OFAC SDN</span>
+          <span class="feature-tag">Darknet</span>
+          <span class="feature-tag">Round-Trip</span>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="feature-card">
+        <span class="feature-icon">✈</span>
+        <div class="feature-title">Travel Rule Checker</div>
+        <p class="feature-desc">
+          Run FATF Recommendation 16 compliance checks on any virtual asset transfer.
+          A built-in registry covers 15 VASPs across India, USA, EU, and offshore
+          jurisdictions. Checks include: amount threshold, VASP registration status,
+          unhosted wallet detection, originator completeness, and live sanctions screening.
+          Returns a PROCEED / CAUTION / REJECT verdict with per-check details.
+        </p>
+        <div class="feature-tags">
+          <span class="feature-tag accent">FATF R.16</span>
+          <span class="feature-tag green">15 VASPs</span>
+          <span class="feature-tag purple">Unhosted EDD</span>
+          <span class="feature-tag red">Sanctions</span>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="feature-card">
+        <span class="feature-icon">🔍</span>
+        <div class="feature-title">Wallet Screener</div>
+        <p class="feature-desc">
+          Score any wallet address on a 0–100 risk scale using five exposure categories:
+          Exchange, Mixer, Darknet, Sanctions, and Gambling. The visual gauge updates
+          instantly with colour-coded levels. Five pre-loaded sample wallets demonstrate
+          a full range from clean to OFAC-sanctioned. Each result includes last-5 transactions
+          and a tailored recommended action card.
+        </p>
+        <div class="feature-tags">
+          <span class="feature-tag accent">SVG Gauge</span>
+          <span class="feature-tag red">Mixer Exposure</span>
+          <span class="feature-tag red">Darknet</span>
+          <span class="feature-tag purple">EDD Triggers</span>
+          <span class="feature-tag">STR Guidance</span>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">Risk Dashboard</div>
+        <p class="feature-desc">
+          A platform-wide overview with four animated stat counters (wallets screened,
+          high-risk flagged, sanctions hits, STRs required). A stacked Canvas bar chart
+          shows transactions by risk tier across the last 7 days. A donut chart visualises
+          risk distribution. The top-5 flagged wallets table includes risk scores, primary
+          risk factors, and status chips (Blocked / Filed / Review).
+        </p>
+        <div class="feature-tags">
+          <span class="feature-tag accent">Animated Counters</span>
+          <span class="feature-tag accent">Stacked Bar Chart</span>
+          <span class="feature-tag green">Donut Chart</span>
+          <span class="feature-tag">FATF Guidance</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="how-inner">
+    <h2>How It Works</h2>
+    <p class="desc">A four-step compliance screening workflow, from transaction receipt to reporting decision.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Receive Transfer</h4>
+        <p>A virtual asset transfer arrives at your VASP from an originator.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Screen the Wallets</h4>
+        <p>Run originator and beneficiary addresses through the Wallet Screener for risk scores and sanctions checks.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Check Travel Rule</h4>
+        <p>Verify that all required FATF R.16 information is present and that both VASPs are registered.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Act on Verdict</h4>
+        <p>Proceed, apply EDD, or reject and file an STR based on the tool's compliance verdict.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPLIANCE CALLOUT -->
+<section class="compliance">
+  <div class="compliance-inner">
+    <div>
+      <h2>Built on FATF Standards</h2>
+      <p class="desc">
+        All compliance logic follows the Financial Action Task Force (FATF) Recommendations
+        for Virtual Assets and Virtual Asset Service Providers, updated guidance notes from
+        2019–2023, and relevant national implementations including India's FIU-IND framework.
+      </p>
+      <div class="reg-chips">
+        <span class="reg-chip">FATF R.15</span>
+        <span class="reg-chip">FATF R.16</span>
+        <span class="reg-chip">PMLA India</span>
+        <span class="reg-chip">OFAC SDN</span>
+        <span class="reg-chip">FIU-IND</span>
+        <span class="reg-chip">MiCA (EU)</span>
+      </div>
+    </div>
+    <div>
+      <ul class="compliance-list">
+        <li>
+          <span class="cl-tag">R.15</span>
+          <span class="cl-text">VASPs must be regulated for AML/CFT purposes and subject to adequate supervision or monitoring by a competent authority.</span>
+        </li>
+        <li>
+          <span class="cl-tag">R.16</span>
+          <span class="cl-text">The Travel Rule requires VASPs to obtain, hold, and transmit required originator and beneficiary information for VA transfers of USD/EUR 1,000 or above.</span>
+        </li>
+        <li>
+          <span class="cl-tag">Unhosted</span>
+          <span class="cl-text">Transfers to/from unhosted (self-hosted) wallets require enhanced due diligence. VASPs should verify the ownership of the counterparty wallet.</span>
+        </li>
+        <li>
+          <span class="cl-tag">Sunrise</span>
+          <span class="cl-text">The "Sunrise Problem" arises because jurisdictions implement the Travel Rule at different times. VASPs must apply a risk-based approach to non-compliant counterparties.</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="footer-brand">Everything · VASP Compliance Tool</div>
+      <div class="footer-tagline">A FinCrime learning tool — educational purposes only. Not legal or compliance advice.</div>
+    </div>
+    <div class="footer-links">
+      <a href="index.html">Launch Tool</a>
+      <a href="../../index.html">Everything Home</a>
+      <a href="../aml-case-trainer/index.html">AML Case Trainer</a>
+      <a href="../fatf-quiz/index.html">FATF Quiz</a>
+    </div>
+    <div class="footer-right">© 2026 Everything Platform</div>
+  </div>
+</footer>
+
+</body>
+</html>

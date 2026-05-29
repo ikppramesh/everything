@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Monitor — FinCrime Suite | Everything Platform</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.6; }
+
+  /* NAV */
+  nav {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 32px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: #64748b;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all .15s;
+  }
+  nav a:hover { background: #f1f5f9; border-color: #e2e8f0; color: #1e293b; }
+  .nav-sep { color: #cbd5e1; font-size: 18px; }
+  .nav-title { font-size: 14px; font-weight: 700; color: #1e293b; }
+  .nav-demo-btn {
+    margin-left: auto;
+    background: #d97706;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    transition: opacity .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .nav-demo-btn:hover { opacity: .88; background: #d97706; color: #fff; border: none; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #fefce8 0%, #fff7ed 40%, #fef3c7 100%);
+    border-bottom: 1px solid #fde68a;
+    padding: 72px 32px 64px;
+  }
+  .hero-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(217,119,6,.1);
+    color: #b45309;
+    border: 1px solid rgba(217,119,6,.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 44px;
+    font-weight: 800;
+    line-height: 1.12;
+    color: #1e293b;
+    margin-bottom: 18px;
+    letter-spacing: -.5px;
+  }
+  .hero-sub {
+    font-size: 17px;
+    color: #475569;
+    margin-bottom: 28px;
+    line-height: 1.65;
+    max-width: 520px;
+  }
+  .hero-features {
+    list-style: none;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hero-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 14px;
+    color: #334155;
+  }
+  .hero-features li::before {
+    content: '✓';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    background: #d97706;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .cta-primary {
+    background: #d97706;
+    color: #fff;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    transition: opacity .15s, transform .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 14px rgba(217,119,6,.35);
+  }
+  .cta-primary:hover { opacity: .88; transform: translateY(-1px); }
+  .cta-secondary {
+    background: #fff;
+    color: #475569;
+    text-decoration: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid #e2e8f0;
+    transition: all .15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cta-secondary:hover { border-color: #d97706; color: #d97706; background: #fffbeb; }
+
+  /* HERO PREVIEW */
+  .hero-preview {
+    position: relative;
+  }
+  .iframe-wrap {
+    background: #0d1117;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.08);
+    position: relative;
+  }
+  .iframe-bar {
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot.red   { background: #ff5f57; }
+  .dot.amber { background: #febc2e; }
+  .dot.green { background: #28c840; }
+  .iframe-url {
+    background: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 5px;
+    padding: 3px 12px;
+    font-size: 11px;
+    color: #8b949e;
+    flex: 1;
+    text-align: center;
+    font-family: monospace;
+  }
+  .hero-preview iframe {
+    width: 100%;
+    height: 340px;
+    border: none;
+    display: block;
+    pointer-events: none;
+  }
+  .preview-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 80px;
+    background: linear-gradient(transparent, rgba(13,17,23,.95));
+    border-radius: 0 0 12px 12px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 14px;
+  }
+  .preview-overlay a {
+    background: rgba(217,119,6,.9);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: background .15s;
+  }
+  .preview-overlay a:hover { background: #d97706; }
+
+  /* LIVE INDICATOR */
+  .live-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(34,197,94,.1);
+    color: #16a34a;
+    border: 1px solid rgba(34,197,94,.2);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .3px;
+    margin-bottom: 12px;
+  }
+  .live-chip-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: blink 1.4s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+  /* FEATURES SECTION */
+  .features-section {
+    background: #0f172a;
+    padding: 72px 32px;
+    color: #e2e8f0;
+  }
+  .features-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .section-badge {
+    display: inline-block;
+    background: rgba(217,119,6,.15);
+    color: #fbbf24;
+    border: 1px solid rgba(217,119,6,.25);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .features-section h2 {
+    font-size: 34px;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 10px;
+    letter-spacing: -.3px;
+  }
+  .features-section .section-sub {
+    font-size: 16px;
+    color: #94a3b8;
+    margin-bottom: 48px;
+    max-width: 560px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  .feature-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 28px 24px;
+    transition: border-color .2s, transform .2s;
+  }
+  .feature-card:hover { border-color: #d97706; transform: translateY(-3px); }
+  .feature-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .feature-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 8px;
+  }
+  .feature-card p {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+  }
+  .feature-tag {
+    display: inline-block;
+    margin-top: 14px;
+    background: rgba(217,119,6,.12);
+    color: #fbbf24;
+    border: 1px solid rgba(217,119,6,.2);
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+  }
+
+  /* HOW IT WORKS */
+  .how-section {
+    padding: 72px 32px;
+    background: #fff;
+  }
+  .how-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .how-section h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 10px;
+    letter-spacing: -.3px;
+  }
+  .how-section .section-sub-light {
+    font-size: 16px;
+    color: #64748b;
+    margin-bottom: 48px;
+  }
+  .steps-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+  }
+  .steps-row::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    left: calc(100% / 8);
+    right: calc(100% / 8);
+    height: 2px;
+    background: linear-gradient(to right, #fde68a, #d97706, #fde68a);
+    z-index: 0;
+  }
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 0 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .step-num {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d97706, #f59e0b);
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 20px rgba(217,119,6,.35);
+    flex-shrink: 0;
+  }
+  .step h4 { font-size: 14px; font-weight: 700; color: #1e293b; text-align: center; }
+  .step p  { font-size: 12px; color: #64748b; text-align: center; line-height: 1.5; }
+
+  /* RULES PREVIEW */
+  .rules-section {
+    padding: 64px 32px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+  }
+  .rules-inner { max-width: 1200px; margin: 0 auto; }
+  .rules-section h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 6px;
+  }
+  .rules-section .sub { font-size: 15px; color: #64748b; margin-bottom: 36px; }
+  .rules-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .rule-preview-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px 22px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .rule-preview-card:hover { border-color: #d97706; box-shadow: 0 4px 16px rgba(217,119,6,.1); }
+  .rule-icon-wrap {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: rgba(217,119,6,.1);
+    border: 1px solid rgba(217,119,6,.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .rule-preview-card h4 { font-size: 13px; font-weight: 700; color: #1e293b; margin-bottom: 4px; }
+  .rule-preview-card p  { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .rule-threshold-pill {
+    margin-top: 8px;
+    display: inline-block;
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: monospace;
+  }
+
+  /* WORKFLOW SECTION */
+  .workflow-section {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 72px 32px;
+    color: #e2e8f0;
+  }
+  .workflow-inner { max-width: 1100px; margin: 0 auto; }
+  .workflow-section h2 {
+    font-size: 30px;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-bottom: 8px;
+  }
+  .workflow-section .sub-light { font-size: 15px; color: #94a3b8; margin-bottom: 40px; }
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: center;
+  }
+  .workflow-step {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: border-color .2s;
+  }
+  .workflow-step:hover { border-color: #d97706; }
+  .wf-icon { font-size: 24px; margin-bottom: 10px; }
+  .wf-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .wf-new      { background: rgba(59,130,246,.15); color: #60a5fa; border: 1px solid rgba(59,130,246,.25); }
+  .wf-review   { background: rgba(245,158,11,.15); color: #fbbf24; border: 1px solid rgba(245,158,11,.25); }
+  .wf-escalate { background: rgba(239,68,68,.12);  color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+  .wf-str      { background: rgba(139,92,246,.12); color: #a78bfa; border: 1px solid rgba(139,92,246,.25); }
+  .wf-done     { background: rgba(34,197,94,.12);  color: #4ade80; border: 1px solid rgba(34,197,94,.25); }
+  .workflow-step h4 { font-size: 12px; font-weight: 700; color: #e2e8f0; margin-bottom: 4px; }
+  .workflow-step p  { font-size: 11px; color: #94a3b8; line-height: 1.45; }
+  .workflow-arrow {
+    text-align: center;
+    color: #475569;
+    font-size: 20px;
+  }
+
+  /* STATS SECTION */
+  .stats-section {
+    padding: 56px 32px;
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+  }
+  .stats-inner { max-width: 1000px; margin: 0 auto; text-align: center; }
+  .stats-section h2 { font-size: 26px; font-weight: 800; color: #1e293b; margin-bottom: 36px; }
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .stat-item { padding: 20px; }
+  .stat-num { font-size: 40px; font-weight: 800; color: #d97706; line-height: 1; margin-bottom: 6px; }
+  .stat-desc { font-size: 14px; color: #64748b; }
+
+  /* FOOTER */
+  footer {
+    background: #0f172a;
+    color: #94a3b8;
+    padding: 40px 32px;
+    border-top: 1px solid #1e293b;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-brand { font-size: 15px; font-weight: 700; color: #e2e8f0; }
+  .footer-brand span { color: #d97706; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 13px;
+    transition: color .15s;
+  }
+  .footer-links a:hover { color: #d97706; }
+  .footer-copy { font-size: 12px; color: #475569; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 32px; }
+    .features-grid { grid-template-columns: repeat(2, 1fr); }
+    .steps-row { grid-template-columns: repeat(2, 1fr); }
+    .steps-row::before { display: none; }
+    .rules-preview-grid { grid-template-columns: repeat(2, 1fr); }
+    .workflow-grid { grid-template-columns: 1fr; }
+    .workflow-arrow { display: none; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .hero { padding: 48px 20px 40px; }
+    .hero h1 { font-size: 26px; }
+    .features-grid, .rules-preview-grid { grid-template-columns: 1fr; }
+    .steps-row { grid-template-columns: 1fr; }
+    nav { padding: 0 16px; }
+    .nav-title { display: none; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="../../index.html">&#8592; Everything</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-title">Transaction Monitor</span>
+  <a class="nav-demo-btn" href="index.html">&#9654; Launch Demo</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-badge">&#128373;&#65039; FinCrime &middot; Transaction Monitoring</div>
+      <div class="live-chip"><span class="live-chip-dot"></span> Live Simulation Active</div>
+      <h1>Every Rupee.<br><span style="color:#d97706">Every Alert.</span></h1>
+      <p class="hero-sub">
+        A real-time AML transaction monitoring dashboard simulating how modern FinCrime teams detect, triage, and report suspicious financial activity — powered entirely by browser-native JavaScript.
+      </p>
+      <ul class="hero-features">
+        <li>Simulated live transaction stream with 10 Indian bank accounts</li>
+        <li>6 configurable AML detection rules (structuring, velocity, geography &amp; more)</li>
+        <li>Full analyst workflow: review, escalate, and file STRs with a single click</li>
+        <li>Canvas-rendered risk distribution chart updating every 30 seconds</li>
+        <li>Zero frameworks, zero dependencies — pure vanilla HTML/CSS/JS</li>
+      </ul>
+      <div class="hero-ctas">
+        <a class="cta-primary" href="index.html">&#9654; Launch Live Dashboard</a>
+        <a class="cta-secondary" href="../../index.html">&#8592; View All Apps</a>
+      </div>
+    </div>
+    <div class="hero-preview">
+      <div class="iframe-wrap">
+        <div class="iframe-bar">
+          <div class="dot red"></div>
+          <div class="dot amber"></div>
+          <div class="dot green"></div>
+          <div class="iframe-url">everything/fincrime/transaction-monitor/</div>
+        </div>
+        <iframe src="index.html" loading="lazy" title="Transaction Monitor Live Preview" scrolling="no"></iframe>
+        <div class="preview-overlay">
+          <a href="index.html">Open Full Dashboard &#8599;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="features-inner">
+    <div class="section-badge">Core Capabilities</div>
+    <h2>Built for AML Analysts</h2>
+    <p class="section-sub">Every component mirrors real-world transaction monitoring workflows used in financial institutions across India and globally.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="feature-icon">&#128225;</span>
+        <h3>Live Feed</h3>
+        <p>Real-time simulated transaction stream generating a new transaction every 0.8&ndash;2.5 seconds across 7 payment channels including UPI, NEFT, RTGS, SWIFT, and Cash.</p>
+        <span class="feature-tag">Real-time</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">&#9881;</span>
+        <h3>Rule Engine</h3>
+        <p>6 configurable AML detection rules — each with an editable threshold, live toggle, and instant feedback. Structuring, velocity, geography, dormant, round-trip, and mule detection.</p>
+        <span class="feature-tag">Configurable</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">&#128680;</span>
+        <h3>Alert Queue</h3>
+        <p>Full analyst workflow from alert generation to STR filing. Review, escalate, or submit a Suspicious Transaction Report with pre-populated fields and a minimum 100-character description requirement.</p>
+        <span class="feature-tag">Workflow</span>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon">&#128202;</span>
+        <h3>Risk Dashboard</h3>
+        <p>Live counters tracking transactions, alerts, STRs, and rule triggers. Canvas-rendered stacked bar chart showing Low / Medium / High risk distribution across rolling 5-minute windows.</p>
+        <span class="feature-tag">Analytics</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <div class="section-badge" style="background:rgba(217,119,6,.08);color:#b45309;border-color:rgba(217,119,6,.2)">How It Works</div>
+    <h2>From Transaction to STR in Four Steps</h2>
+    <p class="section-sub-light">The dashboard simulates the complete detection-to-reporting pipeline used by financial intelligence units.</p>
+    <div class="steps-row">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Transaction Generated</h4>
+        <p>A new transaction is synthesised every 0.8&ndash;2.5 seconds using realistic Indian account data across multiple channels.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Rules Evaluated</h4>
+        <p>All enabled AML rules are checked against the transaction and historical data. Rule fires set risk level to High.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Alert Created</h4>
+        <p>A new alert card is prepended to the queue with rule context, account details, and analyst action buttons.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>STR Filed</h4>
+        <p>Analyst reviews, escalates if needed, then files an STR — generating a unique STR-2026-XXXXX reference number.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RULES PREVIEW -->
+<section class="rules-section">
+  <div class="rules-inner">
+    <div class="section-badge" style="background:rgba(217,119,6,.08);color:#b45309;border-color:rgba(217,119,6,.2)">AML Rule Engine</div>
+    <h2>Six Detection Rules, Fully Configurable</h2>
+    <p class="sub">Each rule can be toggled on or off and its threshold adjusted in real time from the dashboard's built-in rule panel.</p>
+    <div class="rules-preview-grid">
+      <div class="rule-preview-card">
+        <div class="rule-icon-wrap">&#127981;</div>
+        <div>
+          <h4>Structuring Rule</h4>
+          <p>Multiple transactions just below &#8377;10 lakh threshold within 24 hours from the same account — a classic layering technique.</p>
+          <span class="rule-threshold-pill">Threshold: &#8377;9,00,000</span>
+        </div>
+      </div>
+      <div class="rule-preview-card">
+        <div class="rule-icon-wrap">&#9889;</div>
+        <div>
+          <h4>Velocity Rule</h4>
+          <p>More than 5 transactions from the same account within any rolling 10-minute window — indicative of automated fund movement.</p>
+          <span class="rule-threshold-pill">Max: 5 txns / 10 min</span>
+        </div>
+      </div>
+      <div class="rule-preview-card">
+        <div class="rule-icon-wrap">&#127758;</div>
+        <div>
+          <h4>Geography Rule</h4>
+          <p>Transaction involving a high-risk jurisdiction — identified by the HRJ- account prefix — above the configured amount threshold.</p>
+          <span class="rule-threshold-pill">Threshold: &#8377;5,00,000</span>
+        </div>
+      </div>
+      <div class="rule-preview-card">
+        <div class="rule-icon-wrap">&#128260;</div>
+        <div>
+          <h4>Round-Trip Rule</h4>
+          <p>Funds return to the originator account within 2 hours of being sent — a strong indicator of circular fund movement.</p>
+          <span class="rule-threshold-pill">Threshold: &#8377;2,00,000</span>
+        </div>
+      </div>
+      <div class="rule-preview-card">
+        <div class="rule-icon-wrap">&#128564;</div>
+        <div>
+          <h4>Dormant Account Rule</h4>
+          <p>First transaction after 12+ months of inactivity that exceeds the threshold — a common money mule activation pattern.</p>
+          <span class="rule-threshold-pill">Threshold: &#8377;10,00,000</span>
+        </div>
+      </div>
+      <div class="rule-preview-card">
+        <div class="rule-icon-wrap">&#127973;</div>
+        <div>
+          <h4>Mule Account Rule</h4>
+          <p>Account balance near zero before and after a rapid large transaction — characteristic of pass-through mule account behaviour.</p>
+          <span class="rule-threshold-pill">Threshold: &#8377;5,00,000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYST WORKFLOW -->
+<section class="workflow-section">
+  <div class="workflow-inner">
+    <div class="section-badge">Analyst Workflow</div>
+    <h2>Complete STR Filing Pipeline</h2>
+    <p class="sub-light">From automated detection to regulatory reporting — the full FIU-IND-compliant workflow, simulated in the browser.</p>
+    <div class="workflow-grid">
+      <div class="workflow-step">
+        <div class="wf-icon">&#128268;</div>
+        <span class="wf-status wf-new">New</span>
+        <h4>Alert Generated</h4>
+        <p>Rule engine fires, alert card created with context and actions.</p>
+      </div>
+      <div class="workflow-arrow">&#8594;</div>
+      <div class="workflow-step">
+        <div class="wf-icon">&#128270;</div>
+        <span class="wf-status wf-review">Under Review</span>
+        <h4>Analyst Reviews</h4>
+        <p>Analyst clicks Review to begin investigation and log ownership.</p>
+      </div>
+      <div class="workflow-arrow">&#8594;</div>
+      <div class="workflow-step">
+        <div class="wf-icon">&#128226;</div>
+        <span class="wf-status wf-escalate">Escalated</span>
+        <h4>Senior Escalation</h4>
+        <p>Complex cases escalated to senior compliance officer for review.</p>
+      </div>
+      <div class="workflow-arrow">&#8594;</div>
+      <div class="workflow-step">
+        <div class="wf-icon">&#128196;</div>
+        <span class="wf-status wf-str">STR Filed</span>
+        <h4>STR Submitted</h4>
+        <p>STR modal pre-populated and submitted with a unique STR-2026 reference.</p>
+      </div>
+      <div class="workflow-arrow">&#8594;</div>
+      <div class="workflow-step">
+        <div class="wf-icon">&#10003;</div>
+        <span class="wf-status wf-done">Filed</span>
+        <h4>FIU-IND Reported</h4>
+        <p>STR counter incremented, alert status updated, toast confirmation shown.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-inner">
+    <h2>What the Simulation Covers</h2>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">10</div>
+        <div class="stat-desc">Simulated bank accounts including mule, dormant, and HRJ-jurisdiction accounts</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">6</div>
+        <div class="stat-desc">AML detection rules covering the most common suspicious transaction typologies</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">7</div>
+        <div class="stat-desc">Payment channels: UPI, NEFT, RTGS, IMPS, Cash, Card, and SWIFT</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0</div>
+        <div class="stat-desc">External dependencies — fully offline-capable, pure browser technology</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-brand">Everything <span>/</span> FinCrime <span>/</span> Transaction Monitor</div>
+      <div class="footer-copy" style="margin-top:6px">Educational simulation &mdash; not for production use. Data is entirely synthetic.</div>
+    </div>
+    <div class="footer-links">
+      <a href="index.html">&#9654; Live Dashboard</a>
+      <a href="../kyc-onboarding/index.html">KYC Onboarding</a>
+      <a href="../aml-case-trainer/index.html">AML Case Trainer</a>
+      <a href="../../index.html">All Apps</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

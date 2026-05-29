@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AML Case Trainer — FinCrime</title>
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#d97706; --accent2:#16a34a;
+  --nav-h:52px; --green:#22c55e; --red:#ef4444; --yellow:#f59e0b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100;
+}
+nav a{color:var(--muted);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:6px;transition:color .15s;}
+nav a:hover{color:var(--text);}
+.nav-sep{color:var(--border);font-size:16px;}
+.nav-title{color:var(--text);font-weight:600;font-size:14px;}
+.nav-badge{margin-left:auto;background:rgba(217,119,6,.15);color:var(--accent);border:1px solid rgba(217,119,6,.3);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.5px;}
+
+/* MAIN */
+main{margin-top:var(--nav-h);min-height:calc(100vh - var(--nav-h));padding:0;}
+
+/* ===== LIBRARY VIEW ===== */
+#view-library{padding:32px 24px 48px;}
+.lib-header{margin-bottom:28px;}
+.lib-header h1{font-size:24px;font-weight:700;margin-bottom:6px;}
+.lib-header p{color:var(--muted);font-size:14px;}
+
+.case-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;
+}
+.case-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:20px;display:flex;flex-direction:column;gap:12px;
+  cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;position:relative;
+}
+.case-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.card-typology{
+  background:rgba(217,119,6,.12);color:var(--accent);
+  border:1px solid rgba(217,119,6,.25);border-radius:4px;
+  padding:2px 8px;font-size:10px;font-weight:600;letter-spacing:.4px;
+  white-space:nowrap;flex-shrink:0;
+}
+.card-title{font-size:15px;font-weight:700;line-height:1.3;margin-bottom:2px;}
+.card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.card-industry{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--muted);border-radius:4px;padding:2px 7px;font-size:11px;
+}
+.card-stars{color:var(--accent);font-size:12px;letter-spacing:1px;}
+.card-summary{color:var(--muted);font-size:13px;line-height:1.55;flex:1;}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.card-tag{
+  background:rgba(139,148,158,.1);color:var(--muted);
+  border-radius:3px;padding:2px 6px;font-size:11px;
+}
+.card-btn{
+  background:var(--accent);color:#000;border:none;border-radius:6px;
+  padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:background .15s,opacity .15s;margin-top:auto;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-btn:hover{background:#b45309;}
+.card-complete-badge{
+  position:absolute;top:12px;right:12px;
+  background:rgba(34,197,94,.15);color:var(--green);
+  border:1px solid rgba(34,197,94,.3);border-radius:20px;
+  padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:.4px;
+}
+
+/* ===== CASE VIEW ===== */
+#view-case{
+  display:flex;height:calc(100vh - var(--nav-h));overflow:hidden;
+}
+.case-left{
+  width:55%;min-width:0;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.case-right{
+  width:45%;min-width:0;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+
+/* Case header */
+.case-header{
+  padding:18px 20px 0;border-bottom:1px solid var(--border);
+  background:var(--bg2);
+}
+.case-back-btn{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-size:13px;padding:0;margin-bottom:12px;display:flex;align-items:center;gap:4px;
+  transition:color .15s;
+}
+.case-back-btn:hover{color:var(--text);}
+.case-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px;}
+.case-header-title{font-size:18px;font-weight:700;line-height:1.3;}
+.case-header-badges{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.badge-typology{
+  background:rgba(217,119,6,.12);color:var(--accent);
+  border:1px solid rgba(217,119,6,.25);border-radius:4px;
+  padding:3px 9px;font-size:11px;font-weight:600;
+}
+.badge-industry{
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--muted);border-radius:4px;padding:3px 9px;font-size:11px;
+}
+.badge-complexity{color:var(--accent);font-size:12px;}
+
+/* Tabs */
+.tabs{display:flex;gap:0;padding:0 20px;background:var(--bg2);}
+.tab-btn{
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  padding:10px 14px;font-size:13px;font-weight:500;
+  border-bottom:2px solid transparent;transition:color .15s,border-color .15s;
+  white-space:nowrap;
+}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);}
+
+/* Tab panels */
+.tab-panels{flex:1;overflow-y:auto;padding:20px;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* Background */
+.bg-text{color:var(--muted);line-height:1.75;white-space:pre-wrap;font-size:13px;}
+
+/* Customer profile */
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.profile-row{background:var(--bg2);padding:12px 14px;}
+.profile-row:nth-child(odd){background:var(--bg3);}
+.profile-label{color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;}
+.profile-value{color:var(--text);font-size:13px;font-weight:500;}
+
+/* Transactions */
+.txn-table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{
+  background:var(--bg3);color:var(--muted);font-weight:600;
+  padding:9px 10px;text-align:left;border-bottom:1px solid var(--border);
+  white-space:nowrap;font-size:11px;letter-spacing:.4px;text-transform:uppercase;
+}
+tbody tr{border-bottom:1px solid rgba(48,54,61,.6);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:9px 10px;color:var(--text);vertical-align:top;}
+.txn-amount{font-family:monospace;font-weight:600;color:var(--green);white-space:nowrap;}
+.txn-amount.out{color:var(--red);}
+.risk-badge{
+  display:inline-block;padding:2px 6px;border-radius:3px;font-size:10px;font-weight:700;
+  letter-spacing:.3px;
+}
+.risk-high{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.risk-medium{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+.risk-low{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+
+/* Red Flags */
+.flag-list{display:flex;flex-direction:column;gap:8px;}
+.flag-item{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:6px;
+  padding:11px 13px;cursor:pointer;transition:border-color .15s,background .15s;
+  user-select:none;
+}
+.flag-item:hover{border-color:var(--muted);}
+.flag-item.selected-correct{border-color:var(--green);background:rgba(34,197,94,.05);}
+.flag-item.selected-wrong{border-color:var(--red);background:rgba(239,68,68,.05);}
+.flag-checkbox{
+  width:18px;height:18px;border:2px solid var(--border);border-radius:4px;
+  flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;font-size:11px;font-weight:700;
+}
+.flag-item.selected-correct .flag-checkbox{background:var(--green);border-color:var(--green);color:#000;}
+.flag-item.selected-wrong .flag-checkbox{background:var(--red);border-color:var(--red);color:#fff;}
+.flag-text{color:var(--muted);font-size:13px;line-height:1.45;transition:color .15s;}
+.flag-item.selected-correct .flag-text,.flag-item.selected-wrong .flag-text{color:var(--text);}
+.flag-submit-row{margin-top:14px;display:flex;align-items:center;gap:12px;}
+.flag-submit-btn{
+  background:var(--accent);color:#000;border:none;border-radius:6px;
+  padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;
+}
+.flag-submit-btn:hover{background:#b45309;}
+.flag-result-text{font-size:13px;color:var(--muted);}
+.flag-reveal-row{margin-top:14px;}
+.flag-reveal-row .flag-item{cursor:default;}
+.flag-item.correct-reveal{border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.04);}
+.flag-item.correct-reveal .flag-checkbox{background:var(--green);border-color:var(--green);color:#000;}
+.flag-item.correct-reveal .flag-text{color:var(--text);}
+.flag-item.decoy-reveal{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.03);}
+.flag-item.decoy-reveal .flag-checkbox{background:rgba(48,54,61,.8);border-color:var(--red);color:var(--red);}
+.flag-item.decoy-reveal .flag-text{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(239,68,68,.5);}
+
+/* Documents */
+.doc-list{display:flex;flex-direction:column;gap:10px;}
+.doc-item{
+  background:var(--bg2);border:1px solid var(--border);border-radius:7px;
+  padding:14px 16px;display:flex;align-items:flex-start;gap:12px;
+}
+.doc-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.doc-body h4{font-size:13px;font-weight:600;margin-bottom:4px;}
+.doc-body p{color:var(--muted);font-size:12px;line-height:1.5;}
+.doc-status{
+  margin-left:auto;flex-shrink:0;font-size:10px;font-weight:700;
+  padding:2px 7px;border-radius:3px;letter-spacing:.3px;align-self:flex-start;
+}
+.doc-available{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.2);}
+.doc-missing{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.2);}
+.doc-partial{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.2);}
+
+/* ===== DECISION CONSOLE ===== */
+.console-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg2);
+}
+.console-header h3{font-size:14px;font-weight:700;margin-bottom:6px;}
+.progress-bar-wrap{background:var(--bg3);border-radius:20px;height:6px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:20px;transition:width .4s;}
+.progress-label{color:var(--muted);font-size:11px;margin-top:5px;}
+
+.console-steps{flex:1;overflow-y:auto;padding:16px 20px;}
+.step{
+  margin-bottom:16px;background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;transition:border-color .2s;
+}
+.step.active{border-color:rgba(217,119,6,.4);}
+.step.answered-correct{border-color:rgba(34,197,94,.3);}
+.step.answered-wrong{border-color:rgba(239,68,68,.3);}
+.step-header{
+  padding:12px 14px;display:flex;align-items:flex-start;gap:10px;
+  cursor:pointer;
+}
+.step-num{
+  width:22px;height:22px;border-radius:50%;border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+  flex-shrink:0;background:var(--bg3);color:var(--muted);transition:all .2s;
+}
+.step.active .step-num{border-color:var(--accent);color:var(--accent);}
+.step.answered-correct .step-num{background:var(--green);border-color:var(--green);color:#000;}
+.step.answered-wrong .step-num{background:var(--red);border-color:var(--red);color:#fff;}
+.step-q{font-size:13px;font-weight:600;line-height:1.45;color:var(--text);}
+.step.locked .step-q{color:var(--muted);}
+.step-body{padding:0 14px 14px 46px;}
+.choice-list{display:flex;flex-direction:column;gap:7px;}
+.choice-btn{
+  background:var(--bg3);border:1px solid var(--border);border-radius:6px;
+  padding:10px 12px;text-align:left;color:var(--muted);font-size:12px;
+  line-height:1.4;cursor:pointer;transition:all .15s;width:100%;
+}
+.choice-btn:hover:not(:disabled){border-color:var(--muted);color:var(--text);}
+.choice-btn:disabled{cursor:default;}
+.choice-btn.correct{background:rgba(34,197,94,.08);border-color:var(--green);color:var(--text);}
+.choice-btn.wrong{background:rgba(239,68,68,.08);border-color:var(--red);color:var(--text);}
+.step-rationale{
+  margin-top:10px;background:var(--bg);border:1px solid var(--border);
+  border-radius:6px;padding:10px 12px;font-size:12px;line-height:1.55;color:var(--muted);
+}
+.step-rationale.correct-r{border-color:rgba(34,197,94,.3);color:var(--green);}
+.step-rationale.wrong-r{border-color:rgba(239,68,68,.3);color:var(--red);}
+
+/* Outcome panel */
+.outcome-panel{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:20px;margin-top:8px;display:none;
+}
+.outcome-panel.visible{display:block;}
+.outcome-panel h4{font-size:14px;font-weight:700;margin-bottom:8px;color:var(--accent);}
+.outcome-text{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:16px;}
+.score-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.score-num{font-size:28px;font-weight:800;color:var(--text);}
+.score-denom{font-size:16px;color:var(--muted);margin-top:4px;}
+.score-label{color:var(--muted);font-size:12px;line-height:1.4;}
+.competency-badge-wrap{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.competency-icon{font-size:28px;}
+.competency-label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:3px;}
+.competency-title{font-size:14px;font-weight:700;}
+.return-btn{
+  background:var(--accent);color:#000;border:none;border-radius:6px;
+  padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;
+  width:100%;
+}
+.return-btn:hover{background:#b45309;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--muted);}
+
+/* Utility */
+.hidden{display:none!important;}
+
+/* Responsive */
+@media(max-width:768px){
+  #view-case{flex-direction:column;height:auto;overflow:visible;}
+  .case-left,.case-right{width:100%;height:auto;max-height:none;overflow:visible;}
+  .case-left{border-right:none;border-bottom:1px solid var(--border);}
+  .tab-panels{overflow-y:visible;}
+  .console-steps{overflow-y:visible;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../../index.html">&#8592; Everything</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-title">AML Case Trainer</span>
+  <span class="nav-badge">FinCrime</span>
+</nav>
+
+<main>
+  <!-- VIEW: LIBRARY -->
+  <div id="view-library">
+    <div class="lib-header">
+      <h1>AML Case Library</h1>
+      <p>Eight real-world typology cases. Review evidence, identify red flags, make decisions.</p>
+    </div>
+    <div class="case-grid" id="case-grid">
+      <!-- Cards injected by JS -->
+    </div>
+  </div>
+
+  <!-- VIEW: CASE STUDY -->
+  <div id="view-case" class="hidden">
+    <!-- Left panel: case file -->
+    <div class="case-left">
+      <div class="case-header">
+        <button class="case-back-btn" onclick="showView('library')">&#8592; Back to Library</button>
+        <div class="case-header-top">
+          <div class="case-header-title" id="case-title">—</div>
+        </div>
+        <div class="case-header-badges" id="case-badges"></div>
+        <div class="tabs" id="case-tabs">
+          <button class="tab-btn active" data-tab="background">Background</button>
+          <button class="tab-btn" data-tab="customer">Customer Profile</button>
+          <button class="tab-btn" data-tab="transactions">Transactions</button>
+          <button class="tab-btn" data-tab="redflags">Red Flags</button>
+          <button class="tab-btn" data-tab="documents">Documents</button>
+        </div>
+      </div>
+      <div class="tab-panels" id="tab-panels">
+        <div class="tab-panel active" id="tab-background"></div>
+        <div class="tab-panel" id="tab-customer"></div>
+        <div class="tab-panel" id="tab-transactions"></div>
+        <div class="tab-panel" id="tab-redflags"></div>
+        <div class="tab-panel" id="tab-documents"></div>
+      </div>
+    </div>
+
+    <!-- Right panel: decision console -->
+    <div class="case-right">
+      <div class="console-header">
+        <h3>Decision Console</h3>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="progress-label" id="progress-label">0 of 0 decisions made</div>
+      </div>
+      <div class="console-steps" id="console-steps"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+const CASES = [
+  { id:'nail-bar', title:'The Nail Bar Network', typology:'Cash-Intensive Smurfing', industry:'Retail', complexity:2, summary:'A chain of 12 nail salons deposits just below reporting thresholds daily. Revenue is 3-7x industry norms.', tags:['structuring','cash','smurfing'] },
+  { id:'project-sunrise', title:'Project Sunrise', typology:'Real Estate ML', industry:'Real Estate', complexity:3, summary:'A property developer receives cash advances from shell companies with BVI registration and no verified beneficial owners.', tags:['real estate','shell company','BVI'] },
+  { id:'ghost-exporter', title:'The Ghost Exporter', typology:'Trade-Based ML (TBML)', industry:'International Trade', complexity:3, summary:'An export firm invoices goods at 5x market value. The bank financing the LC finds inconsistencies in shipping documents.', tags:['TBML','trade finance','over-invoicing'] },
+  { id:'crypto-casino', title:'Crypto Casino', typology:'Virtual Asset Layering', industry:'Crypto / Gambling', complexity:3, summary:'Large crypto deposits, minimal gambling, "winnings" withdrawn to a different wallet. Classic wash transaction.', tags:['crypto','VASP','gambling'] },
+  { id:'helpful-solicitor', title:'The Helpful Solicitor', typology:'Professional Enabler', industry:'Legal Services', complexity:2, summary:'A law firm holds client funds in trust and makes transfers on client instructions without questioning source of funds.', tags:['DNFBP','lawyer','trust account'] },
+  { id:'shell-maze', title:'Shell Company Maze', typology:'Beneficial Ownership Concealment', industry:'Corporate Finance', complexity:3, summary:'Seven holding companies across 4 jurisdictions obscure the beneficial owner — a sanctioned individual.', tags:['beneficial ownership','sanctions','shell company'] },
+  { id:'friendly-politician', title:'The Friendly Politician', typology:'PEP Corruption', industry:'Government', complexity:2, summary:"A minister's relative receives transfers from companies that received government contracts, described as consulting fees.", tags:['PEP','corruption','bribery'] },
+  { id:'fast-fashion', title:'Fast Fashion Fraud', typology:'Import/Export Under-Invoicing', industry:'Textile', complexity:2, summary:'A garment exporter invoices at 30% below market value while the actual payment is topped up through hawala.', tags:['TBML','hawala','under-invoicing'] }
+];
+
+const CASE_DETAILS = {
+  'nail-bar': {
+    background: `Glamour Nails is a chain of 12 nail salons operating across Mumbai. The owner, Mr. Chen Wei, arrived on a business visa 18 months ago and incorporated the chain within 2 months. All 12 locations are cash-only.\n\nThe bank's TM system has flagged the accounts for 60 days. Each branch deposits ₹4.8-4.9 lakhs daily — just below the ₹5 lakh threshold. Deposits occur at different branches, at different times, by different individuals.\n\nNail salons typically generate ₹2-4 lakhs per month per outlet. 12 outlets at normal revenue = ₹24-48 lakhs/month. The bank is seeing ₹1.7 crore per week.`,
+    customer: { name:'Chen Wei / Glamour Nails Pvt Ltd', nationality:'Chinese (Business Visa)', account:'Current × 12', relationship:'18 months', occupation:'Nail Salon Operator', declared_income:'₹8-12 lakhs/month' },
+    transactions: [
+      { date:'2024-01-15', amount:485000, type:'Cash Deposit', party:'BKC Branch — Self', channel:'Cash', desc:'Daily sales', risk:'high' },
+      { date:'2024-01-15', amount:492000, type:'Cash Deposit', party:'Andheri Branch — Self', channel:'Cash', desc:'Daily sales', risk:'high' },
+      { date:'2024-01-15', amount:487000, type:'Cash Deposit', party:'Juhu Branch — Self', channel:'Cash', desc:'Daily sales', risk:'high' },
+      { date:'2024-01-16', amount:1800000, type:'NEFT Out', party:'HQ Master Account', channel:'NEFT', desc:'Intercompany transfer', risk:'high' },
+      { date:'2024-01-16', amount:1200000, type:'RTGS Out', party:'China Supplier', channel:'RTGS', desc:'Supplier payment', risk:'high' },
+      { date:'2024-01-17', amount:489000, type:'Cash Deposit', party:'Powai Branch — Self', channel:'Cash', desc:'Daily sales', risk:'high' },
+      { date:'2024-01-18', amount:488000, type:'Cash Deposit', party:'BKC Branch — Self', channel:'Cash', desc:'Daily sales', risk:'high' },
+      { date:'2024-01-18', amount:2100000, type:'RTGS Out', party:'HK Supplier', channel:'RTGS', desc:'Supplier payment', risk:'high' }
+    ],
+    red_flags: [
+      { text:'All 12 branches deposit just below ₹5 lakh threshold daily', correct:true },
+      { text:'Cash deposits aggregate to ₹1.7 crore/week — 3-7x normal industry revenue', correct:true },
+      { text:'Multiple individuals depositing at different branches simultaneously', correct:true },
+      { text:'Large outward remittances to China and HK following cash aggregation', correct:true },
+      { text:'Business incorporated only 18 months ago', correct:true },
+      { text:'Owner holds business visa, not long-term resident', correct:true },
+      { text:'No explanation for revenue inconsistency with industry norms', correct:true },
+      { text:'No debit card transactions recorded', correct:false }
+    ],
+    decisions: [
+      { q:'Initial assessment: Are the cash deposits suspicious enough to flag immediately?', choices:[
+        { t:'Yes — structuring pattern is clear. Flag for AML review immediately.', c:true, r:'Correct. PMLA requires reporting when there are reasonable grounds for suspicion. Systematic deposits just below threshold is textbook structuring.' },
+        { t:'No — deposits are below the CTR threshold so no report needed.', c:false, r:'Incorrect. The CTR threshold is for mandatory reporting, not for suspicion assessment. Structuring to avoid thresholds is itself a predicate ML offence.' },
+        { t:'Maybe — request more information from the customer first.', c:false, r:'Gathering info is useful but should not delay filing if suspicion already exists.' }
+      ]},
+      { q:'Revenue is 3-7x industry norms for nail salons. What is the significance?', choices:[
+        { t:'Good locations may explain higher revenue — not necessarily suspicious.', c:false, r:'700% above industry average across 12 locations is statistically implausible regardless of location.' },
+        { t:'Criminal proceeds are being co-mingled with legitimate salon revenue — classic placement stage.', c:true, r:'Correct. This is the placement stage: mixing illegal cash into a cash-intensive business to give it a legitimate source.' },
+        { t:'Should compare against last 3 months growth before concluding.', c:false, r:'Growth analysis is useful but a 300-700% premium cannot be explained by growth in an 18-month-old business.' }
+      ]},
+      { q:'Cash is consolidated then remitted to China and HK. What does this pattern represent?', choices:[
+        { t:'Legitimate supplier payments — normal for import businesses.', c:false, r:'Without verified import documentation matching the amounts and timing, this is unsupported. The cash-to-remittance cycle is suspicious.' },
+        { t:'Layering — cleaning placed cash by moving it internationally.', c:true, r:'Correct. This is layering: cash (placement) is converted to bank credits (structuring), then wired abroad (layering) to obscure origin.' },
+        { t:'Tax-efficient cash pooling for working capital.', c:false, r:'Legitimate tax structures are documented and transparent. This is neither.' }
+      ]},
+      { q:'Should you file an STR now, or wait for more evidence?', choices:[
+        { t:'File STR now — current evidence is sufficient, delay is a risk.', c:true, r:'Correct. PMLA requires filing when there are "reasonable grounds to suspect" — not proof beyond reasonable doubt.' },
+        { t:'Wait 30 more days to build a stronger case.', c:false, r:'Waiting while a known ML pattern continues is not defensible. File now; the FIU will investigate further.' },
+        { t:'Report to management first — they may have a client relationship.', c:false, r:'Management cannot override an STR obligation. If they try to suppress it, that itself is reportable.' }
+      ]},
+      { q:'The owner asks why the account is "under review." What do you say?', choices:[
+        { t:'Explain a transaction monitoring review triggered the query.', c:false, r:'Even this may constitute tipping off. Revealing a specific "review" triggered by suspicious activity can alert the subject.' },
+        { t:'Say nothing specific — routine operational matters cannot be discussed.', c:true, r:'Correct. PMLA Section 45 prohibits disclosure that an STR has been filed. A neutral, non-committal response is required.' },
+        { t:'Deny any review is happening.', c:false, r:'Actively lying is not required. A neutral response is sufficient.' }
+      ]}
+    ],
+    outcome: 'Money laundering conviction. 12 salon accounts frozen. ₹4.2 crore attached under PMLA. Business seized.'
+  },
+  'project-sunrise': {
+    background: `Sunrise Developers is a Mumbai-based real estate company offering luxury apartments in the ₹2-8 crore range. Over the past 6 months, 14 apartments have been sold for cash advances of ₹50-80 lakhs each before formal agreements.\n\nThe buyers are listed as companies: 9 of 14 are BVI-registered. None have verifiable beneficial owners beyond a nominee director. No purchase agreements have been registered.\n\nThe bank financing Sunrise's construction notices that cash inflows to the developer's account don't match expected milestone-based disbursements.`,
+    customer: { name:'Sunrise Developers Pvt Ltd', nationality:'India', account:'Current — Construction Finance', relationship:'3 years', occupation:'Real Estate Developer', declared_income:'Project-based' },
+    transactions: [
+      { date:'2024-01-10', amount:7500000, type:'Cash In', party:'BVI Holdings Alpha', channel:'Cash', desc:'Apartment advance', risk:'high' },
+      { date:'2024-01-12', amount:6200000, type:'Cash In', party:'Cayman Corp Beta', channel:'Cash', desc:'Apartment advance', risk:'high' },
+      { date:'2024-01-15', amount:5800000, type:'RTGS In', party:'Panama Entity Gamma', channel:'RTGS', desc:'Booking advance', risk:'high' },
+      { date:'2024-01-18', amount:3200000, type:'NEFT Out', party:'Construction Subcontractor', channel:'NEFT', desc:'Labour payment', risk:'medium' },
+      { date:'2024-01-20', amount:8100000, type:'Cash In', party:'Mauritius Holdings Delta', channel:'Cash', desc:'Apartment advance', risk:'high' },
+      { date:'2024-01-25', amount:11000000, type:'RTGS Out', party:'Director Personal Account', channel:'RTGS', desc:'Director loan repayment', risk:'high' }
+    ],
+    red_flags: [
+      { text:'9 of 14 buyers are BVI/offshore shell companies', correct:true },
+      { text:'No verifiable beneficial owners for any offshore buyer', correct:true },
+      { text:'Large cash advances without registered purchase agreements', correct:true },
+      { text:'Cash inflows inconsistent with expected construction milestone schedule', correct:true },
+      { text:'Large transfers to director personal account as "loan repayment"', correct:true },
+      { text:'Real estate is a high ML risk sector per FATF typologies', correct:true },
+      { text:'PMLA 2023 amendment makes real estate agents reporting entities', correct:true },
+      { text:'Construction finance bank is unaware of cash advance structure', correct:false }
+    ],
+    decisions: [
+      { q:'14 luxury apartment sales with offshore shell company buyers — what should the bank do first?', choices:[
+        { t:'File an STR immediately based on the shell company pattern alone.', c:true, r:'Correct. Multiple offshore shell company buyers with no beneficial ownership transparency is a high-risk indicator under FATF R.24 and PMLA. Immediate STR is warranted.' },
+        { t:'Request KYC for all 14 buyers before deciding.', c:false, r:'KYC should be requested, but the current pattern already justifies STR filing. Waiting for KYC completion is not required under the reasonable grounds standard.' },
+        { t:'Refer to relationship manager — developer is a longstanding client.', c:false, r:'Client tenure is not a factor in STR obligations. Longstanding clients are not exempt.' }
+      ]},
+      { q:'No registered purchase agreements for ₹50-80 lakh advances. What is the risk?', choices:[
+        { t:'The developer may use informal booking arrangements — common in the industry.', c:false, r:'While informal bookings exist, ₹50-80 lakh advances without any documentation are not standard practice and indicate the cash may not be a genuine property transaction.' },
+        { t:'The property transactions may be fictitious — designed to create a paper trail for illicit funds.', c:true, r:'Correct. Using property transactions as a cover to launder cash (place funds as "property advances" without actual purchases) is a documented real estate ML typology.' },
+        { t:'The developer needs time to prepare agreements — this is a timing issue.', c:false, r:'Documentation should precede large cash exchanges, not follow them.' }
+      ]},
+      { q:'The director receives ₹1.1 crore as "loan repayment" — how should this be treated?', choices:[
+        { t:'Directors can receive loan repayments from their companies — this is normal.', c:false, r:'While director loans are legal, a ₹1.1 crore transfer immediately following large unverified property advances requires verification of the underlying loan.' },
+        { t:'This is potentially the integration stage — moving laundered funds to the beneficial owner.', c:true, r:'Correct. Cash in (placement) → property advance (layering) → director transfer (integration) is a complete three-stage ML cycle.' },
+        { t:'Request the loan agreement from the company — if documented, it is fine.', c:false, r:'Requesting documentation is appropriate but does not change the obligation to file an STR given the surrounding pattern.' }
+      ]},
+      { q:'Should the bank freeze the account pending investigation?', choices:[
+        { t:'Yes — freeze immediately to prevent further outflows.', c:false, r:"Banks generally do not have unilateral authority to freeze accounts pending AML investigation. The FIU/ED has attachment powers. Filing an STR is the bank's obligation." },
+        { t:'No — file the STR and let the FIU/ED exercise their legal powers.', c:true, r:"Correct. The bank's obligation is to file an STR. Account freezing/attachment is the ED's jurisdiction under PMLA Sections 5 and 17." },
+        { t:'Contact the police before deciding.', c:false, r:'STR filing goes to FIU-IND, not directly to the police.' }
+      ]},
+      { q:"The developer's lawyer contacts you demanding information about the \"investigation.\" What do you do?", choices:[
+        { t:'Provide general information — lawyers have a right to know on behalf of clients.', c:false, r:'Incorrect. PMLA Section 45 tipping off provisions apply regardless of whether the inquiry comes from the customer, their lawyer, or any other party.' },
+        { t:'Decline to provide any information — cite legal confidentiality obligations.', c:true, r:'Correct. The tipping off prohibition applies to all third parties. Even providing information to a lawyer knowing they will relay it to the subject constitutes tipping off.' },
+        { t:'Provide information to the lawyer only — not the developer directly.', c:false, r:'Providing information to someone who will predictably transmit it to the subject is still tipping off under PMLA.' }
+      ]}
+    ],
+    outcome: 'ED attached 14 properties under PMLA. Developer arrested. BVI shell company structure unwound. ₹18 crore in proceeds identified.'
+  },
+  'ghost-exporter': {
+    background: `Horizon Exports Pvt Ltd is a Chennai-based exporter claiming to export engineering components to a Hong Kong buyer, Future Tech HK. The bank has been providing letter of credit (LC) financing for 18 months.\n\nDuring a routine document review, the trade finance team notices that shipping documents describe goods as "precision engineering components" at USD 450/unit. Public market data shows the same components trade at USD 80-95/unit. The invoice value is 4.7-5.6x market price.\n\nThe HK buyer, Future Tech HK, was incorporated 3 months before the first LC was issued. Horizon Exports and Future Tech HK share the same registered agent.`,
+    customer: { name:'Horizon Exports Pvt Ltd', nationality:'India', account:'Current + LC Facility', relationship:'18 months', occupation:'Engineering Components Exporter', declared_income:'₹4 crore turnover' },
+    transactions: [
+      { date:'2024-01-08', amount:4500000, type:'LC Payment In', party:'Future Tech HK', channel:'SWIFT', desc:'Export proceeds — Shipment #HE-001', risk:'high' },
+      { date:'2024-01-10', amount:3800000, type:'NEFT Out', party:'Subhash Metal Works', channel:'NEFT', desc:'Raw material purchase', risk:'medium' },
+      { date:'2024-01-12', amount:3500000, type:'LC Payment In', party:'Future Tech HK', channel:'SWIFT', desc:'Export proceeds — Shipment #HE-002', risk:'high' },
+      { date:'2024-01-15', amount:2200000, type:'NEFT Out', party:'Director Personal', channel:'NEFT', desc:'Director remuneration', risk:'high' },
+      { date:'2024-01-20', amount:5100000, type:'LC Payment In', party:'Future Tech HK', channel:'SWIFT', desc:'Export proceeds — Shipment #HE-003', risk:'high' },
+      { date:'2024-01-25', amount:4800000, type:'RTGS Out', party:'Dubai Holding Co.', channel:'RTGS', desc:'Investment transfer', risk:'high' }
+    ],
+    red_flags: [
+      { text:'Invoice price 4.7-5.6x market price for the same goods', correct:true },
+      { text:'Buyer incorporated 3 months before first LC — no prior history', correct:true },
+      { text:'Exporter and buyer share the same registered agent', correct:true },
+      { text:'Rapid conversion of LC proceeds to outward remittances', correct:true },
+      { text:'Proceeds transferred to Dubai holding company with no documented business purpose', correct:true },
+      { text:'No evidence of actual physical shipment beyond documentation', correct:true },
+      { text:"Both parties are related — arm's length pricing not applicable", correct:true },
+      { text:'The LC facility was renewed without incident last year', correct:false }
+    ],
+    decisions: [
+      { q:'The invoice price is 4.7-5.6x market price. What does this indicate?', choices:[
+        { t:'Premium products may command higher prices — engineering components vary widely.', c:false, r:'A 4.7-5.6x premium over publicly available market data for standard components is not credible without specific evidence of differentiation.' },
+        { t:'This is over-invoicing — a classic TBML technique to move value internationally under the guise of trade.', c:true, r:'Correct. Over-invoicing allows the exporter to receive payment exceeding the actual goods value, effectively transferring the excess as a capital export disguised as trade.' },
+        { t:"Request the exporter's cost breakdown before concluding.", c:false, r:'A cost breakdown would be useful but does not change the obligation to flag the pricing anomaly immediately.' }
+      ]},
+      { q:'The exporter and buyer share the same registered agent. What is the significance?', choices:[
+        { t:'Using the same agent for admin purposes is a cost-saving measure.', c:false, r:'Related parties transacting on supposedly arm\'s length commercial terms — indicated by sharing a registered agent — is a red flag for sham transactions.' },
+        { t:"This suggests the buyer and seller are related parties — the \"export\" may be a sham transaction to move funds.", c:true, r:'Correct. A related-party transaction presented as an arm\'s length export is a fundamental TBML indicator. Pricing between related parties is not market-driven.' },
+        { t:'The company secretary handles registrations for efficiency — not unusual.', c:false, r:'Sharing a registered agent between an exporter and its supposed arm\'s length overseas buyer is unusual and inconsistent with genuine commercial separation.' }
+      ]},
+      { q:'Should the bank file an STR and also report to FEMA authorities?', choices:[
+        { t:'File STR only — FEMA is a separate matter.', c:false, r:'TBML involves both PMLA (money laundering) and FEMA (foreign exchange violation) dimensions. Both FIU-IND and FEMA/ED should be notified through appropriate channels.' },
+        { t:'File STR with FIU-IND and separately report FEMA concerns to the RBI/ED.', c:true, r:'Correct. TBML straddles both PMLA and FEMA. The bank must file STR under PMLA and may need to report the suspicious LC transaction under FEMA cross-border reporting obligations.' },
+        { t:'Wait for customs to identify the shipment discrepancy.', c:false, r:"The bank cannot defer its own reporting obligations to another agency's detection capacity." }
+      ]},
+      { q:'The LC facility is due for renewal. What should the bank do?', choices:[
+        { t:'Renew the facility — declining may tip off the exporter about the investigation.', c:false, r:'Continuing to facilitate potentially illegal trade finance while under investigation is not defensible. The STR filing triggers the bank\'s enhanced monitoring obligations.' },
+        { t:'Decline renewal citing credit review — and continue enhanced monitoring while the STR is processed.', c:true, r:'Correct. Not renewing the LC on credit grounds is a legitimate bank action that does not constitute tipping off. The investigation can proceed without the bank continuing to enable the scheme.' },
+        { t:'Immediately freeze all facilities and inform the exporter.', c:false, r:'Informing the exporter would be tipping off. Declining renewal without explanation or freezing without ED authority are both problematic.' }
+      ]}
+    ],
+    outcome: 'FEMA violation. ED investigation. ₹12 crore in over-invoiced proceeds traced. Customs investigation initiated. LC facility suspended.'
+  },
+  'crypto-casino': {
+    background: `BitPlay is a crypto gambling platform accepting Bitcoin and Ethereum deposits. A user "CryptoKing99" has deposited 12.5 BTC (approx. ₹3.2 crore) in the past 30 days. Blockchain analytics shows the source wallets have been flagged by Chainalysis with a 74% mixer-interaction score.\n\nCryptoKing99 places minimal bets — total wagering is less than 5% of deposits. Within 48 hours of each deposit, "winnings" are withdrawn to a different wallet address than the one used for deposit.\n\nThe platform is registered as a VASP in Curaçao and serves Indian users under its international license.`,
+    customer: { name:'CryptoKing99 (unverified identity)', nationality:'Unknown', account:'Crypto wallet on BitPlay', relationship:'30 days', occupation:'Not disclosed', declared_income:'Not disclosed' },
+    transactions: [
+      { date:'2024-01-02', amount:850000, type:'BTC Deposit', party:'Wallet 1A2B3C...', channel:'Crypto', desc:'0.33 BTC deposit', risk:'high' },
+      { date:'2024-01-03', amount:42500, type:'Bet Placed', party:'BitPlay Casino', channel:'Platform', desc:'Slot game — 0.017 BTC wagered', risk:'medium' },
+      { date:'2024-01-04', amount:910000, type:'BTC Withdrawal', party:'Wallet 9X8Y7Z...', channel:'Crypto', desc:'0.354 BTC withdrawal (different wallet)', risk:'high' },
+      { date:'2024-01-08', amount:1200000, type:'ETH Deposit', party:'Wallet 4D5E6F...', channel:'Crypto', desc:'0.31 ETH deposit', risk:'high' },
+      { date:'2024-01-09', amount:18000, type:'Bet Placed', party:'BitPlay Casino', channel:'Platform', desc:'Roulette — ₹18,000', risk:'medium' },
+      { date:'2024-01-10', amount:1260000, type:'ETH Withdrawal', party:'Wallet 1P2Q3R...', channel:'Crypto', desc:'0.325 ETH withdrawal (different wallet)', risk:'high' }
+    ],
+    red_flags: [
+      { text:'Source wallets have 74% mixer-interaction score — indicating obfuscated origin', correct:true },
+      { text:'Wagering is less than 5% of total deposits', correct:true },
+      { text:'Withdrawals go to different wallets than deposits — chain-hopping pattern', correct:true },
+      { text:'No identity verification for large deposits (KYC gap)', correct:true },
+      { text:'Rapid deposit-bet-withdraw cycle (within 48 hours)', correct:true },
+      { text:'The user is profitable — they withdrew more than they deposited', correct:false },
+      { text:'Platform licensed in Curaçao but serving Indian users', correct:true }
+    ],
+    decisions: [
+      { q:'Source wallets have high mixer-interaction scores. What action is required?', choices:[
+        { t:'Mixers are legal in some jurisdictions — blockchain analytics may be over-sensitive.', c:false, r:'Mixer interaction is a major ML red flag regardless of legality. FATF R.15 and VASP guidance explicitly identify mixer use as a high-risk indicator.' },
+        { t:'Block the deposits, file a SAR/STR, and conduct enhanced screening.', c:true, r:'Correct. High mixer scores indicate deliberate obfuscation of fund origin — a core red flag requiring immediate enhanced scrutiny and SAR filing under VASP AML obligations.' },
+        { t:"Request the user's self-declaration of fund source before acting.", c:false, r:'Self-declaration is insufficient for mixer-flagged wallets. The source obfuscation makes self-declaration unverifiable.' }
+      ]},
+      { q:'Deposits go to Casino, withdrawals go to different wallets with minimal actual gambling. What is this?', choices:[
+        { t:'The user may prefer different withdrawal wallets for security purposes.', c:false, r:"Security reasons don't explain the 95% non-wagering pattern. The platform is being used as a pass-through, not for gambling." },
+        { t:'A wash transaction — using the casino as a laundry to give crypto a "gambling winnings" source.', c:true, r:'Correct. The user is using the casino to convert mixer-tainted crypto (unclean source) into "gambling winnings" (clean source). This is a layering technique.' },
+        { t:'The user is profitable and diversifying withdrawal wallets for tax purposes.', c:false, r:"Tax diversification does not explain the 95% non-wagering ratio or the mixer-flagged source wallets." }
+      ]},
+      { q:'The platform is licensed in Curaçao but serves Indian users. How does Indian law apply?', choices:[
+        { t:"Indian law does not apply — Curaçao license governs.", c:false, r:"India's 2023 PMLA amendment extended AML obligations to VASPs serving Indian customers regardless of where the VASP is registered. Indian users' transactions are subject to Indian AML law." },
+        { t:'PMLA 2023 amendments apply — VASPs serving Indian customers must register with FIU-IND.', c:true, r:"Correct. The Finance Ministry's 2023 notification extended PMLA Section 2(wa) to VASPs. Platforms serving Indian customers must register with FIU-IND and comply with PMLA regardless of offshore registration." },
+        { t:'The user is responsible for compliance — not the foreign platform.', c:false, r:'Platform-level AML compliance is required regardless of user location. The VASP bears reporting obligations.' }
+      ]}
+    ],
+    outcome: 'VASP de-registered by FIU-IND. Blockchain forensics traced 12.5 BTC to a darknet marketplace hack. User identified through exchange KYC records. PMLA case registered.'
+  },
+  'helpful-solicitor': {
+    background: `Mehra & Associates is a Mumbai law firm. Partner Rajiv Mehra manages a client trust account that holds client funds prior to property transactions.\n\nOver 12 months, ₹8.4 crore has passed through the trust account. Funds arrive from multiple sources — individuals, companies, and one international wire — and are transferred out to property developers within 1-7 days.\n\nMehra conducts no due diligence on the source of funds. His position: "I act on my client's instructions. The source of their funds is not my business."`,
+    customer: { name:'Mehra & Associates (Trust Account)', nationality:'India', account:'Client Trust Account', relationship:'4 years', occupation:'Legal Services', declared_income:'Professional fees' },
+    transactions: [
+      { date:'2024-01-05', amount:2200000, type:'RTGS In', party:'Individual client — R.K. Jain', channel:'RTGS', desc:'Client funds — property transaction', risk:'medium' },
+      { date:'2024-01-07', amount:2150000, type:'RTGS Out', party:'Sunrise Properties', channel:'RTGS', desc:'Property advance on client behalf', risk:'medium' },
+      { date:'2024-01-10', amount:3500000, type:'SWIFT In', party:'BVI entity — Coral Holdings', channel:'SWIFT', desc:'Client funds — commercial transaction', risk:'high' },
+      { date:'2024-01-12', amount:3450000, type:'RTGS Out', party:'Builder — Horizon Constructions', channel:'RTGS', desc:'Property payment on client behalf', risk:'high' },
+      { date:'2024-01-18', amount:1800000, type:'NEFT In', party:'Multiple individuals (6)', channel:'NEFT', desc:'Client funds — investment', risk:'high' },
+      { date:'2024-01-20', amount:1750000, type:'NEFT Out', party:'Offshore account', channel:'NEFT', desc:'Investment transfer per client instruction', risk:'high' }
+    ],
+    red_flags: [
+      { text:'Trust account used to hold and transfer third-party funds with no due diligence', correct:true },
+      { text:'BVI entity funds passing through a law firm trust account', correct:true },
+      { text:'Rapid pass-through: funds exit within 1-7 days of entry', correct:true },
+      { text:'Lawyer claims no obligation to check source of client funds', correct:true },
+      { text:'Funds from multiple individuals aggregated then transferred offshore', correct:true },
+      { text:'Law firms are DNFBPs under FATF — subject to AML obligations', correct:true },
+      { text:'The law firm has been a client for 4 years', correct:false }
+    ],
+    decisions: [
+      { q:"Mehra claims lawyers don't need to check fund sources. Is he correct?", choices:[
+        { t:'Yes — legal professional privilege exempts lawyers from AML obligations.', c:false, r:'Incorrect. Legal professional privilege is not a blanket exemption from AML obligations. DNFBPs (including lawyers) must conduct CDD and file STRs for suspicious activity unrelated to privileged advice.' },
+        { t:'No — lawyers are DNFBPs under FATF R.22 and must conduct CDD and file STRs for non-privileged transactions.', c:true, r:'Correct. FATF R.22 explicitly includes lawyers/notaries handling real estate transactions, holding client funds, and managing company formation as DNFBPs subject to CDD and STR obligations.' },
+        { t:'Partially — privilege protects transaction instructions but not fund sources.', c:false, r:'The correct position is clearer than "partially." CDD on fund sources in non-privileged transactions is a separate obligation from privilege.' }
+      ]},
+      { q:"What should the bank do about the law firm's trust account?", choices:[
+        { t:"File an STR — the pass-through pattern through a trust account is suspicious regardless of the lawyer's position.", c:true, r:"Correct. The rapid pass-through, BVI involvement, and aggregate pattern meet the threshold for STR filing by the bank. The lawyer's claimed exemption is not the bank's concern." },
+        { t:'Request that Mehra provide his own KYC files on each client.', c:false, r:"Requesting client KYC from Mehra is useful but does not replace the bank's own STR obligation." },
+        { t:'Close the account — the firm is too high risk to bank.', c:false, r:'Closing the account without filing an STR may constitute tipping off by implication and would not fulfil the bank\'s reporting obligation.' }
+      ]},
+      { q:'The Bar Council of India is contacted. What obligations does the lawyer have?', choices:[
+        { t:'Lawyers have no AML obligations — Bar Council rules govern, not PMLA.', c:false, r:'PMLA applies to professionals including lawyers when conducting certain activities. Bar Council rules supplement but do not replace PMLA obligations.' },
+        { t:'The lawyer must register as a reporting entity with FIU-IND for property transaction activities.', c:true, r:'Correct. Lawyers engaged in real estate transactions, managing client funds, and company formation must comply with PMLA reporting entity obligations per the 2023 PMLA amendments.' },
+        { t:'The lawyer should be reported to the police, not the Bar Council.', c:false, r:'The FIU-IND, ED, and Bar Council may all have jurisdiction. Police is not the primary channel.' }
+      ]}
+    ],
+    outcome: 'Bar Council sanctioned Mehra & Associates. Principal partner prosecution under PMLA. ₹8.4 crore traced to proceeds of fraud and property scam. Law firm struck off.'
+  },
+  'shell-maze': {
+    background: `A corporate banking client, Meridian Holdings Ltd (UK), holds accounts at the bank's Mumbai correspondent office. Investigation reveals Meridian is owned 100% by Alpha Capital BVI, which is owned 100% by Beta Enterprises Cayman, owned 100% by Gamma Trust Luxembourg, which lists a "Trustee Co." as the beneficial owner.\n\nA SWIFT message from the US correspondent bank flags that the ultimate beneficial owner of the Gamma Trust structure may be Alexei Volkov — a Russian national on the OFAC SDN (Specially Designated Nationals) list.\n\nThe bank has processed ₹24 crore in transactions for Meridian over 18 months.`,
+    customer: { name:'Meridian Holdings Ltd (UK) / Suspected UBO: Alexei Volkov', nationality:'UK entity / Russian national UBO', account:'Correspondent Account', relationship:'18 months', occupation:'Investment Holding', declared_income:'Not disclosed' },
+    transactions: [
+      { date:'2024-01-15', amount:8500000, type:'SWIFT In', party:'Luxembourg entity', channel:'SWIFT', desc:'Investment proceeds', risk:'high' },
+      { date:'2024-01-16', amount:8200000, type:'RTGS Out', party:'Mumbai property developer', channel:'RTGS', desc:'Property acquisition', risk:'high' },
+      { date:'2024-02-01', amount:6800000, type:'SWIFT In', party:'Cayman entity', channel:'SWIFT', desc:'Investment transfer', risk:'high' },
+      { date:'2024-02-03', amount:6700000, type:'NEFT Out', party:'Luxury goods retailer', channel:'NEFT', desc:'Procurement', risk:'high' },
+      { date:'2024-03-01', amount:9200000, type:'SWIFT In', party:'BVI entity', channel:'SWIFT', desc:'Holding company transfer', risk:'high' },
+      { date:'2024-03-02', amount:9100000, type:'RTGS Out', party:'Gold trading company', channel:'RTGS', desc:'Commodity purchase', risk:'high' }
+    ],
+    red_flags: [
+      { text:'4-layer ownership structure across 4 jurisdictions obscures UBO', correct:true },
+      { text:'OFAC SDN list match for suspected UBO Alexei Volkov', correct:true },
+      { text:'All transactions are rapid pass-throughs (1-2 days between in and out)', correct:true },
+      { text:'Funds flow to property, luxury goods, and gold — all high-risk ML sectors', correct:true },
+      { text:'No verifiable commercial purpose for holding company transactions', correct:true },
+      { text:'US correspondent bank flagged the structure — indicating international concern', correct:true },
+      { text:'Account has been operating for 18 months without prior flags', correct:false }
+    ],
+    decisions: [
+      { q:'An OFAC SDN match is flagged for the suspected UBO. What must the bank do immediately?', choices:[
+        { t:'File an STR and continue processing transactions while investigating.', c:false, r:'Incorrect. An OFAC SDN match requires immediate transaction blocking — not continued processing. This is a sanctions violation if transactions proceed.' },
+        { t:'Block all transactions immediately, freeze the account, file an STR, and report to OFAC/MHA.', c:true, r:'Correct. Sanctions compliance requires immediate blocking of SDN-linked transactions. An STR must be filed with FIU-IND and the matter reported to appropriate sanctions authorities.' },
+        { t:'Request documentation from the client to confirm the UBO before acting.', c:false, r:'An SDN flag requires immediate action — not confirmation-seeking. Processing any transaction for an SDN-linked entity is a sanctions violation.' }
+      ]},
+      { q:"The bank has processed ₹24 crore for this client over 18 months. What is the bank's exposure?", choices:[
+        { t:"The bank is not liable — it processed transactions in good faith without prior knowledge.", c:false, r:'Strict liability applies to sanctions violations regardless of knowledge. The bank is required to screen customers and beneficial owners. Failure to identify Volkov through proper UBO screening is a compliance failure.' },
+        { t:'Significant regulatory exposure — potential OFAC penalty, FIU action, and correspondent banking risk.', c:true, r:'Correct. Failure to identify a sanctioned UBO despite processing ₹24 crore constitutes a serious compliance failure with multiple regulatory consequences including potential OFAC secondary sanctions penalties.' },
+        { t:'The liability lies with the correspondent bank that first flagged the issue.', c:false, r:'Each institution in the chain bears its own compliance responsibilities. The bank cannot defer responsibility to its correspondent.' }
+      ]}
+    ],
+    outcome: 'Account frozen. ₹24 crore attached. Correspondent banking relationship terminated. Bank faces regulatory review. US OFAC secondary sanctions investigation initiated.'
+  },
+  'friendly-politician': {
+    background: `A state minister's wife, Mrs. Sunita Rao, holds a savings account at the bank. Her account shows regular NEFT receipts from 3 private companies — Apex Infra Pvt Ltd, Stellar Services Ltd, and Prime Consulting LLP — totalling ₹1.2-1.8 lakh per month each.\n\nA news report identifies Apex Infra as a recipient of a ₹45 crore state government road construction contract. Stellar Services and Prime Consulting also appear on the state government vendor list.\n\nMrs. Rao's declared income is ₹6 lakhs annually from "professional consultancy."`,
+    customer: { name:"Mrs. Sunita Rao (Spouse of State Minister)", nationality:'India', account:'Savings', relationship:'6 years', occupation:'Consultant', declared_income:'₹6 lakhs/year' },
+    transactions: [
+      { date:'2024-01-10', amount:180000, type:'NEFT In', party:'Apex Infra Pvt Ltd', channel:'NEFT', desc:'Consultancy fees', risk:'high' },
+      { date:'2024-01-12', amount:150000, type:'NEFT In', party:'Stellar Services Ltd', channel:'NEFT', desc:'Advisory fees', risk:'high' },
+      { date:'2024-01-15', amount:130000, type:'NEFT In', party:'Prime Consulting LLP', channel:'NEFT', desc:'Professional fees', risk:'high' },
+      { date:'2024-01-20', amount:350000, type:'RTGS Out', party:'Jewellery store', channel:'RTGS', desc:'Purchase', risk:'high' },
+      { date:'2024-02-10', amount:175000, type:'NEFT In', party:'Apex Infra Pvt Ltd', channel:'NEFT', desc:'Consultancy fees', risk:'high' },
+      { date:'2024-02-18', amount:500000, type:'RTGS Out', party:'Property booking — Sunshine Realty', channel:'RTGS', desc:'Property booking advance', risk:'high' }
+    ],
+    red_flags: [
+      { text:'Customer is a Domestic PEP (spouse of state minister)', correct:true },
+      { text:"Regular payments from companies with government contracts awarded by minister's department", correct:true },
+      { text:'Total annual receipts (~₹50 lakhs) far exceed declared income of ₹6 lakhs', correct:true },
+      { text:'Payments described as consulting fees with no verifiable services rendered', correct:true },
+      { text:'Funds used for luxury purchases (jewellery, property) — integration pattern', correct:true },
+      { text:'PEP not identified at account opening 6 years ago', correct:true },
+      { text:'The account has never been overdrawn', correct:false }
+    ],
+    decisions: [
+      { q:'Mrs. Rao was not identified as a PEP at account opening. What must the bank do now?', choices:[
+        { t:'Reclassify as PEP immediately and apply retrospective EDD.', c:true, r:'Correct. Once a PEP is identified (even retrospectively), the bank must immediately reclassify, apply EDD, obtain senior management approval, and review historical transactions.' },
+        { t:'The identification gap is historical — wait for the next periodic review.', c:false, r:'PEP identification triggers immediate action. Waiting for a scheduled review while known suspicious transactions continue is not defensible.' },
+        { t:"The political connection doesn't make the transactions suspicious by itself.", c:false, r:'PEP status combined with payments from government contractors to the PEP\'s family is a core corruption indicator, not just a political connection.' }
+      ]},
+      { q:"Regular payments from government contract winners to the minister's wife. What is this?", choices:[
+        { t:'Legitimate consulting arrangement — companies can hire anyone.', c:false, r:'The combination of government contracts, contractor payments to a minister\'s family member, and lack of verifiable services is the textbook definition of a corruption/bribery typology.' },
+        { t:'Potential bribery/corruption — kickbacks from contractors to the minister\'s family in exchange for contract awards.', c:true, r:"Correct. This is a classic PEP corruption pattern: kickbacks channelled through a family member's account to create distance from the minister. FATF Guidance on PEPs and R.12 specifically address this." },
+        { t:'The minister should be approached for clarification.', c:false, r:'Approaching the minister would constitute tipping off. The correct action is STR filing, not customer contact.' }
+      ]},
+      { q:"An STR is filed. The bank's Regional Head calls asking to close the investigation. What do you do?", choices:[
+        { t:'Brief the Regional Head and comply with his direction.', c:false, r:'Management cannot override STR obligations. If the Regional Head is attempting to suppress an STR, this should be escalated to the CCO and potentially reported as a separate compliance failure.' },
+        { t:'Refuse and escalate the Regional Head\'s request to the CCO immediately.', c:true, r:'Correct. Pressure from management to close a legitimate STR is itself a compliance failure that must be escalated. The STR process is legally protected and cannot be overridden by seniority.' },
+        { t:"Consult with the bank's legal department before deciding.", c:false, r:"Legal consultation may be appropriate, but the STR filed cannot be withdrawn on management's say-so. The immediate obligation is to document and escalate the suppression attempt." }
+      ]}
+    ],
+    outcome: 'ED investigation launched. ₹2.4 crore in assets attached. CBI FIR registered against minister and wife. 3 companies investigated for bribery. Bank issued show-cause notice for PEP identification failure.'
+  },
+  'fast-fashion': {
+    background: `Bombay Garments Exports Ltd exports readymade garments to a UAE buyer, Al-Noor Textiles. Bank financing includes a pre-shipment credit facility.\n\nCustoms data shows garments invoiced at ₹180-220 per piece to Al-Noor. Industry pricing for similar garments is ₹320-380 per piece. The discount is 30-45% below market.\n\nParallel intelligence indicates that Al-Noor Textiles transfers the "shortfall" via a hawala channel back to the promoters of Bombay Garments. The promoter then uses these undisclosed funds for local investments.`,
+    customer: { name:'Bombay Garments Exports Ltd', nationality:'India', account:'Current + Pre-shipment Credit', relationship:'5 years', occupation:'Garment Exporter', declared_income:'₹15 crore turnover' },
+    transactions: [
+      { date:'2024-01-08', amount:2200000, type:'LC Payment In', party:'Al-Noor Textiles UAE', channel:'SWIFT', desc:'Export proceeds', risk:'high' },
+      { date:'2024-01-10', amount:1800000, type:'NEFT Out', party:'Raw material suppliers', channel:'NEFT', desc:'Fabric purchase', risk:'low' },
+      { date:'2024-01-15', amount:1950000, type:'LC Payment In', party:'Al-Noor Textiles UAE', channel:'SWIFT', desc:'Export proceeds', risk:'high' },
+      { date:'2024-01-18', amount:600000, type:'Cash Deposit', party:'Self', channel:'Cash', desc:'Business proceeds', risk:'high' },
+      { date:'2024-01-22', amount:2100000, type:'LC Payment In', party:'Al-Noor Textiles UAE', channel:'SWIFT', desc:'Export proceeds', risk:'high' },
+      { date:'2024-01-25', amount:1200000, type:'NEFT Out', party:'Promoter personal account', channel:'NEFT', desc:'Advance to director', risk:'high' }
+    ],
+    red_flags: [
+      { text:'Invoice prices 30-45% below market price for similar goods', correct:true },
+      { text:'Same buyer (Al-Noor) for all 3 years — concentrated buyer base', correct:true },
+      { text:'Unexplained cash deposits following LC proceeds', correct:true },
+      { text:'Regular transfers to promoter personal account from export proceeds', correct:true },
+      { text:'Under-invoicing pattern consistent with hawala top-up scheme', correct:true },
+      { text:'FEMA cross-border reporting obligation triggered by pricing anomaly', correct:true },
+      { text:'The pre-shipment credit facility is being repaid on time', correct:false }
+    ],
+    decisions: [
+      { q:'Invoice prices are 30-45% below market. What does this indicate in trade finance?', choices:[
+        { t:'Volume discounts for large buyers are standard — not suspicious.', c:false, r:'30-45% below market is beyond normal volume discount ranges. This is consistent with under-invoicing — a TBML technique where the declared export value is lower than actual, with the "shortfall" transferred through informal channels.' },
+        { t:'Under-invoicing — a TBML technique to reduce customs duties and transfer value through informal channels.', c:true, r:'Correct. Under-invoicing allows export of more value than declared, with the buyer paying the shortfall through hawala or informal channels, effectively transferring funds outside the banking system.' },
+        { t:'The garment market is highly competitive — price pressure explains the discount.', c:false, r:'Market competition exists but does not produce consistent 30-45% discounts below published industry rates across multiple shipments.' }
+      ]},
+      { q:'Post-export cash deposits and transfers to the promoter — what is the significance?', choices:[
+        { t:'Promoters regularly receive advances from their companies — normal cash management.', c:false, r:'In the context of systematic under-invoicing and suspected hawala top-up, cash deposits and promoter transfers represent the integration of hawala proceeds — completing the three-stage cycle.' },
+        { t:'This is likely the hawala top-up being integrated — cash from the informal channel entering the banking system.', c:true, r:'Correct. The cash deposits represent the "shortfall" from under-invoicing being returned through hawala. The funds are then transferred to the promoter for personal use — completing the ML cycle.' },
+        { t:'File a CTR for the cash deposit but no further action needed.', c:false, r:'CTR filing is required for cash ≥ ₹10 lakh. But in this context, an STR is also required given the surrounding pattern. CTR alone is insufficient.' }
+      ]}
+    ],
+    outcome: 'FEMA violation. Customs penalty for under-invoicing. ED investigation into hawala network. Pre-shipment credit facility suspended. Promoter\'s personal assets attached.'
+  }
+};
+
+/* Documents generated per case */
+const DOCS_MAP = {
+  'nail-bar': [
+    { icon:'🏪', title:'Business Registration — Glamour Nails Pvt Ltd', desc:'Certificate of incorporation. Registered 18 months ago.', status:'available' },
+    { icon:'🛂', title:"Owner's Business Visa", desc:'Single-entry business visa. No long-term residency documentation.', status:'available' },
+    { icon:'📊', title:'Transaction Monitoring Alert — 60 Days', desc:'TM system export showing 60-day flagging of all 12 branch accounts.', status:'available' },
+    { icon:'🏭', title:'Industry Revenue Benchmarks — Nail Salons', desc:'RBI/industry norms: ₹2-4 lakhs/month per outlet.', status:'available' },
+    { icon:'📦', title:'Import Documentation from China Supplier', desc:'No shipping documents, invoices, or customs clearance on record.', status:'missing' },
+    { icon:'💰', title:'Source of Funds Declaration', desc:'No declaration on file despite cash-intensive business.', status:'missing' }
+  ],
+  'project-sunrise': [
+    { icon:'🏗️', title:'Construction Finance Agreement', desc:'Sanctioned facility for project development. Milestone-based disbursement.', status:'available' },
+    { icon:'🏢', title:'BVI Company Registry Searches (9 buyers)', desc:'Nominee directors only. No UBO disclosure available from BVI registry.', status:'partial' },
+    { icon:'📝', title:'Registered Sale Agreements', desc:'No registered sale agreements found for any of the 14 apartments sold.', status:'missing' },
+    { icon:'👤', title:'KYC — Offshore Buyers', desc:'No CDD/KYC on file for any of the 9 BVI/offshore entity buyers.', status:'missing' },
+    { icon:'💼', title:'Director Loan Agreement', desc:'No documentation for the ₹1.1 crore "loan repayment" to director.', status:'missing' },
+    { icon:'📋', title:'Cash Advance Receipts', desc:'Informal receipts only. No formal booking documentation.', status:'partial' }
+  ],
+  'ghost-exporter': [
+    { icon:'📜', title:'Letter of Credit — Future Tech HK', desc:'LC issued by the bank. 18 months of LC transactions on file.', status:'available' },
+    { icon:'🚢', title:'Shipping Documents — Shipments HE-001/002/003', desc:'Bills of lading and packing lists provided by exporter.', status:'available' },
+    { icon:'💱', title:'Market Pricing Data — Engineering Components', desc:'Third-party market data: USD 80-95/unit. Invoice price: USD 450/unit.', status:'available' },
+    { icon:'🏢', title:'Future Tech HK — Company Registry', desc:'Incorporated 3 months before first LC. No prior trading history.', status:'available' },
+    { icon:'🔗', title:'Registered Agent — Shared (Exporter & Buyer)', desc:'Same registered agent confirmed for both Horizon Exports and Future Tech HK.', status:'available' },
+    { icon:'📦', title:'Physical Inspection Report — Goods', desc:'No independent inspection of actual goods exported.', status:'missing' }
+  ],
+  'crypto-casino': [
+    { icon:'⛓️', title:'Blockchain Analytics Report — Source Wallets', desc:'Chainalysis report: 74% mixer-interaction score for all source wallets.', status:'available' },
+    { icon:'🎰', title:'Wagering Activity Log — CryptoKing99', desc:'Total wagering: less than 5% of deposits across 30-day period.', status:'available' },
+    { icon:'👤', title:'KYC — CryptoKing99', desc:'No verified identity on file. Platform accepted unverified registration.', status:'missing' },
+    { icon:'📜', title:'VASP Registration — Curaçao', desc:'Registration certificate. No FIU-IND registration for Indian operations.', status:'partial' },
+    { icon:'💸', title:'Wallet Address Analysis — Withdrawal vs Deposit', desc:'All 6 withdrawal wallets differ from 6 deposit wallets — chain-hop pattern confirmed.', status:'available' },
+    { icon:'📋', title:'FIU-IND Registration — BitPlay', desc:'BitPlay not registered with FIU-IND as required under PMLA 2023.', status:'missing' }
+  ],
+  'helpful-solicitor': [
+    { icon:'⚖️', title:'Client Trust Account — Bank Statements', desc:'12 months of pass-through transactions. ₹8.4 crore in/out.', status:'available' },
+    { icon:'🏢', title:'BVI Registry — Coral Holdings', desc:'Nominee director only. UBO not disclosed.', status:'partial' },
+    { icon:'📋', title:"KYC on Trust Account Clients", desc:'No CDD on file for any of the trust account funders.', status:'missing' },
+    { icon:'🏠', title:'Property Transaction Documentation', desc:'No property sale agreements or title documents on file.', status:'missing' },
+    { icon:'📜', title:'Bar Council AML Compliance Certificate', desc:'Mehra & Associates — no AML compliance registration with FIU-IND.', status:'missing' },
+    { icon:'💼', title:'Legal Engagement Letters', desc:'No client engagement letters identifying source of funds obligation.', status:'missing' }
+  ],
+  'shell-maze': [
+    { icon:'🗺️', title:'Ownership Structure Diagram', desc:'4-layer structure: UK → BVI → Cayman → Luxembourg → Trustee Co.', status:'available' },
+    { icon:'🚨', title:'OFAC SDN Alert — Alexei Volkov', desc:'SWIFT correspondent bank alert: Volkov linked to Gamma Trust Luxembourg.', status:'available' },
+    { icon:'🏦', title:'Transaction History — Meridian Holdings (18 months)', desc:'₹24 crore in pass-through transactions. All rapid in/out cycles.', status:'available' },
+    { icon:'👤', title:'KYC — Meridian Holdings Ltd', desc:'UK registered company KYC on file. No UBO documentation beyond Trustee Co.', status:'partial' },
+    { icon:'📋', title:'UBO Verification — Gamma Trust', desc:'No verified beneficial owner documentation for Luxembourg trust.', status:'missing' },
+    { icon:'📜', title:'Sanctions Screening Records', desc:'Initial onboarding screening records. Volkov not identified at onboarding.', status:'partial' }
+  ],
+  'friendly-politician': [
+    { icon:'👤', title:"Mrs. Sunita Rao — KYC File", desc:"Account opened 6 years ago. PEP status not recorded at opening.", status:'partial' },
+    { icon:'📰', title:"News Report — Apex Infra Government Contract", desc:"Published article identifying Apex Infra as ₹45 crore road contract recipient.", status:'available' },
+    { icon:'📊', title:"Income Tax Return — Mrs. Rao", desc:"Declared income ₹6 lakhs/year. Actual receipts ~₹50 lakhs/year.", status:'available' },
+    { icon:'🏢', title:"Government Vendor List — State Department", desc:"Apex Infra, Stellar Services, Prime Consulting all on vendor list.", status:'available' },
+    { icon:'📝', title:"Consulting Agreements — 3 Companies", desc:"No consulting agreements or service delivery proof on file.", status:'missing' },
+    { icon:'🏛️', title:"PEP Screening — Account Opening", desc:"No PEP screening record at account opening 6 years ago.", status:'missing' }
+  ],
+  'fast-fashion': [
+    { icon:'📜', title:"Pre-shipment Credit Facility Agreement", desc:"5-year banking relationship. Facility being repaid on time.", status:'available' },
+    { icon:'💱', title:"Customs Data — Export Invoices vs. Market Price", desc:"Invoice: ₹180-220/piece. Market: ₹320-380/piece. Consistent 30-45% gap.", status:'available' },
+    { icon:'🚢', title:"Shipping Documents — Al-Noor Textiles", desc:"Bills of lading and export declarations on file.", status:'available' },
+    { icon:'🤝', title:"Buyer KYC — Al-Noor Textiles UAE", desc:"Basic KYC on file. No enhanced due diligence for 3-year concentrated relationship.", status:'partial' },
+    { icon:'💸', title:"Hawala Network Intelligence", desc:"Parallel intelligence: hawala transfers from UAE back to promoters. No banking records.", status:'missing' },
+    { icon:'📋', title:"FEMA Cross-Border Reporting — Pricing Anomaly", desc:"No prior FEMA reporting for pricing anomaly despite consistent gap.", status:'missing' }
+  ]
+};
+
+/* =========================================================
+   STATE
+   ========================================================= */
+let currentCaseId = null;
+let currentCase = null;
+let stepAnswers = [];   // null | {choiceIndex, correct}
+let flagSelections = {};
+let flagsSubmitted = false;
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+function stars(n) {
+  return '★'.repeat(n) + '☆'.repeat(3 - n);
+}
+
+function formatAmount(n) {
+  return '₹' + n.toLocaleString('en-IN');
+}
+
+function isOutgoing(type) {
+  return /out|withdrawal|bet/i.test(type);
+}
+
+function getStorageKey(caseId) {
+  return 'fc-aml-cases-' + caseId;
+}
+
+function saveProgress(caseId, score, total) {
+  localStorage.setItem(getStorageKey(caseId), JSON.stringify({ score, total, completed: true }));
+}
+
+function loadProgress(caseId) {
+  try {
+    const raw = localStorage.getItem(getStorageKey(caseId));
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+/* =========================================================
+   LIBRARY
+   ========================================================= */
+function renderLibrary() {
+  const grid = document.getElementById('case-grid');
+  grid.innerHTML = CASES.map(c => {
+    const prog = loadProgress(c.id);
+    const badge = prog ? '<span class="card-complete-badge">Completed</span>' : '';
+    return `
+    <div class="case-card" onclick="openCase('${c.id}')">
+      ${badge}
+      <div class="card-top">
+        <div>
+          <div class="card-title">${c.title}</div>
+        </div>
+        <span class="card-typology">${c.typology}</span>
+      </div>
+      <div class="card-meta">
+        <span class="card-industry">${c.industry}</span>
+        <span class="card-stars" title="Complexity ${c.complexity}/3">${stars(c.complexity)}</span>
+      </div>
+      <p class="card-summary">${c.summary}</p>
+      <div class="card-tags">${c.tags.map(t=>`<span class="card-tag">${t}</span>`).join('')}</div>
+      <button class="card-btn">Open Case <span>→</span></button>
+    </div>`;
+  }).join('');
+}
+
+/* =========================================================
+   VIEW CONTROLLER
+   ========================================================= */
+function showView(name) {
+  document.getElementById('view-library').classList.toggle('hidden', name !== 'library');
+  document.getElementById('view-case').classList.toggle('hidden', name !== 'case');
+  if (name === 'library') {
+    currentCaseId = null;
+    currentCase = null;
+    renderLibrary();
+  }
+}
+
+/* =========================================================
+   OPEN CASE
+   ========================================================= */
+function openCase(caseId) {
+  currentCaseId = caseId;
+  currentCase = CASE_DETAILS[caseId];
+  const meta = CASES.find(c => c.id === caseId);
+
+  // reset state
+  stepAnswers = new Array(currentCase.decisions.length).fill(null);
+  flagSelections = {};
+  flagsSubmitted = false;
+
+  // header
+  document.getElementById('case-title').textContent = meta.title;
+  document.getElementById('case-badges').innerHTML = `
+    <span class="badge-typology">${meta.typology}</span>
+    <span class="badge-industry">${meta.industry}</span>
+    <span class="badge-complexity">${stars(meta.complexity)} Complexity</span>
+  `;
+
+  // activate first tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="background"]').classList.add('active');
+
+  renderAllTabs();
+  renderConsole();
+  showView('case');
+}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+document.getElementById('case-tabs').addEventListener('click', function(e) {
+  const btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  const tab = btn.dataset.tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+});
+
+function renderAllTabs() {
+  renderBackground();
+  renderCustomer();
+  renderTransactions();
+  renderRedFlags();
+  renderDocuments();
+}
+
+function renderBackground() {
+  document.getElementById('tab-background').innerHTML = `
+    <p class="bg-text">${currentCase.background}</p>
+  `;
+}
+
+function renderCustomer() {
+  const c = currentCase.customer;
+  const rows = Object.entries(c).map(([k,v]) => {
+    const label = k.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+    return `<div class="profile-row"><div class="profile-label">${label}</div><div class="profile-value">${v}</div></div>`;
+  }).join('');
+  document.getElementById('tab-customer').innerHTML = `<div class="profile-grid">${rows}</div>`;
+}
+
+function renderTransactions() {
+  const rows = currentCase.transactions.map(t => {
+    const out = isOutgoing(t.type);
+    return `<tr>
+      <td>${t.date}</td>
+      <td><span class="txn-amount ${out?'out':''}">${out?'-':'+'} ${formatAmount(t.amount)}</span></td>
+      <td>${t.type}</td>
+      <td>${t.party}</td>
+      <td>${t.channel}</td>
+      <td style="color:var(--muted);font-size:12px;">${t.desc}</td>
+      <td><span class="risk-badge risk-${t.risk}">${t.risk.toUpperCase()}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('tab-transactions').innerHTML = `
+    <div class="txn-table-wrap">
+      <table>
+        <thead><tr>
+          <th>Date</th><th>Amount</th><th>Type</th><th>Party</th><th>Channel</th><th>Description</th><th>Risk</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  `;
+}
+
+function renderRedFlags() {
+  const flags = currentCase.red_flags;
+  const items = flags.map((f, i) => `
+    <div class="flag-item" data-idx="${i}" onclick="toggleFlag(${i})">
+      <div class="flag-checkbox" id="flag-cb-${i}"></div>
+      <span class="flag-text">${f.text}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('tab-redflags').innerHTML = `
+    <p style="color:var(--muted);font-size:12px;margin-bottom:14px;">Select all statements that represent genuine red flags for this case, then submit to see which are correct.</p>
+    <div class="flag-list" id="flag-list">${items}</div>
+    <div class="flag-submit-row" id="flag-submit-row">
+      <button class="flag-submit-btn" onclick="submitFlags()">Submit Selections</button>
+      <span class="flag-result-text" id="flag-result-text"></span>
+    </div>
+  `;
+}
+
+function toggleFlag(idx) {
+  if (flagsSubmitted) return;
+  const item = document.querySelector(`.flag-item[data-idx="${idx}"]`);
+  const cb = document.getElementById('flag-cb-' + idx);
+  if (flagSelections[idx]) {
+    delete flagSelections[idx];
+    item.classList.remove('selected-correct','selected-wrong');
+    cb.textContent = '';
+  } else {
+    flagSelections[idx] = true;
+    item.classList.add('selected-correct'); // temp visual
+    cb.textContent = '✓';
+  }
+}
+
+function submitFlags() {
+  if (flagsSubmitted) return;
+  flagsSubmitted = true;
+
+  const flags = currentCase.red_flags;
+  let correct = 0, total = flags.filter(f=>f.correct).length;
+
+  flags.forEach((f, i) => {
+    const item = document.querySelector(`.flag-item[data-idx="${i}"]`);
+    const cb = document.getElementById('flag-cb-' + i);
+    item.classList.remove('selected-correct','selected-wrong');
+    item.style.cursor = 'default';
+
+    if (f.correct) {
+      item.classList.add('correct-reveal');
+      cb.textContent = '✓';
+      if (flagSelections[i]) correct++;
+    } else {
+      item.classList.add('decoy-reveal');
+      cb.textContent = '✗';
+    }
+  });
+
+  const missed = total - correct;
+  document.getElementById('flag-result-text').textContent =
+    `${correct}/${total} genuine red flags identified${missed>0?' ('+missed+' missed)':''}`;
+
+  const btn = document.querySelector('.flag-submit-btn');
+  if (btn) btn.style.display = 'none';
+}
+
+function renderDocuments() {
+  const docs = DOCS_MAP[currentCaseId] || [];
+  const items = docs.map(d => {
+    let statusClass = 'doc-available', statusLabel = 'AVAILABLE';
+    if (d.status === 'missing') { statusClass = 'doc-missing'; statusLabel = 'MISSING'; }
+    if (d.status === 'partial') { statusClass = 'doc-partial'; statusLabel = 'PARTIAL'; }
+    return `
+      <div class="doc-item">
+        <span class="doc-icon">${d.icon}</span>
+        <div class="doc-body">
+          <h4>${d.title}</h4>
+          <p>${d.desc}</p>
+        </div>
+        <span class="doc-status ${statusClass}">${statusLabel}</span>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('tab-documents').innerHTML = `<div class="doc-list">${items}</div>`;
+}
+
+/* =========================================================
+   DECISION CONSOLE
+   ========================================================= */
+function renderConsole() {
+  const steps = currentCase.decisions;
+  const answered = stepAnswers.filter(a => a !== null).length;
+  const pct = steps.length > 0 ? (answered / steps.length * 100) : 0;
+
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${answered} of ${steps.length} decisions made`;
+
+  const container = document.getElementById('console-steps');
+
+  let html = steps.map((step, si) => {
+    const ans = stepAnswers[si];
+    const isAnswered = ans !== null;
+    const isActive = !isAnswered && (si === 0 || stepAnswers[si-1] !== null);
+    const isLocked = !isAnswered && !isActive;
+
+    let stepClass = 'step';
+    if (isActive) stepClass += ' active';
+    if (isAnswered && ans.correct) stepClass += ' answered-correct';
+    if (isAnswered && !ans.correct) stepClass += ' answered-wrong';
+    if (isLocked) stepClass += ' locked';
+
+    const choicesHtml = step.choices.map((ch, ci) => {
+      let btnClass = 'choice-btn';
+      if (isAnswered) {
+        btnClass += ch.c ? ' correct' : (ci === ans.choiceIndex ? ' wrong' : '');
+      }
+      return `<button class="${btnClass}" ${isAnswered?'disabled':''} onclick="answerStep(${si},${ci})">${ch.t}</button>`;
+    }).join('');
+
+    let rationaleHtml = '';
+    if (isAnswered) {
+      const rationale = step.choices[ans.choiceIndex].r;
+      rationaleHtml = `<div class="step-rationale ${ans.correct?'correct-r':'wrong-r'}">${rationale}</div>`;
+    }
+
+    const bodyHtml = (!isLocked) ? `<div class="step-body"><div class="choice-list">${choicesHtml}</div>${rationaleHtml}</div>` : '';
+
+    return `
+      <div class="${stepClass}" id="step-${si}">
+        <div class="step-header" onclick="toggleStep(${si})">
+          <div class="step-num">${isAnswered ? (ans.correct ? '✓' : '✗') : (si+1)}</div>
+          <div class="step-q">${step.q}</div>
+        </div>
+        ${bodyHtml}
+      </div>
+    `;
+  }).join('');
+
+  // Outcome panel
+  const allDone = stepAnswers.every(a => a !== null);
+  const score = stepAnswers.filter(a => a && a.correct).length;
+  const total = steps.length;
+  let outcomeHtml = '';
+  if (allDone) {
+    saveProgress(currentCaseId, score, total);
+    const pct2 = total > 0 ? Math.round(score/total*100) : 0;
+    let badge, badgeIcon;
+    if (pct2 === 100) { badge = 'Expert Analyst'; badgeIcon = '🥇'; }
+    else if (pct2 >= 80) { badge = 'Senior Analyst'; badgeIcon = '🥈'; }
+    else if (pct2 >= 60) { badge = 'Analyst'; badgeIcon = '🥉'; }
+    else { badge = 'Trainee'; badgeIcon = '📋'; }
+
+    outcomeHtml = `
+      <div class="outcome-panel visible">
+        <h4>Case Outcome</h4>
+        <p class="outcome-text">${currentCase.outcome}</p>
+        <div class="score-row">
+          <div class="score-num">${score}</div>
+          <div class="score-denom">/ ${total}</div>
+          <div class="score-label">decisions correct<br><strong style="color:var(--text)">${pct2}% accuracy</strong></div>
+        </div>
+        <div class="competency-badge-wrap">
+          <span class="competency-icon">${badgeIcon}</span>
+          <div>
+            <div class="competency-label">Competency Badge</div>
+            <div class="competency-title">${badge}</div>
+          </div>
+        </div>
+        <button class="return-btn" onclick="showView('library')">Return to Library</button>
+      </div>
+    `;
+  }
+
+  container.innerHTML = html + outcomeHtml;
+}
+
+function answerStep(stepIdx, choiceIdx) {
+  if (stepAnswers[stepIdx] !== null) return;
+  const choice = currentCase.decisions[stepIdx].choices[choiceIdx];
+  stepAnswers[stepIdx] = { choiceIndex: choiceIdx, correct: choice.c };
+  renderConsole();
+
+  // scroll to next step or outcome
+  setTimeout(() => {
+    const nextStep = document.getElementById('step-' + (stepIdx + 1));
+    if (nextStep) {
+      nextStep.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    } else {
+      const outcome = document.querySelector('.outcome-panel');
+      if (outcome) outcome.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }
+  }, 150);
+}
+
+function toggleStep(si) {
+  // Locked steps don't open; answered steps can be re-viewed (already rendered)
+  // Active steps are always open — nothing to toggle
+}
+
+/* =========================================================
+   INIT
+   ========================================================= */
+renderLibrary();
+showView('library');
+</script>
+</body>
+</html>

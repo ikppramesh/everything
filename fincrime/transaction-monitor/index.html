@@ -1,0 +1,1537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Monitor | FinCrime | Everything</title>
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#d97706; --accent2:#dc2626;
+  --nav-h:52px; --green:#22c55e; --red:#ef4444; --yellow:#f59e0b; --blue:#3b82f6;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── NAV ─────────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 10px;
+  z-index: 1000;
+}
+.nav-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: color .15s, background .15s;
+  border: 1px solid transparent;
+}
+.nav-back:hover { color: var(--text); background: var(--bg3); border-color: var(--border); }
+.nav-sep { color: var(--border); font-size: 18px; }
+.nav-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.nav-badge {
+  margin-left: auto;
+  background: rgba(217,119,6,.15);
+  color: var(--accent);
+  border: 1px solid rgba(217,119,6,.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+.nav-live-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  margin-right: 6px;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+/* ─── MAIN WRAPPER ────────────────────────────────────────── */
+.wrapper {
+  padding-top: calc(var(--nav-h) + 16px);
+  padding-bottom: 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* ─── STAT BAR ────────────────────────────────────────────── */
+.stat-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.stat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content:'';
+  position: absolute;
+  top:0; left:0; right:0;
+  height: 2px;
+}
+.stat-card.blue::before  { background: var(--blue); }
+.stat-card.amber::before { background: var(--yellow); }
+.stat-card.red::before   { background: var(--red); }
+.stat-card.green::before { background: var(--green); }
+
+.stat-label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .6px; }
+.stat-value { font-size: 30px; font-weight: 700; line-height: 1; }
+.stat-card.blue  .stat-value { color: var(--blue); }
+.stat-card.amber .stat-value { color: var(--yellow); }
+.stat-card.red   .stat-value { color: var(--red); }
+.stat-card.green .stat-value { color: var(--green); }
+.stat-sub { font-size: 11px; color: var(--muted); }
+
+/* ─── CHART ROW ───────────────────────────────────────────── */
+.chart-row {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.chart-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  white-space: nowrap;
+  min-width: 160px;
+}
+#riskChart {
+  flex: 1;
+  height: 52px;
+  display: block;
+}
+.chart-legend {
+  display: flex;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ─── MAIN GRID ───────────────────────────────────────────── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 60fr 40fr;
+  gap: 14px;
+  margin-bottom: 14px;
+  min-height: 520px;
+}
+
+/* ─── PANEL SHARED ────────────────────────────────────────── */
+.panel {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg3);
+  flex-shrink: 0;
+}
+.panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+}
+.count-badge {
+  background: rgba(217,119,6,.15);
+  color: var(--accent);
+  border: 1px solid rgba(217,119,6,.25);
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* ─── FEED CONTROLS ───────────────────────────────────────── */
+.feed-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg3); border-color: var(--muted); }
+.btn.pause { border-color: rgba(245,158,11,.4); color: var(--yellow); }
+.btn.pause:hover { background: rgba(245,158,11,.08); }
+.btn.resume { border-color: rgba(34,197,94,.4); color: var(--green); }
+.btn.resume:hover { background: rgba(34,197,94,.08); }
+
+select.filter-select {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  outline: none;
+}
+select.filter-select:focus { border-color: var(--accent); }
+
+/* ─── FEED TABLE ──────────────────────────────────────────── */
+.feed-scroll {
+  overflow-y: auto;
+  flex: 1;
+}
+.feed-scroll::-webkit-scrollbar { width: 5px; }
+.feed-scroll::-webkit-scrollbar-track { background: transparent; }
+.feed-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+table.feed-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+table.feed-table thead th {
+  background: var(--bg3);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  padding: 8px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+table.feed-table tbody tr {
+  border-bottom: 1px solid rgba(48,54,61,.5);
+  cursor: pointer;
+  transition: background .12s;
+  animation: rowSlideIn .3s ease-out;
+}
+table.feed-table tbody tr:hover { background: rgba(255,255,255,.035); }
+table.feed-table tbody tr.high-risk {
+  border-left: 3px solid var(--red);
+  background: rgba(239,68,68,.04);
+}
+table.feed-table tbody tr.high-risk:hover { background: rgba(239,68,68,.08); }
+table.feed-table tbody tr.expanded-row td {
+  padding: 0;
+}
+table.feed-table tbody td {
+  padding: 8px 10px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.td-time { color: var(--muted); font-family: monospace; font-size: 11px; }
+.td-id { font-family: monospace; font-size: 11px; color: var(--blue); }
+.td-amount { font-weight: 600; }
+.td-channel {
+  font-size: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--muted);
+}
+
+/* ─── RISK BADGE ──────────────────────────────────────────── */
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.risk-badge.low  { background: rgba(34,197,94,.12); color: var(--green); border:1px solid rgba(34,197,94,.25); }
+.risk-badge.medium { background: rgba(245,158,11,.12); color: var(--yellow); border:1px solid rgba(245,158,11,.25); }
+.risk-badge.high { background: rgba(239,68,68,.12); color: var(--red); border:1px solid rgba(239,68,68,.3); }
+.pulse-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--red);
+  animation: pulse-dot 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ─── ROW DETAIL EXPAND ───────────────────────────────────── */
+.row-detail {
+  background: var(--bg3);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px;
+  animation: expandDown .2s ease-out;
+}
+.row-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px 20px;
+}
+.detail-field label {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 3px;
+}
+.detail-field span {
+  font-size: 12px;
+  color: var(--text);
+}
+.rules-fired-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+.rule-tag {
+  background: rgba(217,119,6,.15);
+  color: var(--accent);
+  border: 1px solid rgba(217,119,6,.25);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ─── ALERT QUEUE ─────────────────────────────────────────── */
+.alert-scroll {
+  overflow-y: auto;
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.alert-scroll::-webkit-scrollbar { width: 5px; }
+.alert-scroll::-webkit-scrollbar-track { background: transparent; }
+.alert-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.alert-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 12px 14px;
+  animation: rowSlideIn .3s ease-out;
+  transition: border-color .2s, background .2s;
+}
+.alert-card.escalated { border-left-color: var(--red); }
+.alert-card.str-filed { border-left-color: var(--blue); }
+.alert-card.cleared { border-left-color: var(--green); opacity: .6; }
+.alert-card.under-review { border-left-color: var(--yellow); }
+
+.alert-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.alert-id { font-family: monospace; font-size: 12px; font-weight: 700; color: var(--accent); }
+.alert-rule { font-size: 11px; color: var(--text); font-weight: 600; }
+.alert-status-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  white-space: nowrap;
+}
+.status-new       { background: rgba(59,130,246,.12); color: var(--blue); border:1px solid rgba(59,130,246,.25); }
+.status-under-review { background: rgba(245,158,11,.12); color: var(--yellow); border:1px solid rgba(245,158,11,.25); }
+.status-escalated { background: rgba(239,68,68,.12); color: var(--red); border:1px solid rgba(239,68,68,.25); }
+.status-str-filed { background: rgba(59,130,246,.15); color: #60a5fa; border:1px solid rgba(59,130,246,.3); }
+.status-cleared   { background: rgba(34,197,94,.12); color: var(--green); border:1px solid rgba(34,197,94,.25); }
+
+.alert-meta {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+.alert-meta strong { color: var(--text); }
+
+.alert-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.btn-alert {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-alert:hover { background: var(--bg3); color: var(--text); }
+.btn-alert.review:hover { border-color: rgba(245,158,11,.5); color: var(--yellow); background: rgba(245,158,11,.07); }
+.btn-alert.escalate:hover { border-color: rgba(239,68,68,.5); color: var(--red); background: rgba(239,68,68,.07); }
+.btn-alert.str:hover { border-color: rgba(59,130,246,.5); color: var(--blue); background: rgba(59,130,246,.07); }
+
+/* ─── RULE ENGINE ─────────────────────────────────────────── */
+.rule-engine-section {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.rule-engine-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 18px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg3);
+  transition: background .15s;
+}
+.rule-engine-header:hover { background: #262d35; }
+.rule-engine-title { font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.rule-engine-body {
+  display: none;
+  padding: 16px;
+}
+.rule-engine-body.open { display: block; }
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+.rule-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color .2s;
+}
+.rule-card.active { border-color: rgba(217,119,6,.35); }
+.rule-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.rule-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.rule-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+.rule-threshold {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.rule-threshold label { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
+.rule-threshold input {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 12px;
+  width: 120px;
+  outline: none;
+  transition: border-color .15s;
+}
+.rule-threshold input:focus { border-color: var(--accent); }
+
+/* ─── TOGGLE SWITCH ───────────────────────────────────────── */
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.toggle {
+  position: relative;
+  width: 34px;
+  height: 18px;
+  flex-shrink: 0;
+}
+.toggle input { display: none; }
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.toggle input:checked + .toggle-track { background: rgba(217,119,6,.35); border-color: var(--accent); }
+.toggle-thumb {
+  position: absolute;
+  top: 2px; left: 2px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: transform .2s, background .2s;
+  pointer-events: none;
+}
+.toggle input:checked + .toggle-track + .toggle-thumb {
+  transform: translateX(16px);
+  background: var(--accent);
+}
+.toggle-label { font-size: 10px; color: var(--muted); font-weight: 600; }
+
+/* ─── STR MODAL ───────────────────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(3px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 520px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalIn .2s ease-out;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h3 { font-size: 15px; font-weight: 700; }
+.modal-close {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 6px;
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: all .15s;
+}
+.modal-close:hover { background: var(--bg3); color: var(--text); }
+.modal-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group label { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+.form-group input,
+.form-group textarea {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+  transition: border-color .15s;
+  resize: vertical;
+}
+.form-group input:focus,
+.form-group textarea:focus { border-color: var(--accent); }
+.form-group textarea { min-height: 90px; }
+.char-count { font-size: 10px; color: var(--muted); text-align: right; }
+.char-count.ok { color: var(--green); }
+.modal-footer {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+}
+.btn-primary {
+  padding: 8px 18px;
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn-primary:hover { opacity: .85; }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+.btn-secondary {
+  padding: 8px 18px;
+  background: var(--bg3);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-secondary:hover { background: var(--bg); }
+
+/* ─── TOAST ───────────────────────────────────────────────── */
+.toast-wrap {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--green);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text);
+  box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  animation: toastIn .25s ease-out;
+  max-width: 340px;
+  pointer-events: auto;
+}
+.toast.error { border-left-color: var(--red); }
+.toast-title { font-weight: 700; margin-bottom: 2px; font-size: 12px; }
+.toast-sub { font-size: 11px; color: var(--muted); }
+
+/* ─── ANIMATIONS ──────────────────────────────────────────── */
+@keyframes rowSlideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes expandDown {
+  from { opacity: 0; transform: scaleY(0); transform-origin: top; }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.96) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .4; transform: scale(.75); }
+}
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(20px); }
+}
+
+/* ─── COLLAPSE CHEVRON ────────────────────────────────────── */
+.chevron { font-size: 11px; color: var(--muted); transition: transform .2s; }
+.chevron.open { transform: rotate(180deg); }
+
+/* ─── EMPTY STATE ─────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 40px 20px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.empty-icon { font-size: 28px; opacity: .4; }
+
+/* ─── PAUSED BANNER ───────────────────────────────────────── */
+.paused-banner {
+  display: none;
+  background: rgba(245,158,11,.08);
+  border-bottom: 1px solid rgba(245,158,11,.2);
+  color: var(--yellow);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 16px;
+  text-align: center;
+  letter-spacing: .4px;
+}
+.paused-banner.visible { display: block; }
+
+/* ─── SCROLLBAR GLOBAL ────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-back" href="../../index.html">&#8592; Everything</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-title">Transaction Monitor</span>
+  <span class="nav-badge"><span class="nav-live-dot"></span>FinCrime</span>
+</nav>
+
+<!-- WRAPPER -->
+<div class="wrapper">
+
+  <!-- STAT BAR -->
+  <div class="stat-bar">
+    <div class="stat-card blue">
+      <span class="stat-label">Transactions Today</span>
+      <span class="stat-value" id="stat-txns">0</span>
+      <span class="stat-sub">Live stream active</span>
+    </div>
+    <div class="stat-card amber">
+      <span class="stat-label">Alerts Generated</span>
+      <span class="stat-value" id="stat-alerts">0</span>
+      <span class="stat-sub">Rule-triggered</span>
+    </div>
+    <div class="stat-card red">
+      <span class="stat-label">STRs Filed</span>
+      <span class="stat-value" id="stat-strs">0</span>
+      <span class="stat-sub">Submitted today</span>
+    </div>
+    <div class="stat-card green">
+      <span class="stat-label">Rules Triggered</span>
+      <span class="stat-value" id="stat-rules">0</span>
+      <span class="stat-sub">AML engine hits</span>
+    </div>
+  </div>
+
+  <!-- CHART ROW -->
+  <div class="chart-row">
+    <span class="chart-title">Risk Distribution (5 min)</span>
+    <canvas id="riskChart"></canvas>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Low</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Medium</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>High</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+
+    <!-- LEFT: LIVE FEED -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">&#128225; Live Feed</span>
+        <div class="feed-controls">
+          <select class="filter-select" id="filterChannel" onchange="applyFilters()">
+            <option value="">All Channels</option>
+            <option>UPI</option><option>NEFT</option><option>RTGS</option>
+            <option>IMPS</option><option>Cash</option><option>Card</option><option>SWIFT</option>
+          </select>
+          <select class="filter-select" id="filterRisk" onchange="applyFilters()">
+            <option value="">All Risk</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+          <button class="btn pause" id="pauseBtn" onclick="togglePause()">&#9646;&#9646; Pause</button>
+        </div>
+      </div>
+      <div class="paused-banner" id="pausedBanner">&#9646;&#9646; Feed paused — new transactions are buffered</div>
+      <div class="feed-scroll" id="feedScroll">
+        <table class="feed-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Txn ID</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Amount (&#8377;)</th>
+              <th>Channel</th>
+              <th>Risk</th>
+            </tr>
+          </thead>
+          <tbody id="feedBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- RIGHT: ALERT QUEUE -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">&#128680; Alert Queue</span>
+        <span class="count-badge" id="alertCountBadge">0</span>
+      </div>
+      <div class="alert-scroll" id="alertScroll">
+        <div class="empty-state" id="alertEmpty">
+          <span class="empty-icon">&#128274;</span>
+          <span>No alerts yet — monitoring active</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main-grid -->
+
+  <!-- RULE ENGINE -->
+  <div class="rule-engine-section">
+    <div class="rule-engine-header" onclick="toggleRuleEngine()">
+      <span class="rule-engine-title">&#9881;&#65039; Configure Rules <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:4px;" id="ruleActiveCount"></span></span>
+      <span class="chevron" id="ruleChevron">&#9660;</span>
+    </div>
+    <div class="rule-engine-body" id="ruleEngineBody">
+      <div class="rules-grid" id="rulesGrid"></div>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<!-- STR MODAL -->
+<div class="modal-overlay" id="strModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>&#128196; File Suspicious Transaction Report (STR)</h3>
+      <button class="modal-close" onclick="closeSTRModal()">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Alert Reference</label>
+        <input type="text" id="str-alert-ref" readonly>
+      </div>
+      <div class="form-group">
+        <label>Account (From)</label>
+        <input type="text" id="str-account" readonly>
+      </div>
+      <div class="form-group">
+        <label>Transaction Amount (&#8377;)</label>
+        <input type="text" id="str-amount" readonly>
+      </div>
+      <div class="form-group">
+        <label>Date Range</label>
+        <input type="text" id="str-date-range" readonly>
+      </div>
+      <div class="form-group">
+        <label>Suspicious Activity Description <span style="color:var(--red)">*</span> <span style="font-weight:400;text-transform:none;letter-spacing:0">(min 100 chars)</span></label>
+        <textarea id="str-desc" placeholder="Describe the suspicious activity, pattern, and basis for filing this STR..." oninput="updateCharCount()"></textarea>
+        <span class="char-count" id="str-char-count">0 / 100 minimum</span>
+      </div>
+      <div class="form-group">
+        <label>Rule Triggered</label>
+        <input type="text" id="str-rule" readonly>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeSTRModal()">Cancel</button>
+      <button class="btn-primary" id="submitStrBtn" onclick="submitSTR()" disabled>Submit STR</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+// ─── DATA ────────────────────────────────────────────────────
+const ACCOUNTS = [
+  { id:'ACC-1001', name:'Ravi Kumar',         type:'savings',  balance:45000 },
+  { id:'ACC-1002', name:'Priya Sharma',       type:'current',  balance:280000 },
+  { id:'ACC-1003', name:'Mehta Traders',      type:'current',  balance:1200000 },
+  { id:'ACC-1004', name:'Sunita Patel',       type:'savings',  balance:32000 },
+  { id:'ACC-1005', name:'Global Imports Ltd', type:'current',  balance:4500000 },
+  { id:'ACC-1006', name:'HRJ-Dubai Holdings', type:'current',  balance:890000 },
+  { id:'ACC-1007', name:'Fast Cash Services', type:'current',  balance:12000 },
+  { id:'ACC-1008', name:'Anjali Singh',       type:'savings',  balance:67000 },
+  { id:'ACC-1009', name:'Dormant-Corp-Ltd',   type:'current',  balance:0 },
+  { id:'ACC-1010', name:'Rapid Flow Pvt Ltd', type:'current',  balance:500 },
+];
+
+const CHANNELS = ['UPI','NEFT','RTGS','IMPS','Cash','Card','SWIFT'];
+
+const RULES = [
+  { id:'structuring', name:'Structuring Rule',    desc:'Multiple transactions just below ₹10 lakh threshold within 24 hours from same account.', threshold:900000, enabled:true },
+  { id:'velocity',    name:'Velocity Rule',       desc:'More than 5 transactions from the same account within 10 minutes.',                      threshold:5,      enabled:true },
+  { id:'geography',   name:'Geography Rule',      desc:'Transaction involving a high-risk jurisdiction (account prefix HRJ-).',                  threshold:500000, enabled:true },
+  { id:'roundtrip',   name:'Round-Trip Rule',     desc:'Funds return to originator account within 2 hours.',                                     threshold:200000, enabled:true },
+  { id:'dormant',     name:'Dormant Account Rule',desc:'First transaction after 12+ months of inactivity exceeds threshold.',                    threshold:1000000,enabled:true },
+  { id:'mule',        name:'Mule Account Rule',   desc:'Account balance near zero before and after rapid large transaction.',                    threshold:500000, enabled:false },
+];
+
+// ─── STATE ───────────────────────────────────────────────────
+let paused = false;
+let txHistory = [];
+let alerts = [];
+let stats = { txns:0, alerts:0, strs:0, rulesFired:0 };
+let feedInterval;
+let currentSTRAlertId = null;
+let currentFilterChannel = '';
+let currentFilterRisk = '';
+let expandedRowId = null;
+
+// Chart buckets: track risk counts over 5-min windows (10 x 30s)
+const CHART_BUCKETS = 10;
+let chartData = Array.from({length:CHART_BUCKETS}, () => ({low:0,medium:0,high:0}));
+let currentBucket = 0;
+
+// ─── GENERATE TRANSACTION ────────────────────────────────────
+function generateTransaction() {
+  const fromIdx = Math.floor(Math.random() * ACCOUNTS.length);
+  let toIdx = Math.floor(Math.random() * ACCOUNTS.length);
+  if (toIdx === fromIdx) toIdx = (toIdx + 1) % ACCOUNTS.length;
+  const from = ACCOUNTS[fromIdx];
+  const to   = ACCOUNTS[toIdx];
+
+  const isSuspicious = Math.random() < 0.18;
+  let amount, channel;
+
+  if (isSuspicious) {
+    const pattern = Math.floor(Math.random() * 4);
+    if (pattern === 0)      amount = 840000 + Math.floor(Math.random() * 60000);
+    else if (pattern === 1) amount = 200000 + Math.floor(Math.random() * 300000);
+    else if (pattern === 2) amount = 1500000 + Math.floor(Math.random() * 2000000);
+    else                    amount = 980000 + Math.floor(Math.random() * 15000);
+    channel = CHANNELS[Math.floor(Math.random() * CHANNELS.length)];
+  } else {
+    amount = 1000 + Math.floor(Math.random() * 180000);
+    channel = CHANNELS[Math.floor(Math.random() * 3)];
+  }
+
+  return {
+    id: 'TXN-' + Date.now().toString().slice(-8) + String(Math.floor(Math.random()*100)).padStart(2,'0'),
+    from:     from.id,
+    fromName: from.name,
+    to:       to.id,
+    toName:   to.name,
+    amount,
+    channel,
+    ts: Date.now(),
+    risk: isSuspicious ? (amount > 1000000 ? 'high' : 'medium') : 'low',
+    rulesFired: []
+  };
+}
+
+// ─── RULE CHECKING ───────────────────────────────────────────
+function checkRules(tx) {
+  RULES.filter(r => r.enabled).forEach(rule => {
+    let fired = false;
+
+    if (rule.id === 'structuring') {
+      const recent = txHistory.filter(t =>
+        t.from === tx.from &&
+        t.amount >= rule.threshold * 0.7 &&
+        t.amount < rule.threshold &&
+        Date.now() - t.ts < 86400000
+      );
+      if (recent.length >= 2) fired = true;
+    }
+
+    if (rule.id === 'velocity') {
+      const recentCount = txHistory.filter(t =>
+        t.from === tx.from && Date.now() - t.ts < 600000
+      ).length;
+      if (recentCount >= rule.threshold) fired = true;
+    }
+
+    if (rule.id === 'geography') {
+      if ((tx.fromName.includes('HRJ') || tx.toName.includes('HRJ')) && tx.amount >= rule.threshold) fired = true;
+    }
+
+    if (rule.id === 'roundtrip') {
+      const returning = txHistory.find(t =>
+        t.from === tx.to &&
+        t.to === tx.from &&
+        tx.amount >= rule.threshold &&
+        Date.now() - t.ts < 7200000
+      );
+      if (returning) fired = true;
+    }
+
+    if (rule.id === 'dormant') {
+      if ((tx.fromName.includes('Dormant') || tx.fromName.includes('dormant')) && tx.amount >= rule.threshold) fired = true;
+    }
+
+    if (rule.id === 'mule') {
+      if ((tx.fromName.includes('Fast Cash') || tx.fromName.includes('Rapid Flow')) && tx.amount >= rule.threshold) fired = true;
+    }
+
+    if (fired && !tx.rulesFired.includes(rule.name)) {
+      tx.rulesFired.push(rule.name);
+      tx.risk = 'high';
+      createAlert(tx, rule);
+      stats.alerts++;
+      stats.rulesFired++;
+    }
+  });
+}
+
+// ─── CREATE ALERT ────────────────────────────────────────────
+function createAlert(tx, rule) {
+  const alert = {
+    id:       'ALT-' + String(alerts.length + 10001).padStart(5,'0'),
+    txId:     tx.id,
+    rule:     rule.name,
+    from:     tx.from,
+    fromName: tx.fromName,
+    to:       tx.to,
+    toName:   tx.toName,
+    amount:   tx.amount,
+    ts:       tx.ts,
+    status:   'new'
+  };
+  alerts.unshift(alert);
+  if (alerts.length > 50) alerts.pop();
+  renderAlertCard(alert);
+  updateAlertBadge();
+  hideAlertEmpty();
+}
+
+// ─── RENDER FEED ROW ─────────────────────────────────────────
+function renderFeedRow(tx) {
+  if (!passesFilter(tx)) return;
+
+  const tbody = document.getElementById('feedBody');
+  const rows  = tbody.querySelectorAll('tr.feed-row');
+  if (rows.length >= 50) {
+    // Remove oldest
+    let lastIdx = rows.length - 1;
+    // find last actual row (skip detail rows)
+    for (let i = rows.length - 1; i >= 0; i--) {
+      rows[i].remove();
+      // also remove its possible detail row
+      break;
+    }
+  }
+
+  const time = new Date(tx.ts).toLocaleTimeString('en-IN',{hour12:false});
+  const amtFmt = '₹' + tx.amount.toLocaleString('en-IN');
+
+  const riskBadge = tx.risk === 'high'
+    ? `<span class="risk-badge high"><span class="pulse-dot"></span>High</span>`
+    : tx.risk === 'medium'
+    ? `<span class="risk-badge medium">Medium</span>`
+    : `<span class="risk-badge low">Low</span>`;
+
+  const tr = document.createElement('tr');
+  tr.className = 'feed-row' + (tx.risk === 'high' ? ' high-risk' : '');
+  tr.dataset.txId = tx.id;
+  tr.innerHTML = `
+    <td class="td-time">${time}</td>
+    <td class="td-id">${tx.id}</td>
+    <td title="${tx.fromName}">${tx.fromName.length > 16 ? tx.fromName.slice(0,15)+'…' : tx.fromName}</td>
+    <td title="${tx.toName}">${tx.toName.length > 16 ? tx.toName.slice(0,15)+'…' : tx.toName}</td>
+    <td class="td-amount">${amtFmt}</td>
+    <td><span class="td-channel">${tx.channel}</span></td>
+    <td>${riskBadge}</td>
+  `;
+  tr.addEventListener('click', () => toggleRowDetail(tr, tx));
+
+  tbody.insertBefore(tr, tbody.firstChild);
+
+  // Enforce max 50 feed-rows
+  const allRows = tbody.querySelectorAll('tr.feed-row');
+  if (allRows.length > 50) {
+    allRows[allRows.length - 1].remove();
+  }
+  // Also clean up orphaned detail rows beyond index 50
+  cleanDetailRows();
+}
+
+function cleanDetailRows() {
+  const tbody = document.getElementById('feedBody');
+  const allTrs = tbody.querySelectorAll('tr');
+  if (allTrs.length > 100) {
+    // Remove from the end
+    for (let i = allTrs.length - 1; i >= 100; i--) {
+      allTrs[i].remove();
+    }
+  }
+}
+
+// ─── ROW DETAIL TOGGLE ───────────────────────────────────────
+function toggleRowDetail(tr, tx) {
+  const tbody = document.getElementById('feedBody');
+
+  // Remove any existing detail row
+  const existing = tbody.querySelector('tr.detail-expand-row');
+  if (existing) {
+    if (expandedRowId === tx.id) {
+      existing.remove();
+      expandedRowId = null;
+      return;
+    }
+    existing.remove();
+  }
+  expandedRowId = tx.id;
+
+  const date = new Date(tx.ts).toLocaleString('en-IN');
+  const rulesHtml = tx.rulesFired.length
+    ? tx.rulesFired.map(r => `<span class="rule-tag">${r}</span>`).join('')
+    : '<span style="color:var(--muted);font-size:11px">None</span>';
+
+  const detailTr = document.createElement('tr');
+  detailTr.className = 'detail-expand-row';
+  detailTr.innerHTML = `
+    <td colspan="7" style="padding:0">
+      <div class="row-detail">
+        <div class="row-detail-grid">
+          <div class="detail-field"><label>Transaction ID</label><span>${tx.id}</span></div>
+          <div class="detail-field"><label>From Account</label><span>${tx.from}</span></div>
+          <div class="detail-field"><label>From Name</label><span>${tx.fromName}</span></div>
+          <div class="detail-field"><label>To Account</label><span>${tx.to}</span></div>
+          <div class="detail-field"><label>To Name</label><span>${tx.toName}</span></div>
+          <div class="detail-field"><label>Amount</label><span>₹${tx.amount.toLocaleString('en-IN')}</span></div>
+          <div class="detail-field"><label>Channel</label><span>${tx.channel}</span></div>
+          <div class="detail-field"><label>Risk Level</label><span style="text-transform:capitalize">${tx.risk}</span></div>
+          <div class="detail-field"><label>Timestamp</label><span>${date}</span></div>
+        </div>
+        <div style="margin-top:10px"><div style="font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px">Rules Fired</div><div class="rules-fired-list">${rulesHtml}</div></div>
+      </div>
+    </td>
+  `;
+  tr.after(detailTr);
+}
+
+// ─── ALERT CARD RENDER ───────────────────────────────────────
+function renderAlertCard(alert) {
+  const container = document.getElementById('alertScroll');
+  const time = new Date(alert.ts).toLocaleTimeString('en-IN',{hour12:false});
+  const amtFmt = '₹' + alert.amount.toLocaleString('en-IN');
+
+  const card = document.createElement('div');
+  card.className = 'alert-card';
+  card.id = 'alert-' + alert.id;
+  card.dataset.status = alert.status;
+
+  card.innerHTML = buildAlertCardHTML(alert, time, amtFmt);
+
+  // Insert before empty state or at top
+  const empty = document.getElementById('alertEmpty');
+  if (empty && empty.parentNode === container) {
+    container.insertBefore(card, empty);
+  } else {
+    container.insertBefore(card, container.firstChild);
+  }
+}
+
+function buildAlertCardHTML(alert, time, amtFmt) {
+  time = time || new Date(alert.ts).toLocaleTimeString('en-IN',{hour12:false});
+  amtFmt = amtFmt || ('₹' + alert.amount.toLocaleString('en-IN'));
+
+  const statusLabels = {
+    'new':'New','under-review':'Under Review','escalated':'Escalated','str-filed':'STR Filed','cleared':'Cleared'
+  };
+  const statusClass = 'status-' + alert.status;
+  const statusLabel = statusLabels[alert.status] || 'New';
+
+  return `
+    <div class="alert-top">
+      <div>
+        <div class="alert-id">${alert.id}</div>
+        <div class="alert-rule">${alert.rule}</div>
+      </div>
+      <span class="alert-status-badge ${statusClass}">${statusLabel}</span>
+    </div>
+    <div class="alert-meta">
+      <strong>${alert.fromName}</strong> (${alert.from})<br>
+      Amount: <strong>${amtFmt}</strong> &nbsp;·&nbsp; ${time}
+    </div>
+    <div class="alert-actions">
+      <button class="btn-alert review" onclick="reviewAlert('${alert.id}')">Review</button>
+      <button class="btn-alert escalate" onclick="escalateAlert('${alert.id}')">Escalate</button>
+      <button class="btn-alert str" onclick="openSTRModal('${alert.id}')">File STR</button>
+    </div>
+  `;
+}
+
+function refreshAlertCard(alertId) {
+  const alert = alerts.find(a => a.id === alertId);
+  if (!alert) return;
+  const card = document.getElementById('alert-' + alertId);
+  if (!card) return;
+
+  const statusMap = { 'new':'', 'under-review':'under-review', 'escalated':'escalated', 'str-filed':'str-filed', 'cleared':'cleared' };
+  card.className = 'alert-card ' + (statusMap[alert.status] || '');
+  card.innerHTML = buildAlertCardHTML(alert);
+}
+
+// ─── ALERT ACTIONS ───────────────────────────────────────────
+function reviewAlert(alertId) {
+  const alert = alerts.find(a => a.id === alertId);
+  if (!alert || alert.status === 'str-filed') return;
+  alert.status = 'under-review';
+  refreshAlertCard(alertId);
+  showToast('Alert Updated', alertId + ' moved to Under Review', 'info');
+}
+
+function escalateAlert(alertId) {
+  const alert = alerts.find(a => a.id === alertId);
+  if (!alert || alert.status === 'str-filed') return;
+  alert.status = 'escalated';
+  refreshAlertCard(alertId);
+  showToast('Alert Escalated', alertId + ' escalated to senior analyst', 'warn');
+}
+
+// ─── STR MODAL ───────────────────────────────────────────────
+function openSTRModal(alertId) {
+  const alert = alerts.find(a => a.id === alertId);
+  if (!alert) return;
+  currentSTRAlertId = alertId;
+
+  const today = new Date().toLocaleDateString('en-IN');
+  const startDate = new Date(alert.ts - 86400000 * 30).toLocaleDateString('en-IN');
+
+  document.getElementById('str-alert-ref').value = alert.id + ' / ' + alert.txId;
+  document.getElementById('str-account').value   = alert.fromName + ' (' + alert.from + ')';
+  document.getElementById('str-amount').value    = '₹' + alert.amount.toLocaleString('en-IN');
+  document.getElementById('str-date-range').value = startDate + ' – ' + today;
+  document.getElementById('str-rule').value       = alert.rule;
+  document.getElementById('str-desc').value       = '';
+  document.getElementById('str-char-count').textContent = '0 / 100 minimum';
+  document.getElementById('str-char-count').className   = 'char-count';
+  document.getElementById('submitStrBtn').disabled = true;
+
+  document.getElementById('strModal').classList.add('open');
+}
+
+function closeSTRModal() {
+  document.getElementById('strModal').classList.remove('open');
+  currentSTRAlertId = null;
+}
+
+function updateCharCount() {
+  const val = document.getElementById('str-desc').value;
+  const len = val.length;
+  const countEl = document.getElementById('str-char-count');
+  countEl.textContent = len + ' / 100 minimum';
+  if (len >= 100) {
+    countEl.className = 'char-count ok';
+    document.getElementById('submitStrBtn').disabled = false;
+  } else {
+    countEl.className = 'char-count';
+    document.getElementById('submitStrBtn').disabled = true;
+  }
+}
+
+function submitSTR() {
+  if (!currentSTRAlertId) return;
+  const alert = alerts.find(a => a.id === currentSTRAlertId);
+  if (!alert) return;
+
+  const strNum = 'STR-2026-' + String(stats.strs + 10001).padStart(5,'0');
+  alert.status = 'str-filed';
+  stats.strs++;
+
+  refreshAlertCard(currentSTRAlertId);
+  updateStats();
+  closeSTRModal();
+  showToast('STR Filed Successfully', strNum + ' submitted to FIU', 'success');
+}
+
+// ─── FILTER ──────────────────────────────────────────────────
+function applyFilters() {
+  currentFilterChannel = document.getElementById('filterChannel').value;
+  currentFilterRisk    = document.getElementById('filterRisk').value;
+}
+
+function passesFilter(tx) {
+  if (currentFilterChannel && tx.channel !== currentFilterChannel) return false;
+  if (currentFilterRisk    && tx.risk    !== currentFilterRisk)    return false;
+  return true;
+}
+
+// ─── PAUSE / RESUME ──────────────────────────────────────────
+function togglePause() {
+  paused = !paused;
+  const btn    = document.getElementById('pauseBtn');
+  const banner = document.getElementById('pausedBanner');
+  if (paused) {
+    btn.textContent = '▶ Resume';
+    btn.className = 'btn resume';
+    banner.classList.add('visible');
+  } else {
+    btn.innerHTML = '&#9646;&#9646; Pause';
+    btn.className = 'btn pause';
+    banner.classList.remove('visible');
+  }
+}
+
+// ─── STATS ───────────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('stat-txns').textContent   = stats.txns;
+  document.getElementById('stat-alerts').textContent = stats.alerts;
+  document.getElementById('stat-strs').textContent   = stats.strs;
+  document.getElementById('stat-rules').textContent  = stats.rulesFired;
+}
+
+function updateAlertBadge() {
+  document.getElementById('alertCountBadge').textContent = alerts.length;
+}
+
+function hideAlertEmpty() {
+  const el = document.getElementById('alertEmpty');
+  if (el) el.style.display = 'none';
+}
+
+function updateRuleActiveCount() {
+  const active = RULES.filter(r => r.enabled).length;
+  document.getElementById('ruleActiveCount').textContent = `(${active} of ${RULES.length} active)`;
+}
+
+// ─── RULE ENGINE RENDER ───────────────────────────────────────
+function renderRules() {
+  const grid = document.getElementById('rulesGrid');
+  grid.innerHTML = '';
+  RULES.forEach((rule, idx) => {
+    const card = document.createElement('div');
+    card.className = 'rule-card' + (rule.enabled ? ' active' : '');
+    card.id = 'rule-card-' + rule.id;
+
+    const thresholdLabel = rule.id === 'velocity' ? 'Max Transactions' : 'Threshold (₹)';
+    const thresholdFmt   = rule.id === 'velocity' ? rule.threshold : rule.threshold.toLocaleString('en-IN');
+
+    card.innerHTML = `
+      <div class="rule-card-top">
+        <span class="rule-name">${rule.name}</span>
+        <label class="toggle" title="${rule.enabled ? 'Disable' : 'Enable'} rule">
+          <input type="checkbox" ${rule.enabled ? 'checked' : ''} onchange="toggleRule('${rule.id}', this.checked)">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <p class="rule-desc">${rule.desc}</p>
+      <div class="rule-threshold">
+        <label>${thresholdLabel}</label>
+        <input type="number" value="${rule.threshold}" min="1"
+          onchange="updateRuleThreshold('${rule.id}', this.value)"
+          title="Edit threshold">
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+  updateRuleActiveCount();
+}
+
+function toggleRule(ruleId, enabled) {
+  const rule = RULES.find(r => r.id === ruleId);
+  if (!rule) return;
+  rule.enabled = enabled;
+  const card = document.getElementById('rule-card-' + ruleId);
+  if (card) card.className = 'rule-card' + (enabled ? ' active' : '');
+  updateRuleActiveCount();
+}
+
+function updateRuleThreshold(ruleId, value) {
+  const rule = RULES.find(r => r.id === ruleId);
+  if (!rule) return;
+  const num = parseInt(value, 10);
+  if (!isNaN(num) && num > 0) rule.threshold = num;
+}
+
+function toggleRuleEngine() {
+  const body    = document.getElementById('ruleEngineBody');
+  const chevron = document.getElementById('ruleChevron');
+  body.classList.toggle('open');
+  chevron.classList.toggle('open');
+}
+
+// ─── CANVAS BAR CHART ────────────────────────────────────────
+function drawChart() {
+  const canvas = document.getElementById('riskChart');
+  if (!canvas) return;
+
+  // Size canvas to its CSS layout width
+  canvas.width  = canvas.offsetWidth  * window.devicePixelRatio || 600;
+  canvas.height = canvas.offsetHeight * window.devicePixelRatio || 52;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+  const W = canvas.offsetWidth  || 600;
+  const H = canvas.offsetHeight || 52;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Aggregate all data
+  const maxTotal = Math.max(1, ...chartData.map(b => b.low + b.medium + b.high));
+
+  const barW  = Math.floor(W / CHART_BUCKETS) - 3;
+  const gap   = 3;
+
+  chartData.forEach((bucket, i) => {
+    const x     = i * (barW + gap);
+    const total = bucket.low + bucket.medium + bucket.high;
+    if (total === 0) {
+      // ghost bar
+      ctx.fillStyle = 'rgba(48,54,61,0.5)';
+      ctx.fillRect(x, 2, barW, H - 4);
+      return;
+    }
+
+    const lowH    = Math.round((bucket.low    / maxTotal) * (H - 4));
+    const medH    = Math.round((bucket.medium / maxTotal) * (H - 4));
+    const highH   = Math.round((bucket.high   / maxTotal) * (H - 4));
+
+    let y = H - 2;
+    // Low
+    if (lowH > 0) {
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(x, y - lowH, barW, lowH);
+      y -= lowH;
+    }
+    // Medium
+    if (medH > 0) {
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(x, y - medH, barW, medH);
+      y -= medH;
+    }
+    // High
+    if (highH > 0) {
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(x, y - highH, barW, highH);
+    }
+  });
+}
+
+function rotateBucket() {
+  chartData.push({low:0,medium:0,high:0});
+  if (chartData.length > CHART_BUCKETS) chartData.shift();
+  currentBucket = chartData.length - 1;
+  drawChart();
+}
+
+function recordChartTx(risk) {
+  const b = chartData[chartData.length - 1];
+  if (!b) return;
+  if (risk === 'high')   b.high++;
+  else if (risk === 'medium') b.medium++;
+  else                   b.low++;
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+function showToast(title, sub, type) {
+  const wrap = document.getElementById('toastWrap');
+  const toast = document.createElement('div');
+  toast.className = 'toast' + (type === 'error' ? ' error' : '');
+  toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-sub">${sub}</div>`;
+  wrap.appendChild(toast);
+  setTimeout(() => {
+    toast.style.animation = 'fadeOut .3s ease-in forwards';
+    setTimeout(() => toast.remove(), 320);
+  }, 3500);
+}
+
+// ─── FEED LOOP ───────────────────────────────────────────────
+function startFeed() {
+  function schedule() {
+    const delay = 800 + Math.random() * 1700;
+    feedInterval = setTimeout(() => {
+      if (!paused) {
+        const tx = generateTransaction();
+        if (tx) {
+          checkRules(tx);
+          txHistory.unshift(tx);
+          if (txHistory.length > 200) txHistory.pop();
+          stats.txns++;
+          recordChartTx(tx.risk);
+          renderFeedRow(tx);
+          updateStats();
+          drawChart();
+        }
+      }
+      schedule();
+    }, delay);
+  }
+  schedule();
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+renderRules();
+startFeed();
+
+// Chart bucket rotation every 30 seconds
+setInterval(rotateBucket, 30000);
+
+// Initial draw after layout
+setTimeout(drawChart, 200);
+window.addEventListener('resize', drawChart);
+
+// Close modal on overlay click
+document.getElementById('strModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSTRModal();
+});
+</script>
+</body>
+</html>

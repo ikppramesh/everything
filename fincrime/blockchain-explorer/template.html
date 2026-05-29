@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blockchain Explorer — Everything</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;color:#1e293b;line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+
+  /* NAV */
+  nav{
+    background:#fff;
+    border-bottom:1px solid #e2e8f0;
+    padding:0 32px;
+    height:54px;
+    display:flex;align-items:center;gap:14px;
+    position:sticky;top:0;z-index:100;
+  }
+  nav a{color:#64748b;font-size:14px;display:flex;align-items:center;gap:6px;transition:color .15s;}
+  nav a:hover{color:#1e293b;}
+  nav .sep{color:#cbd5e1;font-size:18px;}
+  nav .nav-title{font-weight:700;font-size:15px;color:#1e293b;}
+  nav .demo-btn{
+    margin-left:auto;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    color:#fff;
+    font-size:13px;font-weight:600;
+    padding:7px 18px;border-radius:8px;
+    transition:opacity .15s;
+  }
+  nav .demo-btn:hover{opacity:.88;}
+
+  /* HERO */
+  .hero{
+    background:#fff;
+    border-bottom:1px solid #e2e8f0;
+    padding:72px 32px 64px;
+    max-width:1200px;margin:0 auto;
+    display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+  }
+  @media(max-width:860px){
+    .hero{grid-template-columns:1fr;padding:48px 24px;}
+  }
+
+  .hero-left{}
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:7px;
+    background:linear-gradient(135deg,#eef2ff,#f5f3ff);
+    border:1px solid #c7d2fe;
+    color:#6366f1;
+    font-size:12px;font-weight:700;
+    padding:5px 14px;border-radius:20px;
+    letter-spacing:.5px;text-transform:uppercase;
+    margin-bottom:24px;
+  }
+  .hero h1{
+    font-size:46px;font-weight:800;color:#0f172a;
+    line-height:1.15;margin-bottom:20px;
+    letter-spacing:-.5px;
+  }
+  @media(max-width:600px){.hero h1{font-size:32px;}}
+  .hero h1 span{color:#6366f1;}
+
+  .hero-sub{font-size:17px;color:#475569;margin-bottom:28px;line-height:1.65;}
+
+  .feature-list{
+    list-style:none;
+    display:flex;flex-direction:column;gap:10px;
+    margin-bottom:36px;
+  }
+  .feature-list li{
+    display:flex;align-items:flex-start;gap:10px;
+    font-size:14px;color:#334155;
+  }
+  .feature-list li::before{
+    content:'';
+    width:18px;height:18px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    margin-top:2px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 5l2.5 2.5L8 3' stroke='white' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-position:center;background-repeat:no-repeat;background-size:auto;
+  }
+
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+  .cta-primary{
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    color:#fff;
+    padding:13px 28px;border-radius:9px;
+    font-weight:700;font-size:15px;
+    transition:opacity .15s,transform .1s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .cta-primary:hover{opacity:.9;transform:translateY(-1px);}
+  .cta-secondary{
+    background:#f1f5f9;
+    color:#334155;
+    padding:13px 24px;border-radius:9px;
+    font-weight:600;font-size:15px;
+    border:1px solid #e2e8f0;
+    transition:background .15s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .cta-secondary:hover{background:#e9eef5;}
+
+  /* IFRAME PREVIEW */
+  .hero-right{
+    position:relative;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 24px 60px rgba(0,0,0,.14),0 0 0 1px #e2e8f0;
+    background:#0d1117;
+    height:440px;
+  }
+  .hero-right iframe{
+    width:200%;height:200%;
+    transform:scale(.5);transform-origin:0 0;
+    border:none;
+    pointer-events:none;
+  }
+  .preview-overlay{
+    position:absolute;inset:0;
+    display:flex;align-items:flex-end;justify-content:center;
+    padding-bottom:20px;
+    background:linear-gradient(to top, rgba(13,17,23,.85) 0%, transparent 60%);
+  }
+  .preview-overlay a{
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.2);
+    color:#fff;
+    backdrop-filter:blur(8px);
+    padding:9px 22px;border-radius:8px;
+    font-size:13px;font-weight:600;
+    transition:background .15s;
+  }
+  .preview-overlay a:hover{background:rgba(255,255,255,.18);}
+
+  /* STATS STRIP */
+  .stats-strip{
+    background:#fff;
+    border-bottom:1px solid #e2e8f0;
+  }
+  .stats-inner{
+    max-width:1200px;margin:0 auto;padding:28px 32px;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+    text-align:center;
+  }
+  @media(max-width:700px){.stats-inner{grid-template-columns:repeat(2,1fr);}}
+  .stat-num{font-size:32px;font-weight:800;color:#6366f1;line-height:1;}
+  .stat-label{font-size:13px;color:#64748b;margin-top:5px;}
+
+  /* FEATURES DARK */
+  .features-dark{
+    background:#0f172a;
+    padding:80px 32px;
+  }
+  .features-inner{max-width:1200px;margin:0 auto;}
+  .features-heading{
+    text-align:center;
+    font-size:32px;font-weight:800;color:#f1f5f9;
+    margin-bottom:12px;letter-spacing:-.3px;
+  }
+  .features-sub{
+    text-align:center;color:#94a3b8;font-size:16px;
+    max-width:540px;margin:0 auto 52px;line-height:1.65;
+  }
+  .features-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  }
+  @media(max-width:900px){.features-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.features-grid{grid-template-columns:1fr;}}
+  .feat-card{
+    background:#1e293b;
+    border:1px solid #334155;
+    border-radius:12px;
+    padding:28px 24px;
+    transition:border-color .2s,transform .15s;
+  }
+  .feat-card:hover{border-color:#6366f1;transform:translateY(-3px);}
+  .feat-icon{
+    font-size:32px;
+    margin-bottom:16px;
+    display:block;
+  }
+  .feat-title{
+    font-size:16px;font-weight:700;color:#f1f5f9;
+    margin-bottom:10px;
+  }
+  .feat-desc{
+    font-size:13.5px;color:#94a3b8;line-height:1.65;
+  }
+
+  /* HOW IT WORKS */
+  .how-section{
+    background:#fff;
+    padding:80px 32px;
+    border-top:1px solid #e2e8f0;
+    border-bottom:1px solid #e2e8f0;
+  }
+  .how-inner{max-width:960px;margin:0 auto;}
+  .how-heading{
+    text-align:center;font-size:30px;font-weight:800;color:#0f172a;
+    margin-bottom:10px;
+  }
+  .how-sub{text-align:center;color:#64748b;font-size:15px;margin-bottom:52px;}
+  .how-steps{
+    display:flex;flex-direction:column;gap:0;
+  }
+  .how-step{
+    display:flex;gap:24px;align-items:flex-start;
+    padding:24px 0;
+    border-bottom:1px solid #f1f5f9;
+  }
+  .how-step:last-child{border-bottom:none;}
+  .step-num{
+    width:40px;height:40px;flex-shrink:0;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    border-radius:10px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;color:#fff;
+    margin-top:2px;
+  }
+  .step-body h3{font-size:15px;font-weight:700;color:#1e293b;margin-bottom:5px;}
+  .step-body p{font-size:13.5px;color:#64748b;line-height:1.65;}
+
+  /* CTA SECTION */
+  .cta-section{
+    background:linear-gradient(135deg,#6366f1 0%,#8b5cf6 100%);
+    padding:72px 32px;text-align:center;
+  }
+  .cta-section h2{
+    font-size:36px;font-weight:800;color:#fff;
+    margin-bottom:12px;
+  }
+  .cta-section p{font-size:17px;color:rgba(255,255,255,.82);margin-bottom:32px;}
+  .cta-white{
+    background:#fff;
+    color:#6366f1;
+    padding:14px 32px;border-radius:9px;
+    font-weight:700;font-size:15px;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:opacity .15s,transform .1s;
+  }
+  .cta-white:hover{opacity:.92;transform:translateY(-1px);}
+
+  /* FOOTER */
+  footer{
+    background:#0f172a;
+    border-top:1px solid #1e293b;
+    padding:32px;
+    display:flex;align-items:center;justify-content:space-between;
+    flex-wrap:wrap;gap:16px;
+  }
+  .footer-brand{font-size:14px;font-weight:700;color:#f1f5f9;}
+  .footer-links{display:flex;gap:24px;}
+  .footer-links a{font-size:13px;color:#64748b;transition:color .15s;}
+  .footer-links a:hover{color:#f1f5f9;}
+  .footer-copy{font-size:12px;color:#475569;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/index.html">← Everything</a>
+  <span class="sep">/</span>
+  <span class="nav-title">Blockchain Explorer</span>
+  <a class="demo-btn" href="index.html">Demo →</a>
+</nav>
+
+<!-- HERO -->
+<section style="background:#fff;border-bottom:1px solid #e2e8f0;">
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge">🕵️ FinCrime · Blockchain</div>
+      <h1>See the Chain.<br/><span style="color:#6366f1">Break the Chain.</span></h1>
+      <p class="hero-sub">
+        An interactive blockchain visualizer that makes cryptographic fundamentals
+        tangible. Mine real blocks, tamper with data, and watch the chain shatter — 
+        then understand why attacks fail.
+      </p>
+      <ul class="feature-list">
+        <li>Real SHA-256 hashing via Web Crypto API</li>
+        <li>Configurable proof-of-work mining (difficulty 1–4)</li>
+        <li>Live avalanche effect demo</li>
+        <li>Tamper detection with downstream chain invalidation</li>
+        <li>Chain re-mining demonstrating the true cost of an attack</li>
+      </ul>
+      <div class="hero-ctas">
+        <a class="cta-primary" href="index.html">⛓ Launch Explorer →</a>
+        <a class="cta-secondary" href="/fincrime/index.html">← FinCrime Hub</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <iframe src="index.html" title="Blockchain Explorer Preview" scrolling="no"></iframe>
+      <div class="preview-overlay">
+        <a href="index.html">Open Full App →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS STRIP -->
+<section class="stats-strip">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-num">SHA-256</div>
+      <div class="stat-label">Real Cryptographic Hash</div>
+    </div>
+    <div>
+      <div class="stat-num">4</div>
+      <div class="stat-label">Difficulty Levels</div>
+    </div>
+    <div>
+      <div class="stat-num">~50%</div>
+      <div class="stat-label">Avalanche Effect Bits Changed</div>
+    </div>
+    <div>
+      <div class="stat-num">256</div>
+      <div class="stat-label">Bits Per Hash Output</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES DARK -->
+<section class="features-dark">
+  <div class="features-inner">
+    <h2 class="features-heading">Everything in One Explorer</h2>
+    <p class="features-sub">Four interactive modules teaching the core mechanics of blockchain security.</p>
+    <div class="features-grid">
+      <div class="feat-card">
+        <span class="feat-icon">⛓️</span>
+        <div class="feat-title">Real Blockchain</div>
+        <p class="feat-desc">
+          SHA-256 hashing, previous-hash linking, and live chain validation. 
+          Edit any block's data and watch the cascade invalidate every block downstream.
+        </p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">⛏️</span>
+        <div class="feat-title">Proof of Work</div>
+        <p class="feat-desc">
+          Mine blocks with configurable difficulty (1–4 leading zeros). 
+          Watch the live nonce counter and hash output as the browser crunches the proof-of-work puzzle.
+        </p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">💥</span>
+        <div class="feat-title">Tamper Demo</div>
+        <p class="feat-desc">
+          One click corrupts Block #1. All downstream blocks turn red instantly.
+          Then watch the cost of re-mining the entire chain block-by-block.
+        </p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🔐</span>
+        <div class="feat-title">Hash Inspector</div>
+        <p class="feat-desc">
+          Avalanche effect visualizer: "Hello World" vs "Hello world" — 
+          one character change flips ~50% of all 256 output bits. Character-by-character diff highlighted live.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <h2 class="how-heading">How Blockchain Security Works</h2>
+    <p class="how-sub">The five principles this explorer teaches interactively.</p>
+    <div class="how-steps">
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Every block contains the hash of the previous block</h3>
+          <p>This cryptographic link means every block's identity depends on all the blocks before it, forming a chain of trust.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Changing any data changes that block's hash</h3>
+          <p>SHA-256 produces a completely different output even for a single-character change — the avalanche effect makes cheating detectable immediately.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>The next block's "prevHash" no longer matches</h3>
+          <p>As soon as one block's hash changes, every subsequent block's previous-hash pointer becomes invalid, visually shown as a red cascade.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>You must re-mine that block AND every block after it</h3>
+          <p>Proof-of-work means finding a nonce that makes the hash start with N zeros. With difficulty 4, that can take tens of thousands of attempts per block.</p>
+        </div>
+      </div>
+      <div class="how-step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>On Bitcoin, this means redoing years of computational work</h3>
+          <p>The honest chain keeps growing while an attacker tries to catch up. This makes successful 51% attacks astronomically expensive on large chains.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section">
+  <h2>Ready to Break the Chain?</h2>
+  <p>Launch the live explorer, mine your first block, and tamper with the ledger — all in your browser.</p>
+  <a class="cta-white" href="index.html">⛓ Open Blockchain Explorer →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-brand">Everything Platform</span>
+  <div class="footer-links">
+    <a href="/index.html">Home</a>
+    <a href="/fincrime/index.html">FinCrime</a>
+    <a href="index.html">Explorer App</a>
+  </div>
+  <span class="footer-copy">Educational tool — no data is stored or transmitted.</span>
+</footer>
+
+</body>
+</html>

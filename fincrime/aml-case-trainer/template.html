@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AML Case Trainer — FinCrime | Everything</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#ffffff;color:#1a1a2e;line-height:1.6;}
+  a{text-decoration:none;color:inherit;}
+</style>
+</head>
+<body>
+
+<!-- ====================================================
+     NAV
+     ==================================================== -->
+<nav style="
+  position:sticky;top:0;z-index:100;
+  background:rgba(255,255,255,0.95);backdrop-filter:blur(8px);
+  border-bottom:1px solid #e5e7eb;
+  display:flex;align-items:center;padding:0 24px;height:52px;gap:14px;
+">
+  <a href="../../index.html" style="color:#6b7280;font-size:13px;display:flex;align-items:center;gap:5px;transition:color .15s;">
+    &#8592; Everything
+  </a>
+  <span style="color:#d1d5db;font-size:16px;">|</span>
+  <span style="font-weight:600;font-size:14px;color:#111827;">AML Case Trainer</span>
+  <a href="index.html" style="
+    margin-left:auto;
+    background:#d97706;color:#ffffff;
+    border-radius:6px;padding:7px 16px;
+    font-size:13px;font-weight:600;
+    transition:background .15s;
+    display:flex;align-items:center;gap:6px;
+  " onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+    Demo &#8594;
+  </a>
+</nav>
+
+<!-- ====================================================
+     HERO
+     ==================================================== -->
+<section style="
+  max-width:1200px;margin:0 auto;padding:72px 24px 64px;
+  display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;
+">
+  <!-- Left column -->
+  <div>
+    <!-- Badge -->
+    <div style="
+      display:inline-flex;align-items:center;gap:8px;
+      background:#fef3c7;color:#92400e;
+      border:1px solid #fde68a;border-radius:20px;
+      padding:5px 14px;font-size:12px;font-weight:600;letter-spacing:.4px;
+      margin-bottom:24px;
+    ">
+      <span>&#128373;&#65039;</span> FinCrime &middot; AML Training
+    </div>
+
+    <!-- Heading -->
+    <h1 style="font-size:42px;font-weight:800;line-height:1.15;letter-spacing:-.5px;margin-bottom:20px;color:#111827;">
+      Real Cases.<br>
+      <span style="color:#d97706;">Real Decisions.</span>
+    </h1>
+
+    <p style="font-size:17px;color:#4b5563;line-height:1.7;margin-bottom:32px;max-width:480px;">
+      Step inside eight real-world money laundering typologies. Review evidence files, spot red flags, and make the same compliance decisions a real AML officer faces — then see how you measure up.
+    </p>
+
+    <!-- Features list -->
+    <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:36px;">
+      <li style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="
+          width:22px;height:22px;background:#d1fae5;color:#065f46;
+          border-radius:50%;display:flex;align-items:center;justify-content:center;
+          font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;
+        ">&#10003;</span>
+        <span style="color:#374151;font-size:15px;">8 case studies spanning cash structuring, TBML, crypto laundering, PEP corruption, and more</span>
+      </li>
+      <li style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="
+          width:22px;height:22px;background:#d1fae5;color:#065f46;
+          border-radius:50%;display:flex;align-items:center;justify-content:center;
+          font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;
+        ">&#10003;</span>
+        <span style="color:#374151;font-size:15px;">Full evidence files: background, customer profile, transactions, red flags, documents</span>
+      </li>
+      <li style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="
+          width:22px;height:22px;background:#d1fae5;color:#065f46;
+          border-radius:50%;display:flex;align-items:center;justify-content:center;
+          font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;
+        ">&#10003;</span>
+        <span style="color:#374151;font-size:15px;">Branching decision trees with expert rationale for every choice — right and wrong</span>
+      </li>
+      <li style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="
+          width:22px;height:22px;background:#d1fae5;color:#065f46;
+          border-radius:50%;display:flex;align-items:center;justify-content:center;
+          font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;
+        ">&#10003;</span>
+        <span style="color:#374151;font-size:15px;">Competency badges based on your decision accuracy — progress tracked locally</span>
+      </li>
+      <li style="display:flex;align-items:flex-start;gap:12px;">
+        <span style="
+          width:22px;height:22px;background:#d1fae5;color:#065f46;
+          border-radius:50%;display:flex;align-items:center;justify-content:center;
+          font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;
+        ">&#10003;</span>
+        <span style="color:#374151;font-size:15px;">India-focused: PMLA, FATF, FIU-IND, FEMA, RBI framework throughout</span>
+      </li>
+    </ul>
+
+    <!-- CTAs -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <a href="index.html" style="
+        background:#d97706;color:#ffffff;
+        border-radius:8px;padding:12px 28px;
+        font-size:15px;font-weight:700;
+        transition:background .15s;
+        display:inline-flex;align-items:center;gap:8px;
+      " onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+        Open Case Library &#8594;
+      </a>
+      <a href="../../index.html" style="
+        background:#f9fafb;color:#374151;
+        border:1px solid #e5e7eb;border-radius:8px;padding:12px 24px;
+        font-size:15px;font-weight:600;
+        transition:all .15s;
+        display:inline-flex;align-items:center;gap:8px;
+      " onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='#f9fafb'">
+        &#8592; All Apps
+      </a>
+    </div>
+  </div>
+
+  <!-- Right column: iframe preview -->
+  <div style="position:relative;">
+    <!-- Browser chrome mockup -->
+    <div style="
+      background:#1e293b;border-radius:12px;overflow:hidden;
+      box-shadow:0 25px 60px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.08);
+    ">
+      <!-- Browser bar -->
+      <div style="
+        background:#0f172a;padding:10px 16px;
+        display:flex;align-items:center;gap:8px;
+      ">
+        <span style="width:11px;height:11px;border-radius:50%;background:#ef4444;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>
+        <span style="width:11px;height:11px;border-radius:50%;background:#22c55e;display:inline-block;"></span>
+        <div style="
+          flex:1;background:#1e293b;border-radius:4px;padding:4px 10px;
+          font-size:11px;color:#64748b;margin-left:8px;
+        ">everything/fincrime/aml-case-trainer</div>
+      </div>
+      <!-- iframe -->
+      <div style="position:relative;height:420px;overflow:hidden;">
+        <iframe
+          src="index.html"
+          style="width:100%;height:520px;border:none;transform:scale(0.9);transform-origin:top left;width:111%;pointer-events:none;"
+          scrolling="no"
+          title="AML Case Trainer preview"
+        ></iframe>
+        <!-- Gradient overlay to fade out bottom -->
+        <div style="
+          position:absolute;bottom:0;left:0;right:0;height:80px;
+          background:linear-gradient(transparent,#1e293b);
+          pointer-events:none;
+        "></div>
+      </div>
+    </div>
+
+    <!-- Floating badge -->
+    <div style="
+      position:absolute;top:-16px;right:-16px;
+      background:#d97706;color:#ffffff;
+      border-radius:50%;width:72px;height:72px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      font-size:11px;font-weight:700;text-align:center;line-height:1.2;
+      box-shadow:0 8px 20px rgba(217,119,6,.4);
+    ">
+      <span style="font-size:18px;">8</span>
+      <span>CASES</span>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================
+     TYPOLOGY STRIP
+     ==================================================== -->
+<section style="background:#f9fafb;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;padding:20px 24px;overflow:hidden;">
+  <div style="
+    max-width:1200px;margin:0 auto;
+    display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center;
+  ">
+    <span style="color:#9ca3af;font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-right:8px;">Typologies covered:</span>
+    <span style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">Cash Structuring</span>
+    <span style="background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">Real Estate ML</span>
+    <span style="background:#d1fae5;color:#065f46;border:1px solid #a7f3d0;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">TBML</span>
+    <span style="background:#fce7f3;color:#9d174d;border:1px solid #fbcfe8;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">Virtual Assets</span>
+    <span style="background:#e0f2fe;color:#075985;border:1px solid #bae6fd;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">Professional Enablers</span>
+    <span style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">Sanctions Evasion</span>
+    <span style="background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">PEP Corruption</span>
+    <span style="background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;">Hawala</span>
+  </div>
+</section>
+
+<!-- ====================================================
+     FEATURES SECTION (dark)
+     ==================================================== -->
+<section style="background:#0d1117;padding:72px 24px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <!-- Section heading -->
+    <div style="text-align:center;margin-bottom:48px;">
+      <h2 style="font-size:32px;font-weight:800;color:#e6edf3;letter-spacing:-.3px;margin-bottom:12px;">
+        What's inside each case
+      </h2>
+      <p style="color:#8b949e;font-size:16px;max-width:520px;margin:0 auto;">
+        Every case is a complete investigation scenario — not just a quiz. Work through the evidence the same way a real compliance officer would.
+      </p>
+    </div>
+
+    <!-- 4-card grid -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
+
+      <!-- Card 1 -->
+      <div style="
+        background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px 24px;
+        transition:border-color .2s;
+      " onmouseover="this.style.borderColor='#d97706'" onmouseout="this.style.borderColor='#30363d'">
+        <div style="
+          width:48px;height:48px;background:rgba(217,119,6,.12);
+          border-radius:10px;display:flex;align-items:center;justify-content:center;
+          font-size:22px;margin-bottom:18px;
+        ">&#128218;</div>
+        <h3 style="font-size:17px;font-weight:700;color:#e6edf3;margin-bottom:10px;">8 Case Studies</h3>
+        <p style="color:#8b949e;font-size:14px;line-height:1.65;">
+          Eight distinct money laundering typologies, each with its own narrative, evidence trail, and outcome. From Mumbai nail salons to offshore shell mazes.
+        </p>
+        <div style="margin-top:18px;padding-top:18px;border-top:1px solid #21262d;">
+          <div style="color:#d97706;font-size:13px;font-weight:600;">Nail Bar &bull; Project Sunrise &bull; Ghost Exporter &bull; Crypto Casino &bull; +4 more</div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div style="
+        background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px 24px;
+        transition:border-color .2s;
+      " onmouseover="this.style.borderColor='#d97706'" onmouseout="this.style.borderColor='#30363d'">
+        <div style="
+          width:48px;height:48px;background:rgba(217,119,6,.12);
+          border-radius:10px;display:flex;align-items:center;justify-content:center;
+          font-size:22px;margin-bottom:18px;
+        ">&#128269;</div>
+        <h3 style="font-size:17px;font-weight:700;color:#e6edf3;margin-bottom:10px;">Evidence Review</h3>
+        <p style="color:#8b949e;font-size:14px;line-height:1.65;">
+          Five evidence tabs per case: narrative background, customer profile, transaction ledger, red flag selector, and document inventory with availability status.
+        </p>
+        <div style="margin-top:18px;padding-top:18px;border-top:1px solid #21262d;">
+          <div style="color:#d97706;font-size:13px;font-weight:600;">Background &bull; KYC &bull; Transactions &bull; Red Flags &bull; Documents</div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div style="
+        background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px 24px;
+        transition:border-color .2s;
+      " onmouseover="this.style.borderColor='#d97706'" onmouseout="this.style.borderColor='#30363d'">
+        <div style="
+          width:48px;height:48px;background:rgba(217,119,6,.12);
+          border-radius:10px;display:flex;align-items:center;justify-content:center;
+          font-size:22px;margin-bottom:18px;
+        ">&#127794;</div>
+        <h3 style="font-size:17px;font-weight:700;color:#e6edf3;margin-bottom:10px;">Decision Trees</h3>
+        <p style="color:#8b949e;font-size:14px;line-height:1.65;">
+          Up to 5 sequential decisions per case with 3 choices each. Every option — correct or incorrect — comes with expert rationale explaining the AML/PMLA reasoning.
+        </p>
+        <div style="margin-top:18px;padding-top:18px;border-top:1px solid #21262d;">
+          <div style="color:#d97706;font-size:13px;font-weight:600;">Sequential stepper &bull; Immediate feedback &bull; Legal citations</div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div style="
+        background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px 24px;
+        transition:border-color .2s;
+      " onmouseover="this.style.borderColor='#d97706'" onmouseout="this.style.borderColor='#30363d'">
+        <div style="
+          width:48px;height:48px;background:rgba(217,119,6,.12);
+          border-radius:10px;display:flex;align-items:center;justify-content:center;
+          font-size:22px;margin-bottom:18px;
+        ">&#127942;</div>
+        <h3 style="font-size:17px;font-weight:700;color:#e6edf3;margin-bottom:10px;">Competency Badges</h3>
+        <p style="color:#8b949e;font-size:14px;line-height:1.65;">
+          Score-based badges: Trainee, Analyst, Senior Analyst, and Expert. Progress is saved to localStorage — completed cases are flagged in the library for easy review.
+        </p>
+        <div style="margin-top:18px;padding-top:18px;border-top:1px solid #21262d;">
+          <div style="color:#d97706;font-size:13px;font-weight:600;">&#127950; Expert &bull; &#129352; Senior &bull; &#129353; Analyst &bull; &#128203; Trainee</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================
+     CASE PREVIEW STRIP
+     ==================================================== -->
+<section style="background:#f9fafb;padding:64px 24px;">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:40px;">
+      <h2 style="font-size:28px;font-weight:800;color:#111827;margin-bottom:10px;">All 8 cases at a glance</h2>
+      <p style="color:#6b7280;font-size:15px;">Each case spans a distinct sector and typology, from ₹4.2 crore structuring schemes to ₹24 crore sanctions evasion.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;">
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #d97706;">
+        <div style="font-size:12px;font-weight:700;color:#d97706;letter-spacing:.4px;margin-bottom:6px;">CASH STRUCTURING &bull; RETAIL</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">The Nail Bar Network</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">12 Mumbai nail salons depositing ₹4.8-4.9 lakhs daily — just below the CTR threshold. Revenue 3-7x industry norms.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #7c3aed;">
+        <div style="font-size:12px;font-weight:700;color:#7c3aed;letter-spacing:.4px;margin-bottom:6px;">REAL ESTATE ML &bull; PROPERTY</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">Project Sunrise</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">14 luxury apartments sold with BVI shell company buyers, no purchase agreements, and director fund extraction.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #0891b2;">
+        <div style="font-size:12px;font-weight:700;color:#0891b2;letter-spacing:.4px;margin-bottom:6px;">TBML &bull; TRADE FINANCE</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">The Ghost Exporter</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">Engineering components invoiced at 4.7-5.6x market value to a related-party HK buyer. LC-funded over-invoicing.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #db2777;">
+        <div style="font-size:12px;font-weight:700;color:#db2777;letter-spacing:.4px;margin-bottom:6px;">VIRTUAL ASSETS &bull; CRYPTO</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">Crypto Casino</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">Mixer-tainted BTC deposits, 5% wagering, withdrawals to clean wallets. Classic casino wash-through layering.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #059669;">
+        <div style="font-size:12px;font-weight:700;color:#059669;letter-spacing:.4px;margin-bottom:6px;">DNFBP &bull; LEGAL SERVICES</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">The Helpful Solicitor</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">₹8.4 crore through a law firm trust account. Rapid pass-throughs, BVI funds, no CDD. Lawyer claims privilege exemption.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #dc2626;">
+        <div style="font-size:12px;font-weight:700;color:#dc2626;letter-spacing:.4px;margin-bottom:6px;">SANCTIONS &bull; CORPORATE FINANCE</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">Shell Company Maze</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">UK → BVI → Cayman → Luxembourg → sanctioned Russian national. ₹24 crore processed. OFAC SDN match flagged.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #ea580c;">
+        <div style="font-size:12px;font-weight:700;color:#ea580c;letter-spacing:.4px;margin-bottom:6px;">PEP CORRUPTION &bull; GOVERNMENT</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">The Friendly Politician</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">Minister's wife receives ₹50 lakhs/year from state government contract winners. Classic kickback channel.</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;border-left:4px solid #0d9488;">
+        <div style="font-size:12px;font-weight:700;color:#0d9488;letter-spacing:.4px;margin-bottom:6px;">TBML / HAWALA &bull; TEXTILE</div>
+        <div style="font-size:15px;font-weight:700;color:#111827;margin-bottom:6px;">Fast Fashion Fraud</div>
+        <div style="font-size:13px;color:#6b7280;line-height:1.5;">Garments under-invoiced 30-45% to UAE buyer; shortfall returned via hawala. Integration through cash deposits.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================
+     REGULATORY FRAMEWORK CALLOUT
+     ==================================================== -->
+<section style="background:#fff;padding:56px 24px;border-top:1px solid #e5e7eb;">
+  <div style="
+    max-width:900px;margin:0 auto;
+    background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%);
+    border:1px solid #fde68a;border-radius:16px;padding:40px 48px;
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+  ">
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#92400e;letter-spacing:.5px;text-transform:uppercase;margin-bottom:12px;">Regulatory Framework</div>
+      <h3 style="font-size:24px;font-weight:800;color:#111827;margin-bottom:14px;line-height:1.3;">India-specific. FATF-aligned.</h3>
+      <p style="color:#4b5563;font-size:15px;line-height:1.7;">
+        Every decision rationale references the actual legal framework — PMLA sections, FATF recommendations, RBI master directions, FIU-IND filing obligations, and FEMA provisions.
+      </p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;">
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">PMLA 2002</span>
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">FATF R.10-16</span>
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">FIU-IND STR</span>
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">FEMA 1999</span>
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">OFAC SDN</span>
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">PMLA 2023</span>
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">RBI Master Dir.</span>
+      <span style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;font-size:13px;font-weight:600;color:#374151;box-shadow:0 1px 3px rgba(0,0,0,.06);">DNFBP Rules</span>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================
+     FINAL CTA
+     ==================================================== -->
+<section style="background:#0d1117;padding:72px 24px;text-align:center;">
+  <div style="max-width:600px;margin:0 auto;">
+    <div style="font-size:40px;margin-bottom:20px;">&#128373;&#65039;</div>
+    <h2 style="font-size:32px;font-weight:800;color:#e6edf3;letter-spacing:-.3px;margin-bottom:16px;">
+      Start your first case
+    </h2>
+    <p style="color:#8b949e;font-size:16px;line-height:1.7;margin-bottom:36px;">
+      No sign-up. No install. Works entirely in your browser. Progress saved locally. Open a case and make your first decision in under 60 seconds.
+    </p>
+    <a href="index.html" style="
+      display:inline-flex;align-items:center;gap:10px;
+      background:#d97706;color:#ffffff;
+      border-radius:10px;padding:15px 36px;
+      font-size:16px;font-weight:700;
+      transition:background .15s;
+      box-shadow:0 8px 24px rgba(217,119,6,.3);
+    " onmouseover="this.style.background='#b45309'" onmouseout="this.style.background='#d97706'">
+      Open Case Library &#8594;
+    </a>
+    <div style="margin-top:20px;color:#6b7280;font-size:13px;">
+      8 cases &bull; Vanilla HTML/CSS/JS &bull; No frameworks &bull; No tracking
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================
+     FOOTER
+     ==================================================== -->
+<footer style="background:#0d1117;border-top:1px solid #21262d;padding:24px;text-align:center;">
+  <div style="max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="color:#6b7280;font-size:13px;">
+      AML Case Trainer &mdash; part of the <a href="../../index.html" style="color:#d97706;text-decoration:none;">Everything</a> platform
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <a href="../../index.html" style="color:#6b7280;font-size:13px;transition:color .15s;" onmouseover="this.style.color='#e6edf3'" onmouseout="this.style.color='#6b7280'">All Apps</a>
+      <a href="../fatf-quiz/index.html" style="color:#6b7280;font-size:13px;transition:color .15s;" onmouseover="this.style.color='#e6edf3'" onmouseout="this.style.color='#6b7280'">FATF Quiz</a>
+      <a href="../kyc-onboarding/index.html" style="color:#6b7280;font-size:13px;transition:color .15s;" onmouseover="this.style.color='#e6edf3'" onmouseout="this.style.color='#6b7280'">KYC Onboarding</a>
+      <a href="../transaction-monitor/index.html" style="color:#6b7280;font-size:13px;transition:color .15s;" onmouseover="this.style.color='#e6edf3'" onmouseout="this.style.color='#6b7280'">Transaction Monitor</a>
+    </div>
+    <div style="color:#484f58;font-size:12px;">
+      For educational use only. Not legal advice.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

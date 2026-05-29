@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fraud Investigator — FinCrime</title>
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#dc2626; --accent2:#d97706;
+  --nav-h:52px; --green:#22c55e; --red:#ef4444; --yellow:#f59e0b;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;height:var(--nav-h);
+  background:rgba(13,17,23,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100;
+}
+nav a{color:var(--muted);text-decoration:none;font-size:.85rem;transition:color .2s;}
+nav a:hover{color:var(--text);}
+.nav-sep{color:var(--border);font-size:.85rem;}
+.nav-title{color:var(--text);font-weight:600;font-size:.9rem;}
+.nav-badge{
+  margin-left:auto;background:rgba(220,38,38,.15);color:var(--accent);
+  border:1px solid rgba(220,38,38,.3);border-radius:20px;
+  padding:3px 10px;font-size:.75rem;font-weight:600;letter-spacing:.04em;
+}
+
+/* ── VIEWS ───────────────────────────────────────────────── */
+.view{display:none;padding-top:calc(var(--nav-h) + 24px);min-height:100vh;}
+.view.active{display:block;}
+
+/* ── SELECTOR VIEW ───────────────────────────────────────── */
+#view-selector{padding-bottom:60px;}
+.sel-hero{text-align:center;padding:48px 20px 40px;}
+.sel-hero h1{font-size:2.2rem;font-weight:700;letter-spacing:-.02em;margin-bottom:10px;}
+.sel-hero p{color:var(--muted);font-size:1rem;}
+.cases-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+  max-width:900px;margin:0 auto;padding:0 20px;
+}
+@media(max-width:720px){.cases-grid{grid-template-columns:1fr;}}
+.case-tile{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:24px;display:flex;flex-direction:column;gap:14px;
+  transition:border-color .25s,transform .2s,box-shadow .25s;cursor:pointer;
+}
+.case-tile:hover{transform:translateY(-3px);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.case-number{font-size:.72rem;font-weight:700;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+.case-title{font-size:1.05rem;font-weight:700;line-height:1.3;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;}
+.badge{
+  display:inline-flex;align-items:center;border-radius:20px;
+  padding:3px 10px;font-size:.72rem;font-weight:600;letter-spacing:.03em;
+}
+.badge-fraud{background:rgba(255,255,255,.07);color:var(--text);}
+.badge-diff-medium{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.25);}
+.badge-diff-hard{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+.case-synopsis{color:var(--muted);font-size:.85rem;line-height:1.55;}
+.case-evidence-count{
+  font-size:.78rem;color:var(--muted);
+  border-top:1px solid var(--border);padding-top:12px;margin-top:4px;
+}
+.open-btn{
+  margin-top:auto;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:9px 16px;border-radius:8px;font-size:.85rem;
+  font-weight:600;cursor:pointer;transition:background .2s,border-color .2s;text-align:center;
+}
+.open-btn:hover{background:#2d333b;border-color:#6e7681;}
+
+/* ── EVIDENCE VIEW ───────────────────────────────────────── */
+#view-evidence{padding-bottom:60px;}
+.ev-header{
+  max-width:1200px;margin:0 auto;padding:0 20px 20px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.back-btn{
+  background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  padding:7px 14px;border-radius:8px;font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:background .2s;flex-shrink:0;
+}
+.back-btn:hover{background:#2d333b;}
+.ev-header-title{font-size:1.1rem;font-weight:700;}
+.ev-header-badge{font-size:.75rem;}
+.ev-progress{margin-left:auto;font-size:.78rem;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;}
+
+.ev-body{
+  max-width:1200px;margin:0 auto;padding:0 20px;
+  display:grid;grid-template-columns:55% 1fr;gap:20px;
+}
+@media(max-width:860px){.ev-body{grid-template-columns:1fr;}}
+
+/* left panel */
+.ev-left{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.ev-tabs{display:flex;border-bottom:1px solid var(--border);}
+.ev-tab{
+  flex:1;padding:11px 6px;font-size:.8rem;font-weight:600;
+  background:transparent;border:none;color:var(--muted);cursor:pointer;
+  border-bottom:2px solid transparent;transition:color .2s,border-color .2s;
+}
+.ev-tab.active{color:var(--text);border-bottom-color:var(--accent);}
+.ev-tab:hover:not(.active){color:var(--text);}
+.ev-cards-container{padding:16px;display:flex;flex-direction:column;gap:12px;min-height:200px;}
+
+/* evidence card */
+.ev-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:10px;
+  overflow:hidden;transition:border-color .2s;
+}
+.ev-card.opened{border-color:#3d4450;}
+.ev-card-header{
+  padding:14px 16px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;
+}
+.ev-card-header:hover{background:rgba(255,255,255,.03);}
+.ev-icon{
+  width:36px;height:36px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;margin-top:2px;
+}
+.ev-card-meta{flex:1;min-width:0;}
+.ev-card-title{font-size:.88rem;font-weight:700;margin-bottom:4px;}
+.ev-card-ts{font-size:.72rem;color:var(--muted);margin-bottom:5px;}
+.ev-card-desc{font-size:.8rem;color:var(--muted);line-height:1.45;}
+.ev-card-actions{
+  display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap;
+}
+.star-btn{
+  background:none;border:none;cursor:pointer;font-size:1.1rem;
+  color:var(--muted);transition:color .2s,transform .2s;line-height:1;
+  padding:2px;
+}
+.star-btn.starred{color:#f59e0b;transform:scale(1.1);}
+.star-btn:hover{transform:scale(1.15);}
+.view-detail-btn{
+  background:none;border:1px solid var(--border);color:var(--muted);
+  padding:3px 10px;border-radius:6px;font-size:.72rem;cursor:pointer;
+  transition:color .2s,border-color .2s;
+}
+.view-detail-btn:hover{color:var(--text);border-color:#6e7681;}
+.ev-detail{
+  padding:0 16px;max-height:0;overflow:hidden;
+  transition:max-height .3s ease,padding .3s ease;
+  font-size:.82rem;color:var(--muted);line-height:1.6;
+  border-top:0px solid var(--border);
+}
+.ev-detail.open{max-height:300px;padding:12px 16px;border-top:1px solid var(--border);}
+.key-evidence-tag{
+  display:inline-block;background:rgba(245,158,11,.12);color:var(--yellow);
+  border:1px solid rgba(245,158,11,.25);border-radius:4px;
+  padding:2px 7px;font-size:.68rem;font-weight:600;margin-left:4px;
+}
+
+/* proceed button */
+.proceed-wrap{padding:16px;border-top:1px solid var(--border);}
+.proceed-btn{
+  width:100%;background:var(--accent);border:none;color:#fff;
+  padding:11px;border-radius:8px;font-size:.88rem;font-weight:700;
+  cursor:pointer;transition:opacity .2s;letter-spacing:.03em;
+}
+.proceed-btn:hover{opacity:.88;}
+
+/* right panel — timeline */
+.ev-right{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.timeline-header{font-size:.85rem;font-weight:700;margin-bottom:16px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:12px;padding-bottom:16px;position:relative;}
+.tl-item::before{
+  content:'';position:absolute;left:7px;top:18px;bottom:0;
+  width:1px;background:var(--border);
+}
+.tl-item:last-child::before{display:none;}
+.tl-dot{
+  width:15px;height:15px;border-radius:50%;flex-shrink:0;margin-top:3px;
+  border:2px solid var(--bg2);
+}
+.tl-content{}
+.tl-ts{font-size:.7rem;color:var(--muted);margin-bottom:2px;}
+.tl-desc{font-size:.8rem;line-height:1.4;}
+.tl-empty{color:var(--muted);font-size:.82rem;font-style:italic;padding:8px 0;}
+
+/* ── VERDICT / DECISION VIEW ─────────────────────────────── */
+#view-verdict{padding-bottom:80px;}
+.vd-header{
+  max-width:760px;margin:0 auto;padding:0 20px 28px;
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+}
+.vd-header-title{font-size:1rem;font-weight:700;}
+.vd-label{font-size:.75rem;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;margin-left:auto;}
+
+.decision-tree{max-width:760px;margin:0 auto;padding:0 20px;}
+.dt-progress{font-size:.78rem;color:var(--muted);margin-bottom:20px;text-align:center;}
+
+/* question node */
+.dt-node{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:26px;margin-bottom:20px;
+}
+.dt-q{font-size:1rem;font-weight:700;line-height:1.45;margin-bottom:10px;}
+.dt-context{font-size:.82rem;color:var(--muted);font-style:italic;margin-bottom:20px;line-height:1.45;}
+.dt-choices{display:flex;flex-direction:column;gap:10px;}
+.choice-btn{
+  background:var(--bg3);border:1px solid var(--border);color:var(--text);
+  padding:12px 16px;border-radius:8px;font-size:.85rem;line-height:1.45;
+  text-align:left;cursor:pointer;transition:background .2s,border-color .2s;
+}
+.choice-btn:hover:not(:disabled){background:#2d333b;border-color:#6e7681;}
+.choice-btn:disabled{cursor:default;}
+.choice-btn.correct{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.4);color:var(--green);}
+.choice-btn.wrong{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.35);color:var(--red);}
+.choice-btn.unchosen{opacity:.5;}
+
+.consequence{
+  margin-top:14px;padding:14px;background:var(--bg3);border-left:3px solid var(--border);
+  border-radius:0 8px 8px 0;font-size:.83rem;color:var(--muted);line-height:1.55;
+  display:none;
+}
+.consequence.correct{border-left-color:var(--green);}
+.consequence.wrong{border-left-color:var(--red);}
+.consequence.visible{display:block;}
+
+.next-btn{
+  display:none;margin-top:16px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);padding:9px 22px;border-radius:8px;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:background .2s;
+}
+.next-btn.visible{display:inline-flex;align-items:center;gap:6px;}
+.next-btn:hover{background:#2d333b;}
+
+/* ── VERDICT SCREEN ──────────────────────────────────────── */
+.verdict-screen{
+  max-width:760px;margin:0 auto;padding:0 20px;
+  display:flex;flex-direction:column;gap:24px;
+}
+.verdict-badge-wrap{display:flex;justify-content:center;padding:10px 0;}
+.verdict-badge{
+  display:inline-flex;flex-direction:column;align-items:center;gap:6px;
+  padding:22px 40px;border-radius:16px;font-size:1.4rem;font-weight:800;
+  letter-spacing:.08em;text-transform:uppercase;
+  animation:popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.verdict-badge.fraud{background:rgba(220,38,38,.15);color:var(--red);border:2px solid rgba(220,38,38,.4);}
+.verdict-badge.genuine{background:rgba(34,197,94,.12);color:var(--green);border:2px solid rgba(34,197,94,.35);}
+.verdict-badge.inconclusive{background:rgba(245,158,11,.12);color:var(--yellow);border:2px solid rgba(245,158,11,.3);}
+.verdict-badge-sub{font-size:.72rem;font-weight:600;letter-spacing:.12em;opacity:.8;}
+@keyframes popIn{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
+
+.verdict-details{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:16px;}
+.vd-row{display:flex;gap:10px;align-items:baseline;}
+.vd-row-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;min-width:130px;flex-shrink:0;}
+.vd-row-val{font-size:.9rem;font-weight:600;}
+
+.confidence-bar-wrap{flex:1;}
+.confidence-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.confidence-fill{height:100%;background:var(--green);border-radius:3px;transition:width 1s ease;}
+
+.actions-list{display:flex;flex-direction:column;gap:8px;}
+.action-item{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:.83rem;line-height:1.45;color:var(--muted);
+}
+.action-item::before{content:'→';color:var(--accent);font-weight:700;flex-shrink:0;margin-top:1px;}
+
+.score-box{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:20px;text-align:center;
+}
+.score-label{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.score-val{font-size:2.2rem;font-weight:800;color:var(--text);}
+.score-val span{color:var(--muted);font-size:1.4rem;}
+.score-desc{font-size:.8rem;color:var(--muted);margin-top:6px;}
+
+.verdict-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
+.va-btn{
+  padding:10px 24px;border-radius:8px;font-size:.85rem;font-weight:600;
+  cursor:pointer;transition:opacity .2s;border:1px solid var(--border);
+}
+.va-btn-primary{background:var(--accent);color:#fff;border-color:var(--accent);}
+.va-btn-secondary{background:var(--bg3);color:var(--text);}
+.va-btn:hover{opacity:.85;}
+
+/* ── UTIL ────────────────────────────────────────────────── */
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/index.html">← Everything</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-title">Fraud Investigator</span>
+  <span class="nav-badge">FinCrime</span>
+</nav>
+
+<!-- VIEW: CASE SELECTOR -->
+<div id="view-selector" class="view active">
+  <div class="sel-hero">
+    <h1>Fraud Investigator</h1>
+    <p>Three cases. Real evidence. Your call.</p>
+  </div>
+  <div class="cases-grid" id="cases-grid">
+    <!-- rendered by JS -->
+  </div>
+</div>
+
+<!-- VIEW: EVIDENCE ROOM -->
+<div id="view-evidence" class="view">
+  <div class="ev-header">
+    <button class="back-btn" onclick="showView('selector')">← Cases</button>
+    <span class="ev-header-title" id="ev-case-title"></span>
+    <span class="badge badge-fraud ev-header-badge" id="ev-fraud-type-badge"></span>
+    <span class="ev-progress" id="ev-progress"></span>
+  </div>
+  <div class="ev-body">
+    <!-- LEFT: evidence list -->
+    <div class="ev-left">
+      <div class="ev-tabs">
+        <button class="ev-tab active" data-tab="digital" onclick="switchTab('digital')">Digital</button>
+        <button class="ev-tab" data-tab="financial" onclick="switchTab('financial')">Financial</button>
+        <button class="ev-tab" data-tab="customer" onclick="switchTab('customer')">Customer</button>
+        <button class="ev-tab" data-tab="external" onclick="switchTab('external')">External</button>
+      </div>
+      <div class="ev-cards-container" id="ev-cards"></div>
+      <div class="proceed-wrap">
+        <button class="proceed-btn" onclick="showView('verdict')">Proceed to Analysis →</button>
+      </div>
+    </div>
+    <!-- RIGHT: timeline -->
+    <div class="ev-right">
+      <div class="timeline-header">Case Timeline</div>
+      <div class="timeline" id="timeline">
+        <p class="tl-empty">Open evidence cards to build the timeline.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: VERDICT / DECISION TREE -->
+<div id="view-verdict" class="view">
+  <div class="vd-header">
+    <button class="back-btn" onclick="showView('evidence')">← Evidence</button>
+    <span class="vd-header-title" id="vd-case-title"></span>
+    <span class="vd-label">Analysis</span>
+  </div>
+  <div id="decision-tree-area" class="decision-tree"></div>
+</div>
+
+<script>
+/* ========================================================
+   DATA
+   ======================================================== */
+const CASES = [
+  {
+    id: 'ato',
+    title: 'The Overnight Account Takeover',
+    fraudType: 'Account Takeover (ATO)',
+    difficulty: 'Medium',
+    synopsis: 'A customer\'s account was accessed at 3:14am from an unrecognised device in Nigeria. ₹2.5 lakh NEFT transfer was initiated to an unknown beneficiary before the customer could be reached.',
+    evidenceCount: 7,
+    color: '#dc2626'
+  },
+  {
+    id: 'phantom-card',
+    title: 'The Phantom Card',
+    fraudType: 'Card-Not-Present Fraud',
+    difficulty: 'Hard',
+    synopsis: 'A premium credit card shows 14 online transactions totalling ₹4.8 lakh over 6 hours. The cardholder claims they have the card in their wallet and made none of the purchases.',
+    evidenceCount: 8,
+    color: '#7c3aed'
+  },
+  {
+    id: 'synthetic-id',
+    title: 'The Perfect Stranger',
+    fraudType: 'Synthetic Identity Fraud',
+    difficulty: 'Hard',
+    synopsis: 'A 14-month-old account with impeccable credit history suddenly defaults on a ₹12 lakh loan. Background checks reveal the customer\'s identity may have been constructed from multiple real people\'s data.',
+    evidenceCount: 9,
+    color: '#0891b2'
+  }
+];
+
+const CASE_DATA = {
+  'ato': {
+    evidence: {
+      digital: [
+        { id:'d1', title:'Login Event Log', ts:'03:14 AM', desc:'Login from IP 197.210.X.X (Lagos, Nigeria). Browser: Chrome on Windows. Device fingerprint: NEVER SEEN BEFORE on this account.', detail:'Login originated from IP 197.210.55.42, geolocated to Lagos, Nigeria. The account has 847 prior logins — all from Mumbai, Karnataka, or Delhi. No VPN or travel declared by customer. Device fingerprint does not match any of the 3 registered devices on the account.', category:'digital', keyEvidence:false },
+        { id:'d2', title:'Password Change Event', ts:'03:18 AM', desc:'Password changed 4 minutes after login. Email notification sent to registered address.', detail:'Account password changed at 03:18:22. Email OTP was sent to the registered email. The email account (Gmail) had its own login from the same Nigerian IP at 03:17 — 1 minute before the bank OTP was requested. This indicates the attacker had access to both the bank account and the email account.', category:'digital', keyEvidence:false },
+        { id:'d3', title:'Mobile Number Update', ts:'03:22 AM', desc:'Registered mobile number updated to an unrecognised number ending in 9847.', detail:'Mobile number changed to +91-XXXX-XX9847 at 03:22. This number has no prior association with the account. The change was authenticated via email OTP (same compromised email). Changing the mobile number would redirect all SMS OTPs for future transactions.', category:'digital', keyEvidence:false }
+      ],
+      financial: [
+        { id:'f1', title:'NEFT Transfer Initiated', ts:'03:26 AM', desc:'₹2,50,000 NEFT to beneficiary account ACC-9981-4472 at Axis Bank, Nagpur branch.', detail:'₹2,50,000 NEFT transfer initiated at 03:26 AM to ACC-9981-4472, Axis Bank, Nagpur. This beneficiary was added at 03:21 AM (1 minute before mobile number change). OTP for transfer was delivered to the newly registered +91-XXXX-XX9847 number, not the customer\'s real number. The beneficiary account was opened 3 days ago.', category:'financial', keyEvidence:false },
+        { id:'f2', title:'Account Balance History', ts:'Pre-incident', desc:'Account had ₹3.8 lakh balance. Post-transfer balance: ₹1.3 lakh.', detail:'Account balance was ₹3,82,450 prior to the incident. After the ₹2.5 lakh NEFT, balance dropped to ₹1,32,450. The customer\'s average monthly balance over 24 months was ₹2.1-3.9 lakh — consistent with a working professional. No prior late-night large transfers.', category:'financial', keyEvidence:false }
+      ],
+      customer: [
+        { id:'c1', title:'Customer Contact — Call Centre Log', ts:'09:47 AM (same day)', desc:'Customer called to report they cannot log in. Claims no knowledge of overnight activity.', detail:'Customer Ramesh Pillai called at 09:47 AM reporting inability to login. Upon identity verification, he confirmed: (1) He did not login overnight; (2) He did not initiate any transfer; (3) He was asleep at 3am; (4) His phone did not receive any OTP overnight. Critically, the customer\'s phone log (screenshot provided) shows NO SMS received between 11pm and 8am. This confirms the attacker used the new number to receive OTPs.', category:'customer', keyEvidence:false },
+        { id:'c2', title:'Customer Travel Disclosure', ts:'KYC records', desc:'Customer has never travelled internationally. Passport issued but unused.', detail:'KYC records show the customer holds a passport issued in 2019 but with no immigration stamps. The customer is a schoolteacher in Pune. No international travel history on record. This makes the Nigerian IP login definitively anomalous.', category:'customer', keyEvidence:false }
+      ],
+      external: [
+        { id:'e1', title:'SIM Swap Check — Telecom Provider', ts:'Requested 10:15 AM', desc:'Customer\'s registered SIM (ending 4421) shows no SIM swap in last 30 days.', detail:'TRAI verification confirmed no SIM swap on the customer\'s registered number ending 4421 in the past 90 days. However, the attacker did not need to SIM swap — they changed the registered mobile number in the bank\'s system using email OTP after compromising the email account.', category:'external', keyEvidence:false },
+        { id:'e2', title:'Beneficiary Account Intelligence', ts:'Requested 10:30 AM', desc:'Beneficiary account ACC-9981-4472 is 3 days old. No KYC document verification completed.', detail:'Axis Bank confirmed beneficiary account ACC-9981-4472 was opened online 3 days before the fraud using minimal KYC. The account has received 4 other similar transfers from different banks in the same 3-day period (totalling ~₹12 lakhs across 5 banks). Account has since been flagged by multiple institutions. This is a classic mule account.', category:'external', keyEvidence:false }
+      ]
+    },
+    decisions: [
+      { q:'Based on the login event (foreign IP, new device, 3:14am), is this account takeover?', context:'Consider: is there any innocent explanation for this login?', choices:[
+        { t:'Yes — this is definitively an account takeover. Proceed with fraud investigation.', correct:true, consequence:'Correct. A foreign IP, never-seen device, 3am timing, and no travel history constitute overwhelming evidence of ATO. No innocent explanation holds.' },
+        { t:'Possibly — the customer may have been travelling. Request confirmation first.', correct:false, consequence:'KYC records confirm no international travel. Additionally, a 3am login from Nigeria is implausible even for a traveller — and the customer reported no knowledge of the event.' },
+        { t:'No — the customer must have authorised this. Investigate further before labelling as fraud.', correct:false, consequence:'The customer explicitly denied the activity, has no travel history, and the device is unregistered. This analysis is not defensible.' }
+      ]},
+      { q:'The attacker changed the mobile number to receive OTPs. What attack vector does this represent?', context:'No SIM swap occurred — the number change happened within the bank\'s own system.', choices:[
+        { t:'SIM Swap — the attacker cloned the customer\'s SIM.', correct:false, consequence:'The telecom check confirmed no SIM swap. The attacker changed the bank-registered number through the bank\'s own mobile update facility after compromising the email account.' },
+        { t:'Credential stuffing — the attacker obtained the customer\'s email and bank credentials from a data breach, then changed the mobile number to intercept OTPs.', correct:true, consequence:'Correct. The sequence: email compromised → bank login → mobile update → beneficiary add → transfer is classic credential stuffing combined with mobile number hijacking via email OTP.' },
+        { t:'Phishing — the customer was tricked into providing credentials.', correct:false, consequence:'While possible, the simultaneous Nigerian IP login to both email and bank, and no customer report of any phishing contact, makes credential stuffing from a data breach more likely.' }
+      ]},
+      { q:'The beneficiary account is 3 days old and received funds from 5 banks. What should be the recommendation?', context:'Transaction is already processed. ₹2.5 lakh has left the account.', choices:[
+        { t:'File an STR and initiate a recall request to Axis Bank immediately.', correct:true, consequence:'Correct. Two parallel actions are required: (1) STR filing with FIU-IND for the fraud proceeds, (2) Immediate NEFT recall request to Axis Bank citing fraud. Mule accounts are sometimes emptied within hours.' },
+        { t:'Wait for the police complaint before acting — cannot recall without FIR.', correct:false, consequence:'Police complaint is useful but not required before a NEFT recall request. The bank has a separate process for fraud recalls that should be initiated immediately.' },
+        { t:'Close the customer\'s account to prevent further fraud.', correct:false, consequence:'Closing the account without recall is the wrong priority. The immediate goal is to recover funds. Account security should be enhanced, not closed.' }
+      ]},
+      { q:'Should the customer be compensated for the fraudulent transfer?', context:'RBI circular on limiting customer liability in unauthorised transactions applies.', choices:[
+        { t:'No — the customer\'s email was compromised, making it their fault.', correct:false, consequence:'Incorrect. RBI Circular on Limiting Customer Liability (2017) states that where the fraud is due to a third party breach (not the customer\'s negligence), the customer bears zero liability if reported within 3 working days.' },
+        { t:'Yes — this was a third-party breach with no customer negligence. Full compensation within RBI\'s timeline applies.', correct:true, consequence:'Correct. The customer reported within hours. There is no evidence of customer negligence. Under RBI\'s framework, zero liability applies. The bank must compensate within 10 working days of the customer\'s complaint.' },
+        { t:'Partial compensation — the customer should have used stronger passwords.', correct:false, consequence:'RBI guidelines do not allow banks to reduce compensation due to hypothetical preventable actions. The standard is actual negligence, not theoretical better practices.' }
+      ]}
+    ],
+    verdict: { fraud:true, type:'Account Takeover via Credential Stuffing + Mobile Number Hijacking', confidence:97, actions:['Initiate NEFT recall request to Axis Bank immediately','File STR with FIU-IND','Compensate customer per RBI zero-liability framework within 10 days','Implement additional authentication for mobile number changes','Flag the beneficiary account to FIU-IND as a mule account'] }
+  },
+
+  'phantom-card': {
+    evidence: {
+      digital: [
+        { id:'d1', title:'Transaction IP Addresses', ts:'02:14-08:20 AM', desc:'All 14 transactions originated from 3 IP addresses in Eastern Europe (Romania and Bulgaria).', detail:'IP analysis: 8 transactions from 185.220.XX.XX (Romania, Tor exit node), 4 transactions from 194.165.XX.XX (Bulgaria VPN), 2 from 109.206.XX.XX (Romania residential). None of these IPs have any prior history with this cardholder\'s account. The cardholder is based in Bengaluru.', category:'digital', keyEvidence:false },
+        { id:'d2', title:'Merchant Categories', ts:'02:14-08:20 AM', desc:'14 transactions: electronics retailers (6), gaming platforms (4), gift card purchases (4). All digital goods.', detail:'Breakdown: 6 electronics retailers across 3 countries, 4 gaming platform top-ups (Steam, PlayStation), 4 gift card purchases (Amazon US, Google Play). All digital/downloadable goods — no physical delivery address required. This pattern (digital goods, gift cards) is consistent with professional CNP fraud designed to quickly liquidate stolen card data.', category:'digital', keyEvidence:false }
+      ],
+      financial: [
+        { id:'f1', title:'Transaction Amounts', ts:'02:14-08:20 AM', desc:'14 transactions: ₹8,500-₹62,000 each. Total: ₹4,81,200. All in foreign currency (USD/EUR).', detail:'Transaction values escalated over 6 hours: first 3 transactions were ₹8,500-12,000 (test charges), next 5 were ₹25,000-40,000, final 6 were ₹45,000-62,000. This escalation pattern (small tests followed by large transactions) is a standard card testing methodology used by professional fraud rings before selling the card data or completing the fraudulent purchases.', category:'financial', keyEvidence:false },
+        { id:'f2', title:'Cardholder\'s Statement History', ts:'Last 12 months', desc:'Card is primarily used for domestic transactions: groceries, fuel, utility payments. Average monthly spend ₹45,000-70,000.', detail:'12-month history shows exclusively India-based merchants. No prior international transactions. No gaming or electronics transactions. Cardholder\'s profile: 38-year-old government employee, Bengaluru. Monthly spend: ₹45,000-68,000 on groceries, fuel, Swiggy, and utility bills. The ₹4.8 lakh in 6 hours on foreign digital merchants is completely inconsistent with 12 months of prior behaviour.', category:'financial', keyEvidence:false }
+      ],
+      customer: [
+        { id:'c1', title:'Cardholder Statement', ts:'Disputed at 10:30 AM', desc:'Customer confirms card is physically in wallet. Has not shared card details with anyone. Was asleep between 2am-8am.', detail:'Customer Mrs. Lakshmi Venkat called disputes at 10:30 AM. Confirmed: (1) Physical card is in wallet, (2) Has never shopped at any of the 14 merchants, (3) Has never made an international transaction, (4) Has not shared card number with anyone, (5) Has not responded to any phishing attempts she is aware of. Card has chip and contactless — but none of these transactions used physical card presence.', category:'customer', keyEvidence:false },
+        { id:'c2', title:'Data Breach Check', ts:'Internal intelligence', desc:'Customer\'s email address appears in a major e-commerce platform breach from 11 months ago.', detail:'Intelligence database shows the customer\'s email address was included in a data breach from a major Indian e-commerce platform 11 months ago. The breach included: email, hashed passwords, and partial card numbers. It is probable that the card details were obtained from this breach or from a subsequent dark web purchase of the breach data. The 11-month delay before fraud is typical — stolen card data is often sold and used with a delay.', category:'customer', keyEvidence:false }
+      ],
+      external: [
+        { id:'e1', title:'Chargeback Eligibility', ts:'Assessment', desc:'All 14 transactions are eligible for chargeback under Visa/Mastercard CNP fraud rules.', detail:'Under Visa\'s Zero Liability Policy and Mastercard\'s chargeback framework, all 14 transactions qualify for chargeback as CNP (Card Not Present) fraud. The merchant must bear the chargeback for digital goods transactions where the card was not physically present and no 3DS authentication was completed for transactions above ₹5,000 (per RBI mandate for international CNP).', category:'external', keyEvidence:false },
+        { id:'e2', title:'3DS Authentication Records', ts:'02:14-08:20 AM', desc:'6 of 14 transactions bypassed 3DS authentication. 8 transactions involved 3DS from foreign issuing banks.', detail:'RBI mandates 3DS for all international CNP transactions above ₹5,000. 6 transactions (₹8,500-12,000) appeared to bypass or be exempted from 3DS at the merchant end. 8 transactions used a 3DS flow — but authentication was completed from Eastern European IPs, suggesting the fraudster had access to the OTP delivery channel (possibly the customer\'s email used as the 3DS fallback).', category:'external', keyEvidence:false },
+        { id:'e3', title:'Fraud Ring Intelligence', ts:'Industry sharing', desc:'Same IP cluster linked to 34 other fraud cases across 6 Indian banks in the past 30 days.', detail:'The Romanian and Bulgarian IP addresses appear in a cross-bank fraud intelligence report shared via the Indian Banks\' Association fraud intelligence platform. 34 similar CNP fraud cases across HDFC, ICICI, SBI, Kotak, Axis, and IndusFirst in the past 30 days all share this IP cluster. Pattern: test charges followed by digital goods purchases. This is an organised fraud ring, not opportunistic.', category:'external', keyEvidence:false }
+      ]
+    },
+    decisions: [
+      { q:'14 transactions, all from Eastern European IPs, on a cardholder who has never transacted internationally. Is this CNP fraud?', context:'The cardholder has the physical card and disputes all transactions.', choices:[
+        { t:'Yes — the evidence is conclusive. Initiate chargeback and block the card.', correct:true, consequence:'Correct. Foreign IPs, inconsistent merchant profile, physical card present with cardholder, and cardholder dispute — all confirm CNP fraud. Immediate card block and chargeback initiation are required.' },
+        { t:'Possibly — the cardholder may have shopped on international sites before. Investigate 30 more days.', correct:false, consequence:'12 months of history shows zero international transactions. Waiting 30 more days while fraud continues is not defensible. The evidence is already conclusive.' },
+        { t:'Not clear — request merchant receipts before deciding.', correct:false, consequence:'Merchant receipts for digital goods are not physical evidence. The IP, location, and customer dispute already establish fraud.' }
+      ]},
+      { q:'Small test transactions (₹8,500-12,000) followed by larger ones (₹45,000-62,000). What does this pattern mean?', context:'The escalation happened over 6 hours.', choices:[
+        { t:'The cardholder may have made small purchases first to test the site, then larger ones.', correct:false, consequence:'This explanation requires the cardholder to be lying about their dispute — for which there is no evidence. The escalation pattern is a standard fraud ring testing methodology, not typical consumer behaviour.' },
+        { t:'Card testing — the fraudster made small transactions to verify the card works before escalating to high-value purchases.', correct:true, consequence:'Correct. Card testing is standard professional CNP fraud methodology: small authorisation to verify card validity, then escalate to larger purchases. The escalation from ₹8,500 to ₹62,000 over 6 hours is the textbook pattern.' },
+        { t:'The transactions may be from multiple cardholders on the same account.', correct:false, consequence:'There is only one cardholder on this account. The variation in transaction size is not explained by multiple users.' }
+      ]},
+      { q:'The same IP cluster appears in 34 other fraud cases. Should this be filed as an STR?', context:'The STR would cover both the card fraud and the potential organised fraud ring.', choices:[
+        { t:'No — STRs are for money laundering, not card fraud.', correct:false, consequence:'Card fraud proceeds that are layered through digital purchases and gift cards can constitute ML predicate offences under PMLA. More importantly, organised fraud rings are specifically reportable typologies.' },
+        { t:'Yes — file an STR for the organised fraud ring pattern and share the IP intelligence with FIU-IND.', correct:true, consequence:'Correct. The cross-bank organised fraud ring pattern meets PMLA STR filing criteria. Sharing IP intelligence through the IBA platform and FIU-IND helps disrupt the ring affecting all 6 banks.' },
+        { t:'Report only to the police cybercrime cell — STR is not appropriate here.', correct:false, consequence:'Police reporting is appropriate in parallel, but does not replace the STR obligation to FIU-IND. Both should be done.' }
+      ]}
+    ],
+    verdict: { fraud:true, type:'Card-Not-Present Fraud — Organised Ring (Credential Breach + Dark Web)', confidence:98, actions:['Block card immediately and issue replacement','Initiate chargeback for all 14 transactions','File STR with FIU-IND including IP intelligence','Share IP data with IBA fraud intelligence platform','Notify customer of data breach origin and credit monitoring recommendation'] }
+  },
+
+  'synthetic-id': {
+    evidence: {
+      digital: [
+        { id:'d1', title:'Application Metadata', ts:'Account opening (14 months ago)', desc:'Account application submitted from a VoIP mobile number. Email domain registered 3 days before application.', detail:'The mobile number used for account opening is registered to a VoIP service (Twilio) — not a traditional telecom operator. The email address domain (fastmailbox247.com) was registered via a privacy registrar 3 days before the bank account application. Neither is common for a genuine applicant opening a savings account.', category:'digital', keyEvidence:false },
+        { id:'d2', title:'Device Fingerprint Analysis', ts:'14-month history', desc:'All 847 app logins came from the same device. App installed on device type "Emulator" — not a real phone.', detail:'Technical analysis of the 847 logins over 14 months shows: (1) All logins from the same device fingerprint, (2) Device type reported as "Emulator" by the banking app\'s SDK — suggesting a virtual Android device rather than a physical phone, (3) GPS location data is inconsistently real — the "device" appeared in 3 different cities in the same hour on 4 occasions. Physical humans cannot be in 3 cities simultaneously.', category:'digital', keyEvidence:false }
+      ],
+      financial: [
+        { id:'f1', title:'Credit History Build-Up', ts:'Months 1-12', desc:'Perfect credit behaviour for 12 months: ₹2,000-15,000 monthly transactions, credit card paid in full, no late payments.', detail:'The account showed textbook "credit building" behaviour: small regular transactions, credit card bill paid in full every month (within 3-5 days of statement generation — unusually fast), small fixed deposits opened and closed, and salary credits from a sole proprietorship (the account holder is listed as self-employed in the KYC). This pattern is consistent with synthetic identity "nurturing" — building a credit profile to maximise a subsequent bust-out loan.', category:'financial', keyEvidence:false },
+        { id:'f2', title:'Loan Application and Drawdown', ts:'Month 13-14', desc:'₹12 lakh personal loan applied and disbursed. Fully drawn down within 72 hours. Account then inactive.', detail:'In month 13, a ₹12 lakh personal loan was applied for citing 12 months of positive credit history. Approved and disbursed within 5 days. Within 72 hours: ₹11.8 lakh was transferred to 7 different accounts (₹1.4-2.1 lakh each) via NEFT. Account balance dropped to ₹200. Loan EMI was never paid. This is the "bust-out" — the final stage of synthetic identity fraud.', category:'financial', keyEvidence:false }
+      ],
+      customer: [
+        { id:'c1', title:'Address Verification', ts:'KYC re-check', desc:'Physical address visit found the address to be a co-working space — no resident by the declared name.', detail:'KYC address verification visit to the declared address at "12, Lotus Business Park, Andheri East" confirmed this is a commercial co-working space that rents virtual office addresses. No individual named "Arjun Mehta" has ever been a client. The address is used by 47 different "businesses" and 12 different bank accounts at other institutions.', category:'customer', keyEvidence:false },
+        { id:'c2', title:'Identity Cross-Check', ts:'Fraud investigation', desc:'Aadhaar number belongs to a real person in Jaipur who is unaware their identity was used.', detail:'Cross-reference with UIDAI confirms the Aadhaar number (XXXX-XXXX-4471) belongs to Mr. Rajesh Kumar, a 45-year-old teacher in Jaipur who has no knowledge of the bank account. The PAN card was issued 6 months before the bank account opening — also in Mr. Kumar\'s name but with a different photograph. This is a synthetic identity: real Aadhaar/PAN numbers linked to a fabricated person.', category:'customer', keyEvidence:false }
+      ],
+      external: [
+        { id:'e1', title:'Credit Bureau Check', ts:'Post-default', desc:'CIBIL shows 4 other credit facilities opened with the same identity across 3 other banks. All defaulted simultaneously.', detail:'CIBIL query reveals that the same "Arjun Mehta" identity has 4 other credit facilities: 2 credit cards (HDFC ₹3L, Axis ₹2.5L) and 2 personal loans (Kotak ₹8L, SBI ₹5L). All 5 accounts defaulted in the same 30-day window. Total bust-out: approximately ₹30.5 lakh across all 5 institutions. This is a coordinated synthetic identity ring — multiple lenders targeted simultaneously.', category:'external', keyEvidence:false },
+        { id:'e2', title:'Beneficiary Account Intelligence', ts:'NEFT trace', desc:'7 recipient accounts all opened within 60 days of the loan disbursement. All have since been emptied.', detail:'NEFT recall requests to all 7 beneficiary banks confirmed: (1) All 7 accounts were opened in the 60 days before the loan (prepared in advance), (2) Funds were further split and transferred out within 24 hours of receipt, (3) None of the accounts have any other transaction history, (4) All match the profile of mule accounts. The speed and coordination indicates a professional fraud network, not an opportunistic individual.', category:'external', keyEvidence:false }
+      ]
+    },
+    decisions: [
+      { q:'Perfect credit history for 12 months followed by immediate default after large loan. What is this pattern?', context:'The credit-building phase lasted exactly 12 months.', choices:[
+        { t:'The customer may have had a genuine financial crisis — investigate before concluding fraud.', correct:false, consequence:'A "genuine crisis" does not explain: VoIP number, emulator device, virtual office address, simultaneous default across 5 banks, or the 72-hour fund dispersal. These are not consistent with genuine financial difficulty.' },
+        { t:'Synthetic identity bust-out — the identity was created, credit-nurtured for 12 months, then used to defraud multiple lenders simultaneously.', correct:true, consequence:'Correct. Bust-out fraud involves building a credit profile before maximally drawing down credit and disappearing. The 12-month nurturing period, simultaneous multi-bank default, and coordinated beneficiary accounts are definitive indicators.' },
+        { t:'The loan was too large for the customer\'s income — a credit assessment failure.', correct:false, consequence:'While the credit assessment may have been insufficient, the fraud is not a credit risk failure — it is deliberate identity fraud. Attributing this to credit assessment misses the fraud dimension entirely.' }
+      ]},
+      { q:'The Aadhaar belongs to a real person in Jaipur. What type of fraud is this exactly?', context:'The bank\'s own KYC accepted the documents at account opening.', choices:[
+        { t:'Identity theft — the fraudster stole someone\'s identity.', correct:false, consequence:'Partially correct but incomplete. Identity theft uses an existing person\'s real identity. This is synthetic identity fraud — the fraudster used a real Aadhaar but created a new persona (Arjun Mehta) with a different photograph, combining real and fabricated elements.' },
+        { t:'Synthetic identity fraud — a new person was created using a real Aadhaar number but with fabricated name and photograph.', correct:true, consequence:'Correct. Synthetic identity fraud combines real identity elements (Aadhaar, PAN) with fabricated ones (name, photo, address). The victim (Mr. Rajesh Kumar) has no idea — he was not defrauded directly, the bank was. This is why it evades standard identity verification checks.' },
+        { t:'Document forgery — the fraudster forged government documents.', correct:false, consequence:'The Aadhaar number is real (just used by a different person). The fraud is in the composite identity, not purely document forgery.' }
+      ]},
+      { q:'5 banks affected simultaneously with ₹30.5 lakh total bust-out. What is the response?', context:'All 5 institutions defaulted in the same 30-day window.', choices:[
+        { t:'Pursue recovery from the guarantor (if any).', correct:false, consequence:'There is no guarantor in a synthetic identity case — the guarantor identity would also be fabricated. This analysis does not address the fraud response.' },
+        { t:'File STR with FIU-IND, coordinate with other affected banks, and refer to the police cybercrime cell.', correct:true, consequence:'Correct. Multi-bank coordinated bust-out requires: (1) STR to FIU-IND citing ML from fraud, (2) Coordination with other affected banks via IBA or direct contact, (3) Cybercrime cell referral for the synthetic identity ring. This is an organised fraud network.' },
+        { t:'Write off the loan as a bad debt and strengthen KYC processes.', correct:false, consequence:'Write-off may eventually be necessary but cannot precede the fraud investigation and reporting obligations. Immediate reporting and coordination are required first.' }
+      ]}
+    ],
+    verdict: { fraud:true, type:'Synthetic Identity Fraud (Bust-Out) — Organised Ring', confidence:99, actions:['File STR with FIU-IND immediately','Coordinate with HDFC, Axis, Kotak, SBI on the synthetic identity ring','Refer to cybercrime cell for investigation','Notify UIDAI of Aadhaar misuse','Strengthen KYC: device type checking, VoIP number detection, address liveness checks','Write off loan after completing reporting obligations'] }
+  }
+};
+
+/* ========================================================
+   STATE
+   ======================================================== */
+let currentCaseId = null;
+let currentTab = 'digital';
+let timelineEvents = [];
+let openedEvidence = new Set();
+// deep-clone evidence state per session
+let evidenceState = {};
+
+/* ========================================================
+   VIEW ROUTER
+   ======================================================== */
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  if (name === 'evidence') renderEvidence();
+  if (name === 'verdict') renderDecisionTree();
+}
+
+/* ========================================================
+   CASE SELECTOR
+   ======================================================== */
+function renderCaseSelector() {
+  const grid = document.getElementById('cases-grid');
+  grid.innerHTML = CASES.map((c, i) => {
+    const diffClass = c.difficulty === 'Medium' ? 'badge-diff-medium' : 'badge-diff-hard';
+    const savedScore = localStorage.getItem('fc-fraud-' + c.id);
+    const scoreTag = savedScore ? `<span style="color:var(--green);font-size:.72rem;margin-left:auto;">Best: ${savedScore}</span>` : '';
+    return `
+      <div class="case-tile" onclick="openCase('${c.id}')"
+           style="border-top:3px solid ${c.color};">
+        <div class="case-number" style="color:${c.color}">Case ${String(i+1).padStart(2,'0')}</div>
+        <div class="case-title">${c.title}</div>
+        <div class="badge-row">
+          <span class="badge badge-fraud" style="background:${c.color}22;color:${c.color};border:1px solid ${c.color}44;">${c.fraudType}</span>
+          <span class="badge ${diffClass}">${c.difficulty}</span>
+          ${scoreTag}
+        </div>
+        <div class="case-synopsis">${c.synopsis}</div>
+        <div class="case-evidence-count">📁 ${c.evidenceCount} evidence items</div>
+        <button class="open-btn" style="border-top-color:${c.color}33;">Open Case →</button>
+      </div>`;
+  }).join('');
+}
+
+function openCase(caseId) {
+  currentCaseId = caseId;
+  currentTab = 'digital';
+  timelineEvents = [];
+  openedEvidence = new Set();
+  // deep-clone evidence for this session
+  const src = CASE_DATA[caseId].evidence;
+  evidenceState[caseId] = {};
+  for (const cat in src) {
+    evidenceState[caseId][cat] = src[cat].map(e => ({ ...e, keyEvidence: false, opened: false }));
+  }
+  // reset decision state
+  decisionState = { step: 0, score: 0, answered: [] };
+  showView('evidence');
+}
+
+/* ========================================================
+   EVIDENCE VIEW
+   ======================================================== */
+const ICONS = {
+  digital: '💻',
+  financial: '💰',
+  customer: '👤',
+  external: '🔎'
+};
+const TAB_COLORS = {
+  digital: '#3b82f6',
+  financial: '#22c55e',
+  customer: '#f59e0b',
+  external: '#a855f7'
+};
+
+function renderEvidence() {
+  if (!currentCaseId) return;
+  const caseObj = CASES.find(c => c.id === currentCaseId);
+  document.getElementById('ev-case-title').textContent = caseObj.title;
+  const ftBadge = document.getElementById('ev-fraud-type-badge');
+  ftBadge.textContent = caseObj.fraudType;
+  ftBadge.style.background = caseObj.color + '22';
+  ftBadge.style.color = caseObj.color;
+  ftBadge.style.border = '1px solid ' + caseObj.color + '44';
+  updateEvProgress();
+  switchTab(currentTab);
+  renderTimeline();
+}
+
+function updateEvProgress() {
+  const total = countAllEvidence();
+  const opened = openedEvidence.size;
+  document.getElementById('ev-progress').textContent = `${opened} / ${total} evidence reviewed`;
+}
+
+function countAllEvidence() {
+  let n = 0;
+  const es = evidenceState[currentCaseId];
+  if (!es) return 0;
+  for (const cat in es) n += es[cat].length;
+  return n;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.ev-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab);
+  });
+  renderCards();
+}
+
+function renderCards() {
+  const container = document.getElementById('ev-cards');
+  const items = evidenceState[currentCaseId]?.[currentTab] || [];
+  if (!items.length) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:.82rem;padding:8px 0;">No evidence in this category.</p>';
+    return;
+  }
+  container.innerHTML = items.map(ev => buildCard(ev)).join('');
+}
+
+function buildCard(ev) {
+  const color = TAB_COLORS[ev.category];
+  const starClass = ev.keyEvidence ? 'starred' : '';
+  const detailOpen = ev.opened ? 'open' : '';
+  const openedStyle = ev.opened ? 'border-color:#3d4450;' : '';
+  return `
+    <div class="ev-card ${ev.opened ? 'opened' : ''}" id="card-${ev.id}" style="${openedStyle}">
+      <div class="ev-card-header" onclick="toggleDetail('${ev.id}')">
+        <div class="ev-icon" style="background:${color}22;color:${color};">${ICONS[ev.category]}</div>
+        <div class="ev-card-meta">
+          <div class="ev-card-title">
+            ${ev.title}
+            ${ev.keyEvidence ? '<span class="key-evidence-tag">Key Evidence</span>' : ''}
+          </div>
+          <div class="ev-card-ts">${ev.ts}</div>
+          <div class="ev-card-desc">${ev.desc}</div>
+          <div class="ev-card-actions">
+            <button class="star-btn ${starClass}" title="Mark as Key Evidence"
+              onclick="toggleStar(event,'${ev.id}')">★</button>
+            <button class="view-detail-btn" onclick="toggleDetail('${ev.id}');event.stopPropagation();">
+              ${ev.opened ? 'Hide Details ↑' : 'View Details →'}
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="ev-detail ${detailOpen}" id="detail-${ev.id}">${ev.detail}</div>
+    </div>`;
+}
+
+function toggleDetail(evId) {
+  const cat = currentTab;
+  const items = evidenceState[currentCaseId][cat];
+  const ev = items.find(e => e.id === evId);
+  if (!ev) return;
+  const wasOpened = ev.opened;
+  ev.opened = !ev.opened;
+  if (!wasOpened) {
+    // first open — add to opened set and timeline
+    if (!openedEvidence.has(evId)) {
+      openedEvidence.add(evId);
+      addTimelineEvent(ev);
+      updateEvProgress();
+    }
+  }
+  // re-render just this card
+  const cardEl = document.getElementById('card-' + evId);
+  if (cardEl) cardEl.outerHTML = buildCard(ev);
+  // re-attach detail state
+  const detailEl = document.getElementById('detail-' + evId);
+  if (detailEl) {
+    if (ev.opened) detailEl.classList.add('open');
+    else detailEl.classList.remove('open');
+  }
+  // update view detail button text
+  const vdbEl = cardEl ? document.querySelector('#card-' + evId + ' .view-detail-btn') : null;
+  // Re-render the whole card region to be safe
+  renderCards();
+  renderTimeline();
+}
+
+function toggleStar(e, evId) {
+  e.stopPropagation();
+  const cat = currentTab;
+  const items = evidenceState[currentCaseId][cat];
+  const ev = items.find(i => i.id === evId);
+  if (!ev) return;
+  ev.keyEvidence = !ev.keyEvidence;
+  renderCards();
+}
+
+/* ========================================================
+   TIMELINE
+   ======================================================== */
+function addTimelineEvent(ev) {
+  // avoid duplicates
+  if (timelineEvents.find(t => t.id === ev.id)) return;
+  timelineEvents.push({ id: ev.id, ts: ev.ts, desc: ev.title, category: ev.category });
+}
+
+function renderTimeline() {
+  const container = document.getElementById('timeline');
+  if (!timelineEvents.length) {
+    container.innerHTML = '<p class="tl-empty">Open evidence cards to build the timeline.</p>';
+    return;
+  }
+  container.innerHTML = timelineEvents.map(ev => {
+    const color = TAB_COLORS[ev.category];
+    return `
+      <div class="tl-item">
+        <div class="tl-dot" style="background:${color};"></div>
+        <div class="tl-content">
+          <div class="tl-ts">${ev.ts}</div>
+          <div class="tl-desc">${ev.desc}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ========================================================
+   DECISION TREE
+   ======================================================== */
+let decisionState = { step: 0, score: 0, answered: [] };
+
+function renderDecisionTree() {
+  if (!currentCaseId) return;
+  const caseObj = CASES.find(c => c.id === currentCaseId);
+  document.getElementById('vd-case-title').textContent = caseObj.title;
+  const decisions = CASE_DATA[currentCaseId].decisions;
+  const area = document.getElementById('decision-tree-area');
+
+  if (decisionState.step >= decisions.length) {
+    renderVerdict();
+    return;
+  }
+
+  const total = decisions.length;
+  const step = decisionState.step;
+  const d = decisions[step];
+
+  area.innerHTML = `
+    <div class="dt-progress">Step ${step + 1} of ${total}</div>
+    <div class="dt-node" id="dt-node-${step}">
+      <div class="dt-q">${d.q}</div>
+      <div class="dt-context">${d.context}</div>
+      <div class="dt-choices" id="dt-choices-${step}">
+        ${d.choices.map((ch, ci) => `
+          <button class="choice-btn" id="choice-${step}-${ci}"
+            onclick="answerQuestion(${step},${ci})">${ch.t}</button>
+        `).join('')}
+      </div>
+      <div class="consequence" id="consequence-${step}"></div>
+      <button class="next-btn" id="next-btn-${step}"
+        onclick="nextQuestion(${step})">${step + 1 < total ? 'Next →' : 'See Verdict →'}</button>
+    </div>`;
+}
+
+function answerQuestion(step, choiceIndex) {
+  const decisions = CASE_DATA[currentCaseId].decisions;
+  const d = decisions[step];
+  const ch = d.choices[choiceIndex];
+  const isCorrect = ch.correct;
+
+  // disable all buttons
+  d.choices.forEach((_, ci) => {
+    const btn = document.getElementById(`choice-${step}-${ci}`);
+    btn.disabled = true;
+    if (ci === choiceIndex) {
+      btn.classList.add(isCorrect ? 'correct' : 'wrong');
+    } else {
+      btn.classList.add('unchosen');
+    }
+  });
+
+  // show consequence
+  const consEl = document.getElementById(`consequence-${step}`);
+  consEl.textContent = ch.consequence;
+  consEl.classList.add('visible', isCorrect ? 'correct' : 'wrong');
+
+  // show next
+  document.getElementById(`next-btn-${step}`).classList.add('visible');
+
+  // record
+  if (!decisionState.answered[step]) {
+    decisionState.answered[step] = choiceIndex;
+    if (isCorrect) decisionState.score++;
+  }
+}
+
+function nextQuestion(step) {
+  decisionState.step = step + 1;
+  renderDecisionTree();
+}
+
+/* ========================================================
+   VERDICT SCREEN
+   ======================================================== */
+function renderVerdict() {
+  const v = CASE_DATA[currentCaseId].verdict;
+  const decisions = CASE_DATA[currentCaseId].decisions;
+  const total = decisions.length;
+  const score = decisionState.score;
+
+  // save score
+  const savedRaw = localStorage.getItem('fc-fraud-' + currentCaseId);
+  const savedScore = savedRaw ? parseInt(savedRaw.split('/')[0]) : -1;
+  if (score > savedScore) {
+    localStorage.setItem('fc-fraud-' + currentCaseId, `${score}/${total}`);
+  }
+
+  const badgeClass = v.fraud ? 'fraud' : 'genuine';
+  const badgeText = v.fraud ? 'FRAUD CONFIRMED' : 'GENUINE — NO FRAUD';
+  const badgeSub = v.fraud ? 'CONFIRMED FRAUD DETECTED' : 'NO FRAUDULENT ACTIVITY';
+
+  const pct = Math.round((score / total) * 100);
+  let analystLabel = '';
+  if (pct === 100) analystLabel = 'Perfect score — Model Analyst level';
+  else if (pct >= 75) analystLabel = 'Strong performance — Senior Analyst level';
+  else if (pct >= 50) analystLabel = 'Adequate — Analyst level';
+  else analystLabel = 'Needs review — Training recommended';
+
+  document.getElementById('decision-tree-area').innerHTML = `
+    <div class="verdict-screen">
+      <div class="verdict-badge-wrap">
+        <div class="verdict-badge ${badgeClass}">
+          ${badgeText}
+          <span class="verdict-badge-sub">${badgeSub}</span>
+        </div>
+      </div>
+
+      <div class="verdict-details">
+        <div class="vd-row">
+          <span class="vd-row-label">Fraud Type</span>
+          <span class="vd-row-val">${v.type}</span>
+        </div>
+        <div class="vd-row" style="align-items:center;">
+          <span class="vd-row-label">Confidence</span>
+          <div class="confidence-bar-wrap">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+              <span style="font-size:.88rem;font-weight:700;color:var(--green);">${v.confidence}%</span>
+            </div>
+            <div class="confidence-bar">
+              <div class="confidence-fill" id="conf-fill" style="width:0%;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="vd-row" style="flex-direction:column;gap:10px;">
+          <span class="vd-row-label">Recommended Actions</span>
+          <div class="actions-list">
+            ${v.actions.map(a => `<div class="action-item">${a}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="score-box">
+        <div class="score-label">Your Score vs. Model Analyst</div>
+        <div class="score-val">${score}<span> / ${total}</span></div>
+        <div class="score-desc">${analystLabel}</div>
+      </div>
+
+      <div class="verdict-actions">
+        <button class="va-btn va-btn-primary" onclick="retryCase()">Try Again</button>
+        <button class="va-btn va-btn-secondary" onclick="showView('selector')">Choose Another Case</button>
+      </div>
+    </div>`;
+
+  // animate confidence bar
+  setTimeout(() => {
+    const fill = document.getElementById('conf-fill');
+    if (fill) fill.style.width = v.confidence + '%';
+  }, 300);
+
+  // refresh selector scores
+  renderCaseSelector();
+}
+
+function retryCase() {
+  openCase(currentCaseId);
+}
+
+/* ========================================================
+   INIT
+   ======================================================== */
+renderCaseSelector();
+</script>
+</body>
+</html>

@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethics Simulator — FinCrime</title>
+<style>
+  :root {
+    --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+    --text:#e6edf3; --muted:#8b949e; --accent:#8b5cf6; --accent2:#4b5563;
+    --nav-h:52px; --green:#22c55e; --red:#ef4444; --yellow:#f59e0b;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--nav-h);
+    background: rgba(13,17,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center;
+    padding: 0 24px; gap: 12px;
+  }
+  nav a {
+    color: var(--muted); text-decoration: none; font-size: 13px;
+    transition: color .2s;
+  }
+  nav a:hover { color: var(--text); }
+  nav .sep { color: var(--border); font-size: 13px; }
+  nav .nav-title { color: var(--text); font-size: 13px; font-weight: 500; }
+  nav .badge-nav {
+    margin-left: auto;
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.3);
+    color: var(--accent);
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 20px;
+    letter-spacing: .04em;
+  }
+
+  /* SCREENS */
+  .screen {
+    display: none;
+    padding-top: calc(var(--nav-h) + 40px);
+    padding-bottom: 80px;
+    min-height: 100vh;
+    opacity: 0;
+    transition: opacity .35s ease;
+  }
+  .screen.active {
+    display: block;
+  }
+  .screen.visible {
+    opacity: 1;
+  }
+
+  /* SCREEN 1 — SELECT */
+  #screen-select { padding-top: calc(var(--nav-h) + 60px); }
+  .select-header {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 56px;
+    padding: 0 20px;
+  }
+  .select-header h1 {
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 700;
+    letter-spacing: -.03em;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #e6edf3 30%, rgba(139,92,246,0.9));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .select-header p {
+    color: var(--muted);
+    font-size: 16px;
+  }
+
+  .scenarios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  @media(max-width:640px) {
+    .scenarios-grid { grid-template-columns: 1fr; }
+  }
+
+  .scenario-tile {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    cursor: pointer;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative; overflow: hidden;
+  }
+  .scenario-tile::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--tile-accent, var(--accent));
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .scenario-tile:hover {
+    border-color: var(--tile-accent, var(--accent));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  }
+  .scenario-tile:hover::before { opacity: 1; }
+  .tile-domain {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px;
+    width: fit-content;
+  }
+  .scenario-tile h3 {
+    font-size: 17px; font-weight: 600; line-height: 1.3;
+    color: var(--text);
+  }
+  .scenario-tile p {
+    color: var(--muted); font-size: 13.5px; line-height: 1.55;
+    flex: 1;
+  }
+  .tile-btn {
+    margin-top: 8px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 13px; font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, color .2s;
+    width: fit-content;
+  }
+  .scenario-tile:hover .tile-btn {
+    border-color: var(--tile-accent, var(--accent));
+    background: rgba(139,92,246,0.08);
+    color: var(--text);
+  }
+
+  /* SCREEN 2 — STORY */
+  #screen-story {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .story-topbar {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+  .breadcrumb {
+    font-size: 12px; color: var(--muted);
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 6px;
+  }
+  .story-title {
+    font-size: 15px; font-weight: 600;
+    flex: 1;
+  }
+  .domain-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  .context-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px 20px;
+  }
+  @media(max-width:500px){ .context-card { grid-template-columns: 1fr; } }
+  .ctx-item {
+    font-size: 12px; color: var(--muted);
+  }
+  .ctx-item span {
+    color: var(--text); font-weight: 500;
+  }
+
+  .story-text-area {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    min-height: 140px;
+    position: relative;
+  }
+  @media(max-width:500px){ .story-text-area { padding: 20px 18px; } }
+  #story-text-content {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-line;
+  }
+  .skip-btn {
+    position: absolute; top: 12px; right: 14px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px; padding: 3px 9px;
+    border-radius: 5px; cursor: pointer;
+    transition: color .2s, border-color .2s;
+  }
+  .skip-btn:hover { color: var(--text); border-color: var(--muted); }
+
+  /* DECISION */
+  .decision-section { margin-bottom: 24px; }
+  .decision-label {
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: 14px;
+  }
+  .choices-list {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .choice-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 14px; font-weight: 400;
+    padding: 14px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    line-height: 1.5;
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(139,92,246,0.07);
+    transform: translateX(4px);
+  }
+  .choice-btn:disabled {
+    cursor: default;
+    opacity: .5;
+  }
+  .choice-btn.selected {
+    border-color: var(--accent);
+    background: rgba(139,92,246,0.12);
+    opacity: 1 !important;
+  }
+
+  /* CONSEQUENCE PANEL */
+  .consequence-panel {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height .5s cubic-bezier(.4,0,.2,1), opacity .35s ease, margin .35s ease;
+  }
+  .consequence-panel.open {
+    max-height: 800px;
+    opacity: 1;
+  }
+  .consequence-inner {
+    padding: 24px 28px;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  @media(max-width:500px){ .consequence-inner { padding: 18px 16px; } }
+  .consequence-row {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .consequence-label {
+    font-size: 12px; font-weight: 600; color: var(--accent);
+    letter-spacing: .04em;
+  }
+  .consequence-text {
+    font-size: 13.5px; color: var(--text); line-height: 1.6;
+  }
+  .consequence-divider {
+    height: 1px; background: var(--border);
+  }
+
+  /* ACTION BUTTONS */
+  .action-row {
+    display: flex; gap: 12px; align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    font-size: 14px; font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .btn-primary:hover { background: #7c3aed; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    padding: 11px 20px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: border-color .2s, color .2s;
+  }
+  .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+  /* SCREEN 3 — OUTCOME */
+  #screen-outcome {
+    max-width: 780px;
+    margin: 0 auto;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .outcome-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .outcome-header .scenario-complete-tag {
+    display: inline-block;
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: var(--green);
+    font-size: 11px; font-weight: 700; letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 12px; border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .outcome-header h2 {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700; letter-spacing: -.02em;
+    margin-bottom: 8px;
+  }
+  .outcome-header .scenario-name-out {
+    color: var(--muted); font-size: 15px;
+  }
+
+  .outcome-body {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+  @media(max-width:640px){
+    .outcome-body { grid-template-columns: 1fr; }
+    .radar-col { display: flex; flex-direction: column; align-items: center; }
+  }
+
+  .radar-col canvas {
+    display: block;
+    border-radius: 12px;
+  }
+
+  .score-section { display: flex; flex-direction: column; gap: 20px; }
+  .score-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+  .score-number {
+    font-size: 52px; font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, #e6edf3, var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .score-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .profile-badge {
+    display: inline-block;
+    margin-top: 12px;
+    background: rgba(139,92,246,0.12);
+    border: 1px solid rgba(139,92,246,0.3);
+    color: var(--accent);
+    font-size: 13px; font-weight: 600;
+    padding: 6px 14px; border-radius: 8px;
+  }
+
+  .score-bars { display: flex; flex-direction: column; gap: 10px; }
+  .score-bar-row { display: flex; flex-direction: column; gap: 4px; }
+  .score-bar-top { display: flex; justify-content: space-between; font-size: 12px; }
+  .score-bar-track {
+    height: 6px; background: var(--bg3);
+    border-radius: 3px; overflow: hidden;
+  }
+  .score-bar-fill {
+    height: 100%; background: var(--accent);
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+
+  .reflection-section {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 32px;
+  }
+  .reflection-section h3 {
+    font-size: 14px; font-weight: 600; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 16px;
+  }
+  .reflection-list {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .reflection-list li {
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 14px; line-height: 1.6;
+  }
+  .reflection-list li .r-icon {
+    font-size: 16px; flex-shrink: 0; margin-top: 1px;
+  }
+
+  .outcome-actions {
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+
+  /* UTILITIES */
+  .hidden { display: none !important; }
+  .mt-8 { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="../../">← Everything</a>
+  <span class="sep">|</span>
+  <span class="nav-title">Ethics Simulator</span>
+  <span class="badge-nav">FinCrime</span>
+</nav>
+
+<!-- ════════════════════════════════════════
+     SCREEN 1: SCENARIO SELECTOR
+════════════════════════════════════════ -->
+<section class="screen active" id="screen-select">
+  <div class="select-header">
+    <h1>Compliance Ethics Simulator</h1>
+    <p>Navigate real-world dilemmas. Live with the consequences.</p>
+  </div>
+  <div class="scenarios-grid" id="scenarios-grid">
+    <!-- tiles injected by JS -->
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SCREEN 2: STORY / DECISION VIEW
+════════════════════════════════════════ -->
+<section class="screen" id="screen-story">
+  <div class="story-topbar">
+    <span class="breadcrumb" id="breadcrumb">Node 1 of 4</span>
+    <span class="story-title" id="story-title-bar">—</span>
+    <span class="domain-badge" id="story-domain-badge">Domain</span>
+  </div>
+
+  <div class="context-card" id="context-card">
+    <div class="ctx-item">Character: <span id="ctx-char">—</span></div>
+    <div class="ctx-item">Institution: <span id="ctx-inst">—</span></div>
+    <div class="ctx-item">Role: <span id="ctx-role">—</span></div>
+    <div class="ctx-item">Date/Time: <span id="ctx-dt">—</span></div>
+  </div>
+
+  <div class="story-text-area">
+    <button class="skip-btn" id="skip-btn">Skip →</button>
+    <div id="story-text-content"></div>
+  </div>
+
+  <!-- Decision section -->
+  <div class="decision-section hidden" id="decision-section">
+    <div class="decision-label">What do you do?</div>
+    <div class="choices-list" id="choices-list"></div>
+  </div>
+
+  <!-- Consequence panel -->
+  <div class="consequence-panel" id="consequence-panel">
+    <div class="consequence-inner">
+      <div class="consequence-row">
+        <div class="consequence-label">⚡ Immediate</div>
+        <div class="consequence-text" id="cons-immediate"></div>
+      </div>
+      <div class="consequence-divider"></div>
+      <div class="consequence-row">
+        <div class="consequence-label">⚖️ Regulatory</div>
+        <div class="consequence-text" id="cons-regulatory"></div>
+      </div>
+      <div class="consequence-divider"></div>
+      <div class="consequence-row">
+        <div class="consequence-label">💼 Career</div>
+        <div class="consequence-text" id="cons-career"></div>
+      </div>
+      <div class="consequence-divider"></div>
+      <div class="consequence-row">
+        <div class="consequence-label">🧠 Ethical Framework</div>
+        <div class="consequence-text" id="cons-ethics"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action row -->
+  <div class="action-row" id="story-action-row">
+    <button class="btn-primary hidden" id="continue-btn">Continue →</button>
+    <button class="btn-secondary" id="back-to-select-btn">← Choose Another</button>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════
+     SCREEN 3: OUTCOME
+════════════════════════════════════════ -->
+<section class="screen" id="screen-outcome">
+  <div class="outcome-header">
+    <div class="scenario-complete-tag">Scenario Complete</div>
+    <h2>Here's how you performed</h2>
+    <div class="scenario-name-out" id="outcome-scenario-name">—</div>
+  </div>
+
+  <div class="outcome-body">
+    <div class="radar-col">
+      <canvas id="radar-chart"></canvas>
+    </div>
+    <div class="score-section">
+      <div class="score-box">
+        <div class="score-number" id="final-score">—</div>
+        <div class="score-label">Overall Ethics Score / 100</div>
+        <div class="profile-badge" id="profile-label">—</div>
+      </div>
+      <div class="score-box score-bars" id="score-bars-container">
+        <!-- bars injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <div class="reflection-section">
+    <h3>Reflection Notes</h3>
+    <ul class="reflection-list" id="reflection-list">
+      <!-- injected by JS -->
+    </ul>
+  </div>
+
+  <div class="outcome-actions">
+    <button class="btn-primary" id="try-again-btn">Try Different Choices</button>
+    <button class="btn-secondary" id="choose-scenario-btn">Choose Another Scenario</button>
+  </div>
+</section>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   SCENARIO DATA
+══════════════════════════════════════════════════════════ */
+const SCENARIOS = [
+  {
+    id: 'three-am-call',
+    title: 'The 3am Call',
+    domain: 'Confidentiality',
+    domainColor: '#8b5cf6',
+    hook: "You've just filed an STR on a longtime client. At 3am, their relationship manager calls you.",
+    context: { character: 'Priya Nair', role: 'Compliance Officer', institution: 'IndusFirst Bank', datetime: 'Thursday, 03:14 AM' },
+    nodes: [
+      {
+        id: 'n1', type: 'story',
+        text: "You filed an STR two hours ago on Rahul Mehta, a senior consultant at a major pharma firm. His account shows ₹4.2 crore in 19 transactions over 6 days — structured just below the ₹10-lakh CTR threshold. Your phone rings. It's Vikram Joshi, the corporate relationship manager.\n\n\"Priya, I know it's late. I just saw the activity log. Tell me — did you file something on Rahul? He's one of our biggest clients. The regional director is going to want answers at 9am.\""
+      },
+      {
+        id: 'n2', type: 'decision',
+        text: "Vikram is friendly and senior. He sounds genuinely worried, not threatening. But you know what he's asking.",
+        choices: [
+          {
+            text: "Confirm that you filed an STR to help Vikram prepare",
+            nextNode: 'n3a',
+            scores: { integrity: 10, compliance: 5, loyalty: 70, courage: 20, prudence: 10 },
+            consequences: {
+              immediate: "Vikram thanks you and says he'll handle it. But now Rahul may be alerted before the FIU can act.",
+              regulatory: "This is tipping off — a criminal offence under Section 45 of PMLA. Disclosing that an STR has been filed is punishable regardless of intent.",
+              career: "If investigated, your career is over. You may face personal prosecution under PMLA. The goodwill you built with Vikram is worthless against a criminal charge.",
+              ethics: "Utilitarian: you damaged the greater good (investigation). Deontological: you violated a categorical duty of confidentiality. Virtue Ethics: you prioritised loyalty over integrity."
+            }
+          },
+          {
+            text: "Decline to confirm or deny — cite legal confidentiality obligations",
+            nextNode: 'n3b',
+            scores: { integrity: 90, compliance: 95, loyalty: 30, courage: 80, prudence: 90 },
+            consequences: {
+              immediate: "Vikram pushes back. You hold the line. The call ends awkwardly. The STR remains confidential.",
+              regulatory: "Correct. PMLA Section 45 and FATF Recommendation 21 require strict confidentiality of STR filings. You may not confirm, deny, or indicate an STR exists.",
+              career: "The regional director may be annoyed tomorrow, but your compliance posture is impeccable. You are protected legally and professionally.",
+              ethics: "Utilitarian: the investigation is protected, maximising public benefit. Deontological: you fulfilled your duty unconditionally. Virtue Ethics: you demonstrated integrity and courage."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3b', type: 'story',
+        text: "Morning comes. The regional director calls a meeting. Vikram is there. He says you were \"unhelpful\" and \"creating unnecessary tension with a major client.\"\n\nThe director turns to you: \"Priya, can you explain why you couldn't reassure Vikram last night? Was this really necessary?\""
+      },
+      {
+        id: 'n4', type: 'decision',
+        text: "The pressure in the room is palpable.",
+        choices: [
+          {
+            text: "Stand firm and explain that STR confidentiality is a legal obligation, not a choice",
+            nextNode: 'outcome',
+            scores: { integrity: 95, compliance: 100, loyalty: 20, courage: 95, prudence: 85 },
+            consequences: {
+              immediate: "The director pauses. The Legal team is called in. They confirm your position. The meeting ends with you vindicated.",
+              regulatory: "PMLA Section 45 is unambiguous. Even the regional director cannot override this obligation. Your documentation of the night's events protects you.",
+              career: "Your standing as a compliance professional is elevated. Vikram is quietly counselled. You have demonstrated that compliance is non-negotiable.",
+              ethics: "Deontological: you upheld the rule regardless of consequence. Virtue Ethics: courage, integrity, and prudence in action."
+            }
+          },
+          {
+            text: "Apologise and suggest you could have \"communicated better\"",
+            nextNode: 'outcome',
+            scores: { integrity: 30, compliance: 40, loyalty: 60, courage: 20, prudence: 30 },
+            consequences: {
+              immediate: "The tension eases. But you have implicitly suggested your conduct was improper — which it was not.",
+              regulatory: "No legal violation in the apology itself, but you have normalised a culture of pressure on compliance officers — a systemic risk.",
+              career: "You avoided short-term friction but lost credibility. Next time someone pressures you, this moment will be used as precedent.",
+              ethics: "Utilitarian: short-term peace, long-term institutional harm. Virtue Ethics: you prioritised comfort over integrity."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3a', type: 'story',
+        text: "Rahul Mehta does not show up for his 9am appointment with the regulator the next day. The FIU investigation stalls. Internal audit discovers that the STR was disclosed. An inquiry begins."
+      },
+      {
+        id: 'outcome', type: 'outcome',
+        text: "The scenario has concluded."
+      }
+    ]
+  },
+  {
+    id: 'supervisors-pressure',
+    title: "The Supervisor's Pressure",
+    domain: 'Integrity',
+    domainColor: '#ef4444',
+    hook: "Your manager tells you to close an alert without investigating. The account belongs to a major corporate client.",
+    context: { character: 'Arjun Sharma', role: 'AML Analyst', institution: 'Meridian Payments', datetime: 'Monday, 4:47 PM' },
+    nodes: [
+      {
+        id: 'n1', type: 'story',
+        text: "You've been investigating Alert #4471 for three days. The account belongs to Sunbright Exports Pvt. Ltd. — a client that brings ₹8 crore in annual fees to the bank. The transactions are classic layering: wire in from Hong Kong, immediate split into 12 transfers, all sent to different accounts within 48 hours.\n\nYour manager, Deepak, stops by your desk. \"Arjun, that Sunbright alert — I need you to close it. The CFO's office has been on the phone. No activity was unusual given their business model.\" He slides a one-paragraph note across your desk with instructions to log it as \"No Suspicious Activity Found.\""
+      },
+      {
+        id: 'n2', type: 'decision',
+        text: "Deepak is your direct supervisor. You depend on him for your performance review. But the pattern you have documented is unambiguous.",
+        choices: [
+          {
+            text: "Close the alert as instructed — Deepak has the authority",
+            nextNode: 'n3a',
+            scores: { integrity: 5, compliance: 5, loyalty: 70, courage: 10, prudence: 15 },
+            consequences: {
+              immediate: "The alert is closed. The investigation stops.",
+              regulatory: "Under PMLA, suppressing a legitimate STR is an offence. Following a supervisor's unlawful instruction is not a defence. Both you and Deepak face personal liability.",
+              career: "If the scheme is later uncovered — and layering patterns usually are — your name is on the closure. \"Following orders\" is not a recognised defence in AML enforcement.",
+              ethics: "Deontological: you violated an unconditional duty. Virtue Ethics: you chose expedience over courage."
+            }
+          },
+          {
+            text: "Push back — ask Deepak to document his instruction in writing",
+            nextNode: 'n3b',
+            scores: { integrity: 85, compliance: 85, loyalty: 40, courage: 90, prudence: 95 },
+            consequences: {
+              immediate: "Deepak pauses. He says he'll \"think about it\" and leaves. He never provides the written instruction.",
+              regulatory: "Requesting written documentation is a professional and protective move. It demonstrates you are not acting unilaterally and creates an evidence trail.",
+              career: "You have protected yourself while giving Deepak the opportunity to reconsider. The alert remains open. This is the right call.",
+              ethics: "Virtue Ethics: prudence and courage together. Utilitarian: maximum institutional protection with minimum confrontation."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3b', type: 'decision',
+        text: "Two days pass. The alert is still open. Deepak comes back: \"Arjun, I'm not going to put this in writing. Just close it. I'll back you up.\" What do you do now?",
+        choices: [
+          {
+            text: "Escalate to the Chief Compliance Officer through the proper whistleblower channel",
+            nextNode: 'outcome',
+            scores: { integrity: 100, compliance: 100, loyalty: 10, courage: 100, prudence: 90 },
+            consequences: {
+              immediate: "You submit a formal escalation noting that your supervisor has instructed you to suppress a suspicious activity alert without documented justification.",
+              regulatory: "This is the textbook correct action. FATF Recommendation 18 requires financial institutions to have internal whistleblower protections. PMLA protects employees who report in good faith.",
+              career: "The short-term is uncomfortable. Long-term: you are protected, your integrity is documented, and the institution is protected from regulatory sanction.",
+              ethics: "Deontological: you upheld an unconditional duty. Virtue Ethics: exceptional moral courage."
+            }
+          },
+          {
+            text: "Close the alert but file a personal memo documenting the instruction",
+            nextNode: 'outcome',
+            scores: { integrity: 40, compliance: 30, loyalty: 50, courage: 35, prudence: 55 },
+            consequences: {
+              immediate: "The alert is closed. Your memo is in your personal files but has not been formally escalated.",
+              regulatory: "The STR was still suppressed. Your personal memo is evidence of the instruction but does not absolve you of failing to file the STR. This is a partial protection at best.",
+              career: "In an enforcement investigation you have partial protection, but the closure is still your signature. This compromise is legally and professionally risky.",
+              ethics: "Prudence without courage — you protected yourself partially but failed the institution and the public interest."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3a', type: 'story',
+        text: "Six months later, Sunbright Exports is named in an ED investigation. The bank is subject to a show-cause notice from the RBI. Investigators request alert closure records. Alert #4471 comes up immediately."
+      },
+      {
+        id: 'outcome', type: 'outcome',
+        text: "Scenario complete."
+      }
+    ]
+  },
+  {
+    id: 'loyal-banker',
+    title: 'The Loyal Banker',
+    domain: 'Loyalty vs Duty',
+    domainColor: '#f59e0b',
+    hook: "A client you've known for 15 years shows classic structuring patterns. Coincidence?",
+    context: { character: 'Meera Iyer', role: 'Senior Relationship Manager', institution: 'Apex Commercial Bank', datetime: 'Wednesday, 11:20 AM' },
+    nodes: [
+      {
+        id: 'n1', type: 'story',
+        text: "You have managed the account of Mr. G.K. Padmanabhan — \"Paddy\" — for 12 years. He is a textile trader from Coimbatore. A genuinely warm man who always asks about your family. His account turnover is around ₹1.8 crore annually — consistent, unremarkable.\n\nThis morning, the transaction monitoring system flags his account. In the past 30 days: ₹62 lakhs deposited across 18 transactions. All just under ₹5 lakhs. All from different remitters with no apparent business connection. When you call Paddy, he says, \"Meera, you know me. It is advance payment from new buyers. You can close the alert.\" He laughs warmly."
+      },
+      {
+        id: 'n2', type: 'decision',
+        text: "Paddy has been your client for 12 years. He has never given you trouble. But structuring is structuring.",
+        choices: [
+          {
+            text: "Trust Paddy and close the alert — he's explained the transactions",
+            nextNode: 'n3a',
+            scores: { integrity: 10, compliance: 10, loyalty: 90, courage: 5, prudence: 10 },
+            consequences: {
+              immediate: "Alert closed. Paddy thanks you warmly.",
+              regulatory: "Personal trust is not a compliance defence. The pattern — 18 transactions, all below the CTR threshold, from unrelated parties — is a classic structuring typology. Closing this alert without investigation violates R.20 and PMLA.",
+              career: "If this is structuring (and statistically it likely is), your closure note will be exhibit one in any enforcement action.",
+              ethics: "Loyalty to one person at the cost of your professional duty and the financial system's integrity is not a virtue — it is a conflict of interest."
+            }
+          },
+          {
+            text: "Investigate properly — request supporting documents for each remitter",
+            nextNode: 'n3b',
+            scores: { integrity: 95, compliance: 90, loyalty: 40, courage: 75, prudence: 90 },
+            consequences: {
+              immediate: "You ask Paddy for purchase orders and identity documents for each of the 18 new \"buyers.\" He becomes quiet and says he'll send them.",
+              regulatory: "This is correct CDD practice. Unusual activity must be explained with documentation, not verbal assurances regardless of relationship tenure.",
+              career: "If Paddy's explanation is genuine, the relationship is preserved with documentation. If not, you have protected yourself and the bank.",
+              ethics: "Deontological: professional duty applies equally to all customers. Virtue Ethics: fairness over favouritism."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3b', type: 'decision',
+        text: "Paddy sends documents for 4 of the 18 transactions. For the rest, he says \"the buyers are informal traders — they don't have GST registration.\" What do you do with the remaining 14 transactions?",
+        choices: [
+          {
+            text: "Accept the partial documentation and close the alert",
+            nextNode: 'outcome',
+            scores: { integrity: 30, compliance: 20, loyalty: 60, courage: 25, prudence: 25 },
+            consequences: {
+              immediate: "Partial documentation is accepted. Alert closed.",
+              regulatory: "Partial documentation does not satisfy CDD requirements where unusual activity is identified. Accepting 4 of 18 explanations and closing the alert is not defensible.",
+              career: "A regulator reviewing this alert will see that you identified a gap and chose relationship management over compliance.",
+              ethics: "Compromise of principle — you chose partial comfort over full integrity."
+            }
+          },
+          {
+            text: "Escalate to compliance for a full EDD review and potential STR",
+            nextNode: 'outcome',
+            scores: { integrity: 95, compliance: 100, loyalty: 20, courage: 85, prudence: 90 },
+            consequences: {
+              immediate: "You refer the case to the AML team. Paddy's account is put under enhanced monitoring.",
+              regulatory: "Correct. When CDD cannot be completed satisfactorily, escalation and potential STR filing are required. R.20 and PMLA Section 12A apply.",
+              career: "Paddy may be unhappy. But you have fulfilled your professional and legal duty. Your documentation protects both you and the bank.",
+              ethics: "You separated personal loyalty from professional obligation — the defining characteristic of an ethical compliance professional."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3a', type: 'story',
+        text: "Two months later, Paddy's account is flagged in an inter-bank data share. He is a sub-account in a larger hawala network. The compliance team traces the alert you closed. Your name is on the closure note."
+      },
+      {
+        id: 'outcome', type: 'outcome',
+        text: "Scenario complete."
+      }
+    ]
+  },
+  {
+    id: 'anonymous-tip',
+    title: 'The Anonymous Tip',
+    domain: 'Whistleblowing',
+    domainColor: '#22c55e',
+    hook: "An anonymous note on your desk says your colleague has been suppressing alerts for a specific customer.",
+    context: { character: 'Rajan Pillai', role: 'AML Analyst', institution: 'FinEdge Bank', datetime: 'Friday, 09:05 AM' },
+    nodes: [
+      {
+        id: 'n1', type: 'story',
+        text: "You arrive at your desk on Friday morning to find a folded note. It reads: \"Check alerts for Account 4892-XXXX. Kiran has been closing them without investigation for 3 months. The account belongs to someone connected to a board member.\"\n\nKiran is your colleague — a friend, actually. You have lunch together twice a week. You have no idea if the note is accurate or malicious."
+      },
+      {
+        id: 'n2', type: 'decision',
+        text: "Anonymous tip. No name, no evidence. But the allegation is specific.",
+        choices: [
+          {
+            text: "Confront Kiran directly about the note",
+            nextNode: 'n3a',
+            scores: { integrity: 40, compliance: 30, loyalty: 80, courage: 50, prudence: 20 },
+            consequences: {
+              immediate: "Kiran denies it and asks who sent the note. You've now potentially alerted a suspect and contaminated any investigation.",
+              regulatory: "Confronting the subject of a tip before verifying through proper channels is procedurally incorrect and can constitute obstruction.",
+              career: "If Kiran is guilty, you've given them time to cover tracks. If innocent, you've damaged a friendship on an unverified tip.",
+              ethics: "Good intentions, poor judgment. Loyalty to a colleague should not override due process."
+            }
+          },
+          {
+            text: "Report the tip through the bank's whistleblower/ethics hotline without telling Kiran",
+            nextNode: 'n3b',
+            scores: { integrity: 90, compliance: 95, loyalty: 30, courage: 85, prudence: 95 },
+            consequences: {
+              immediate: "The tip is logged confidentially. A compliance review of Account 4892-XXXX and Kiran's closure records is initiated.",
+              regulatory: "Correct procedure. FATF Recommendation 18 requires institutions to have whistleblower mechanisms. PMLA provides legal protection for good-faith reports.",
+              career: "You have fulfilled a professional obligation while protecting the investigation's integrity. Whether the tip is accurate, you acted correctly.",
+              ethics: "Utilitarian: maximum protection for the institution and public. Deontological: you upheld professional duty impartially."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3b', type: 'decision',
+        text: "The compliance review finds 7 alerts for Account 4892-XXXX closed in 90 days with one-line notes: \"Verified with customer — no suspicious activity.\" The review team asks if you know who filed the tip. Do you disclose your own identity?",
+        choices: [
+          {
+            text: "Identify yourself — transparency is important",
+            nextNode: 'outcome',
+            scores: { integrity: 85, compliance: 80, loyalty: 30, courage: 90, prudence: 70 },
+            consequences: {
+              immediate: "You are formally recorded as the tipster. The investigation proceeds.",
+              regulatory: "Legally permissible. PMLA protects you from retaliation. However, confidential whistleblower channels exist precisely to allow anonymous reporting.",
+              career: "Brave but potentially isolating. Colleagues may become guarded around you regardless of the outcome.",
+              ethics: "Transparency is a virtue — but so is prudence. This choice has integrity at some personal cost."
+            }
+          },
+          {
+            text: "Maintain anonymity — the channel is confidential for a reason",
+            nextNode: 'outcome',
+            scores: { integrity: 90, compliance: 95, loyalty: 50, courage: 75, prudence: 95 },
+            consequences: {
+              immediate: "Your identity remains protected. The investigation proceeds based on documentary evidence.",
+              regulatory: "This is the design intent of confidential whistleblower channels. Your protection and the investigation's integrity are both maximised.",
+              career: "Optimally protective. The investigation stands on its own evidence, not on your testimony.",
+              ethics: "Prudent use of institutional safeguards — the most sustainable approach to ethical courage in professional environments."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3a', type: 'story',
+        text: "Kiran tells you \"don't worry about it\" and seems nervous. On Monday, you notice several files on Kiran's desk have been moved. The compliance team's periodic alert review — which happens quarterly — is still six weeks away."
+      },
+      {
+        id: 'outcome', type: 'outcome',
+        text: "Scenario complete."
+      }
+    ]
+  },
+  {
+    id: 'friendly-regulator',
+    title: 'The Friendly Regulator',
+    domain: 'Professional Boundaries',
+    domainColor: '#0891b2',
+    hook: "The examiner from the regulator asks for documents beyond the scope of the current inspection.",
+    context: { character: 'Nandita Roy', role: 'Head of Compliance', institution: 'TrustLine NBFC', datetime: 'Tuesday, 3:00 PM' },
+    nodes: [
+      {
+        id: 'n1', type: 'story',
+        text: "An RBI inspection team has been on-site for three days. The lead examiner, Mr. Venkatesh, has been professional and thorough. This afternoon, he comes to your office alone and closes the door.\n\n\"Ms. Roy, the formal scope of this inspection is the KYC framework. But while going through your systems, I noticed something interesting in your treasury transactions. I'd like copies of the treasury desk's internal memos for the past 12 months. Off the record, of course.\""
+      },
+      {
+        id: 'n2', type: 'decision',
+        text: "He is a regulator. Refusing seems risky. But he said \"off the record\" and the request is outside the inspection scope.",
+        choices: [
+          {
+            text: "Provide the documents — he is the regulator and you don't want to antagonise him",
+            nextNode: 'n3a',
+            scores: { integrity: 30, compliance: 25, loyalty: 30, courage: 20, prudence: 15 },
+            consequences: {
+              immediate: "Documents are handed over informally.",
+              regulatory: "Providing documents outside a formal inspection process without proper authorisation creates legal and confidentiality risks. \"Off the record\" is not a recognised regulatory procedure.",
+              career: "If the treasury memos contain sensitive information and they are used outside proper channels, your institution bears the risk. You have no record of what was shared.",
+              ethics: "Fear of authority is not the same as compliance. Prudence requires you to follow process even with regulators."
+            }
+          },
+          {
+            text: "Politely decline and suggest any out-of-scope requests be formally documented",
+            nextNode: 'n3b',
+            scores: { integrity: 90, compliance: 95, loyalty: 50, courage: 85, prudence: 95 },
+            consequences: {
+              immediate: "Mr. Venkatesh seems slightly surprised but nods. He says he will formalise the request.",
+              regulatory: "Correct. All regulatory requests should be formally documented, scoped, and responded to through proper channels. \"Off the record\" requests create grey areas.",
+              career: "You have protected your institution and maintained proper governance. A competent regulator will respect this.",
+              ethics: "Professional boundaries are ethical boundaries. You treated a powerful figure with the same procedural standards you would apply to anyone."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3b', type: 'decision',
+        text: "Mr. Venkatesh formalises the request the next morning. It arrives as a formal RBI notice citing Section 35 of the Banking Regulation Act, with a specific document list. Your CEO calls you: \"Just give him whatever he needs, Nandita. We don't want any issues.\" What do you advise?",
+        choices: [
+          {
+            text: "Comply fully with the formal notice — it is now a lawful request",
+            nextNode: 'outcome',
+            scores: { integrity: 90, compliance: 100, loyalty: 70, courage: 70, prudence: 85 },
+            consequences: {
+              immediate: "Documents are provided in response to a formal, scoped, legally-authorised notice.",
+              regulatory: "This is correct. A formal Section 35 notice is a lawful demand. Compliance is required. The difference from yesterday is that today there is a paper trail, formal scope, and legal authority.",
+              career: "You have navigated this correctly — refusing the informal request and complying with the formal one. This is textbook regulatory management.",
+              ethics: "Consistent application of process: informal requests treated with caution; formal lawful demands treated with full compliance."
+            }
+          },
+          {
+            text: "Provide a redacted version to protect sensitive treasury strategy information",
+            nextNode: 'outcome',
+            scores: { integrity: 50, compliance: 30, loyalty: 50, courage: 40, prudence: 40 },
+            consequences: {
+              immediate: "You hand over redacted memos. Mr. Venkatesh notes the redactions.",
+              regulatory: "Redacting documents from a formal regulatory notice without legal basis is non-compliance with a Section 35 notice — a serious offence. If redaction is justified, it must be done with legal counsel and formally explained.",
+              career: "Unexplained redactions to a regulator are a red flag. This creates more scrutiny, not less.",
+              ethics: "Well-intentioned but procedurally wrong. Prudence requires legal counsel before redacting, not unilateral judgment."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3a', type: 'story',
+        text: "The treasury memos contained details of a confidential product pricing strategy. Three weeks later, a competitor launches an almost identical product. You will never know if the documents were the source. But the off-the-record handover is now in your informal log."
+      },
+      {
+        id: 'outcome', type: 'outcome',
+        text: "Scenario complete."
+      }
+    ]
+  },
+  {
+    id: 'the-conflict',
+    title: 'The Conflict',
+    domain: 'Conflict of Interest',
+    domainColor: '#f97316',
+    hook: "You hold shares in a company that your compliance team is now investigating for suspicious activity.",
+    context: { character: 'Sanjay Krishnan', role: 'Deputy Chief Compliance Officer', institution: 'Vanguard Asset Management', datetime: 'Monday, 10:00 AM' },
+    nodes: [
+      {
+        id: 'n1', type: 'story',
+        text: "Monday morning briefing. Your team lead presents: \"We have escalated alerts on Celera Biotech Ltd. Classic round-tripping pattern — ₹18 crore in and out in 72 hours, same beneficial owner, different entities. We're recommending an STR.\"\n\nYou listen carefully. Then you remember: you hold 4,000 shares of Celera Biotech in your personal demat account — purchased 8 months ago on a friend's tip. Filing an STR could trigger a regulatory investigation and crash the stock."
+      },
+      {
+        id: 'n2', type: 'decision',
+        text: "Nobody knows about your shareholding except your broker.",
+        choices: [
+          {
+            text: "Don't say anything and approve the STR — the filing decision is correct regardless",
+            nextNode: 'n3a',
+            scores: { integrity: 40, compliance: 50, loyalty: 30, courage: 40, prudence: 20 },
+            consequences: {
+              immediate: "STR is filed. Stock drops 22% over the next week.",
+              regulatory: "The STR filing was correct, but approving it while having an undisclosed conflict of interest violates your institution's conflict of interest policy and SEBI insider trading regulations.",
+              career: "If the conflict is discovered later (and it often is), the question shifts from \"did you file the STR correctly?\" to \"why didn't you disclose your holding?\" This undermines the institution's decision.",
+              ethics: "A good outcome does not justify an undisclosed conflict. Process integrity requires disclosure regardless of how you vote."
+            }
+          },
+          {
+            text: "Immediately disclose your shareholding and recuse yourself from the decision",
+            nextNode: 'n3b',
+            scores: { integrity: 100, compliance: 100, loyalty: 50, courage: 95, prudence: 100 },
+            consequences: {
+              immediate: "You notify your CCO of the shareholding and formally recuse yourself from the Celera review. The decision is made by the CCO without your input.",
+              regulatory: "This is the required course of action. Conflict of interest policies exist for exactly this situation. SEBI LODR and your institution's code of conduct require immediate disclosure.",
+              career: "Your proactive disclosure is noted and respected. The personal financial loss is real, but your professional integrity is preserved.",
+              ethics: "All three ethical frameworks agree: this is the correct choice. Transparency, duty, and virtue all point in the same direction."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3b', type: 'decision',
+        text: "The CCO files the STR. She thanks you for the disclosure. Two weeks later, during an internal review, she asks: \"Sanjay, should we add a rule requiring all compliance staff to pre-clear personal trades in any entity that could come before the compliance committee?\" What is your recommendation?",
+        choices: [
+          {
+            text: "Recommend the pre-clearance rule — this gap should not exist",
+            nextNode: 'outcome',
+            scores: { integrity: 100, compliance: 100, loyalty: 60, courage: 90, prudence: 100 },
+            consequences: {
+              immediate: "Pre-clearance requirement is added to the compliance policy.",
+              regulatory: "Best practice endorsed by SEBI, FATF Recommendation 18 (internal controls), and all major compliance frameworks. This closes a systemic gap.",
+              career: "You have turned your personal situation into institutional improvement — the mark of a senior compliance leader.",
+              ethics: "You used your experience to improve the system for everyone. This is virtue ethics in its highest expression."
+            }
+          },
+          {
+            text: "Suggest it is too burdensome for staff and recommend only post-trade disclosure",
+            nextNode: 'outcome',
+            scores: { integrity: 60, compliance: 55, loyalty: 60, courage: 50, prudence: 55 },
+            consequences: {
+              immediate: "Post-trade disclosure policy is adopted instead.",
+              regulatory: "Post-trade disclosure is weaker protection. The conflict has already occurred by the time it is disclosed. Pre-clearance is the industry standard for compliance staff.",
+              career: "You missed an opportunity to implement the stronger safeguard after experiencing the problem first-hand.",
+              ethics: "Pragmatic but not optimal. Compliance should be designed for the hardest cases, not the average case."
+            }
+          }
+        ]
+      },
+      {
+        id: 'n3a', type: 'story',
+        text: "Three months later, during a SEBI audit, the inspector reviews the Celera STR and asks for the approval chain. Your name appears as approving officer. The inspector asks: \"Were any approving officers aware of a personal financial interest in Celera at the time of approval?\""
+      },
+      {
+        id: 'outcome', type: 'outcome',
+        text: "Scenario complete."
+      }
+    ]
+  }
+];
+
+/* ══════════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════════ */
+let currentScenario = null;
+let currentNodeId = null;
+let playerScores = { integrity: 50, compliance: 50, loyalty: 50, courage: 50, prudence: 50 };
+let scoreCount = 0;
+let nodeMap = {};
+let decisionsMade = [];
+let typewriterTimer = null;
+let isTyping = false;
+let pendingContinueNode = null;
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN MANAGEMENT
+══════════════════════════════════════════════════════════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active', 'visible');
+  });
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      el.classList.add('visible');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   SCREEN 1 — BUILD TILES
+══════════════════════════════════════════════════════════ */
+function buildSelectScreen() {
+  const grid = document.getElementById('scenarios-grid');
+  grid.innerHTML = '';
+  SCENARIOS.forEach(s => {
+    const tile = document.createElement('div');
+    tile.className = 'scenario-tile';
+    tile.style.setProperty('--tile-accent', s.domainColor);
+    tile.innerHTML = `
+      <div class="tile-domain" style="background:${s.domainColor}18;border:1px solid ${s.domainColor}44;color:${s.domainColor}">
+        ${s.domain}
+      </div>
+      <h3>${s.title}</h3>
+      <p>${s.hook}</p>
+      <button class="tile-btn">Begin →</button>
+    `;
+    tile.querySelector('.tile-btn').addEventListener('click', () => startScenario(s.id));
+    tile.addEventListener('click', (e) => {
+      if (e.target.tagName !== 'BUTTON') startScenario(s.id);
+    });
+    grid.appendChild(tile);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   START SCENARIO
+══════════════════════════════════════════════════════════ */
+function startScenario(id) {
+  currentScenario = SCENARIOS.find(s => s.id === id);
+  if (!currentScenario) return;
+
+  // Reset state
+  playerScores = { integrity: 50, compliance: 50, loyalty: 50, courage: 50, prudence: 50 };
+  scoreCount = 0;
+  decisionsMade = [];
+  pendingContinueNode = null;
+
+  // Build node map
+  nodeMap = {};
+  currentScenario.nodes.forEach(n => { nodeMap[n.id] = n; });
+
+  // Set context card
+  const ctx = currentScenario.context;
+  document.getElementById('ctx-char').textContent = ctx.character;
+  document.getElementById('ctx-role').textContent = ctx.role;
+  document.getElementById('ctx-inst').textContent = ctx.institution;
+  document.getElementById('ctx-dt').textContent = ctx.datetime;
+
+  // Set story top bar
+  document.getElementById('story-title-bar').textContent = currentScenario.title;
+  const db = document.getElementById('story-domain-badge');
+  db.textContent = currentScenario.domain;
+  db.style.background = currentScenario.domainColor + '1a';
+  db.style.border = '1px solid ' + currentScenario.domainColor + '44';
+  db.style.color = currentScenario.domainColor;
+
+  showScreen('screen-story');
+  goToNode('n1');
+}
+
+/* ══════════════════════════════════════════════════════════
+   NODE NAVIGATION
+══════════════════════════════════════════════════════════ */
+function getNodeSequence() {
+  // Return ordered list of non-outcome, non-branch nodes for breadcrumb
+  return currentScenario.nodes.filter(n => n.type !== 'outcome');
+}
+
+function goToNode(nodeId) {
+  if (typewriterTimer) { clearInterval(typewriterTimer); typewriterTimer = null; }
+  isTyping = false;
+
+  const node = nodeMap[nodeId];
+  if (!node) return;
+  currentNodeId = nodeId;
+
+  // Update breadcrumb
+  const seq = getNodeSequence();
+  const idx = seq.findIndex(n => n.id === nodeId);
+  document.getElementById('breadcrumb').textContent =
+    idx >= 0 ? `Node ${idx + 1} of ${seq.length}` : '—';
+
+  // Hide consequence panel
+  const cp = document.getElementById('consequence-panel');
+  cp.classList.remove('open');
+
+  // Hide decision section
+  document.getElementById('decision-section').classList.add('hidden');
+
+  // Hide continue button
+  document.getElementById('continue-btn').classList.add('hidden');
+
+  if (node.type === 'outcome') {
+    showOutcome();
+    return;
+  }
+
+  // Show story text area
+  const storyTextContent = document.getElementById('story-text-content');
+  const skipBtn = document.getElementById('skip-btn');
+
+  if (node.type === 'story') {
+    skipBtn.classList.remove('hidden');
+    typeText(storyTextContent, node.text, () => {
+      skipBtn.classList.add('hidden');
+      document.getElementById('continue-btn').classList.remove('hidden');
+    });
+    pendingContinueNode = node;
+  }
+
+  if (node.type === 'decision') {
+    skipBtn.classList.remove('hidden');
+    typeText(storyTextContent, node.text, () => {
+      skipBtn.classList.add('hidden');
+      buildChoices(node);
+    });
+  }
+}
+
+function typeText(el, text, onDone) {
+  el.textContent = '';
+  isTyping = true;
+  let i = 0;
+  const speed = 12; // ms per char
+  document.getElementById('skip-btn').onclick = () => {
+    if (typewriterTimer) { clearInterval(typewriterTimer); typewriterTimer = null; }
+    el.textContent = text;
+    isTyping = false;
+    document.getElementById('skip-btn').classList.add('hidden');
+    if (onDone) onDone();
+  };
+  typewriterTimer = setInterval(() => {
+    el.textContent += text[i];
+    i++;
+    if (i >= text.length) {
+      clearInterval(typewriterTimer);
+      typewriterTimer = null;
+      isTyping = false;
+      if (onDone) onDone();
+    }
+  }, speed);
+}
+
+/* ══════════════════════════════════════════════════════════
+   CONTINUE (story nodes)
+══════════════════════════════════════════════════════════ */
+document.getElementById('continue-btn').addEventListener('click', () => {
+  const node = nodeMap[currentNodeId];
+  if (!node) return;
+  // story nodes: find next node in scenario array after current
+  const idx = currentScenario.nodes.findIndex(n => n.id === currentNodeId);
+  if (idx < 0 || idx >= currentScenario.nodes.length - 1) return;
+  const next = currentScenario.nodes[idx + 1];
+  goToNode(next.id);
+});
+
+/* ══════════════════════════════════════════════════════════
+   BUILD CHOICES
+══════════════════════════════════════════════════════════ */
+function buildChoices(node) {
+  const section = document.getElementById('decision-section');
+  const list = document.getElementById('choices-list');
+  list.innerHTML = '';
+  section.classList.remove('hidden');
+
+  node.choices.forEach((choice, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = choice.text;
+    btn.addEventListener('click', () => selectChoice(node, choice, btn));
+    list.appendChild(btn);
+  });
+}
+
+function selectChoice(node, choice, clickedBtn) {
+  // Disable all buttons
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    b.disabled = true;
+  });
+  clickedBtn.classList.add('selected');
+
+  // Accumulate scores
+  Object.keys(choice.scores).forEach(k => {
+    playerScores[k] = Math.round((playerScores[k] + choice.scores[k]) / 2);
+  });
+  scoreCount++;
+  decisionsMade.push({ choice, node });
+
+  // Show consequence panel
+  document.getElementById('cons-immediate').textContent = choice.consequences.immediate;
+  document.getElementById('cons-regulatory').textContent = choice.consequences.regulatory;
+  document.getElementById('cons-career').textContent = choice.consequences.career;
+  document.getElementById('cons-ethics').textContent = choice.consequences.ethics;
+
+  const cp = document.getElementById('consequence-panel');
+  cp.classList.add('open');
+
+  // Show continue button
+  document.getElementById('continue-btn').classList.remove('hidden');
+
+  // Wire continue to next node
+  document.getElementById('continue-btn').onclick = () => {
+    cp.classList.remove('open');
+    goToNode(choice.nextNode);
+  };
+}
+
+/* ══════════════════════════════════════════════════════════
+   OUTCOME SCREEN
+══════════════════════════════════════════════════════════ */
+function showOutcome() {
+  showScreen('screen-outcome');
+  document.getElementById('outcome-scenario-name').textContent = currentScenario.title;
+
+  const scores = playerScores;
+  const avg = Math.round(Object.values(scores).reduce((a, b) => a + b, 0) / 5);
+  document.getElementById('final-score').textContent = avg;
+
+  // Profile label
+  const profile = getProfile(scores, avg);
+  document.getElementById('profile-label').textContent = profile;
+
+  // Score bars
+  buildScoreBars(scores);
+
+  // Radar chart
+  setTimeout(() => drawRadar(scores), 100);
+
+  // Reflection notes
+  buildReflections(scores, avg);
+}
+
+function getProfile(scores, avg) {
+  const { integrity, compliance, loyalty, courage, prudence } = scores;
+  if (integrity >= 80 && compliance >= 80 && courage >= 75) return 'Courageous Whistleblower';
+  if (integrity >= 80 && compliance >= 80 && prudence >= 80) return 'Rule-Bound Professional';
+  if (loyalty >= 75 && integrity < 60) return 'Institutional Loyalist';
+  if (prudence >= 75 && courage < 50) return 'Pragmatic Operator';
+  if (avg >= 75) return 'Principled Compliance Professional';
+  if (avg >= 55) return 'Pragmatic Operator';
+  if (loyalty > integrity) return 'Institutional Loyalist';
+  return 'Developing Professional';
+}
+
+function buildScoreBars(scores) {
+  const container = document.getElementById('score-bars-container');
+  container.innerHTML = '';
+  const axes = [
+    { key: 'integrity', label: 'Integrity' },
+    { key: 'compliance', label: 'Compliance' },
+    { key: 'loyalty', label: 'Loyalty' },
+    { key: 'courage', label: 'Courage' },
+    { key: 'prudence', label: 'Prudence' }
+  ];
+  axes.forEach(a => {
+    const val = scores[a.key] || 50;
+    const row = document.createElement('div');
+    row.className = 'score-bar-row';
+    row.innerHTML = `
+      <div class="score-bar-top">
+        <span style="color:var(--muted);font-size:12px">${a.label}</span>
+        <span style="color:var(--text);font-size:12px;font-weight:600">${val}</span>
+      </div>
+      <div class="score-bar-track">
+        <div class="score-bar-fill" style="width:0%" data-target="${val}%"></div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+
+  // Animate bars
+  setTimeout(() => {
+    container.querySelectorAll('.score-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.target;
+    });
+  }, 200);
+}
+
+function buildReflections(scores, avg) {
+  const list = document.getElementById('reflection-list');
+  list.innerHTML = '';
+  const notes = [];
+
+  if (scores.compliance >= 80) {
+    notes.push({ icon: '✅', text: 'Your compliance instincts are strong. You consistently prioritised regulatory obligations over convenience or relationship pressure.' });
+  } else {
+    notes.push({ icon: '⚠️', text: 'Your compliance score reflects moments where regulatory obligations were subordinated to other considerations. Review PMLA Section 45 and FATF Recommendations 20–21.' });
+  }
+
+  if (scores.courage >= 75) {
+    notes.push({ icon: '💪', text: 'You demonstrated moral courage — the willingness to hold a position under institutional pressure. This is the rarest quality in compliance.' });
+  } else {
+    notes.push({ icon: '🪞', text: 'Consider where pressure — from seniors, clients, or the desire for harmony — influenced your decisions. Compliance courage is a learnable skill.' });
+  }
+
+  if (scores.loyalty > scores.integrity && scores.loyalty > 70) {
+    notes.push({ icon: '🔗', text: 'Loyalty to colleagues or clients shaped your choices significantly. In compliance, the fiduciary duty runs to the institution and the public — not to individuals.' });
+  } else if (scores.prudence >= 80) {
+    notes.push({ icon: '🎯', text: 'Your prudent approach — seeking documentation, using proper channels, and following process — demonstrates mature professional judgment.' });
+  } else {
+    notes.push({ icon: '📘', text: 'Deontological thinking — acting on duty regardless of outcome — is the foundation of compliance ethics. Revisit the choices where process was bypassed.' });
+  }
+
+  notes.slice(0, 3).forEach(n => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="r-icon">${n.icon}</span><span>${n.text}</span>`;
+    list.appendChild(li);
+  });
+}
+
+/* ══════════════════════════════════════════════════════════
+   RADAR CHART
+══════════════════════════════════════════════════════════ */
+function drawRadar(scores) {
+  const canvas = document.getElementById('radar-chart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 300;
+  canvas.height = 300;
+  const cx = 150, cy = 150, r = 110;
+  const axes = ['integrity', 'compliance', 'loyalty', 'courage', 'prudence'];
+  const labels = ['Integrity', 'Compliance', 'Loyalty', 'Courage', 'Prudence'];
+  const N = 5;
+
+  ctx.clearRect(0, 0, 300, 300);
+
+  // Draw grid rings
+  for (let level = 1; level <= 5; level++) {
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+      const rad = r * level / 5;
+      const x = cx + rad * Math.cos(angle);
+      const y = cy + rad * Math.sin(angle);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(139,92,246,0.2)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Draw axes
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+    ctx.strokeStyle = 'rgba(139,92,246,0.3)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Draw data polygon
+  ctx.beginPath();
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const val = (scores[axes[i]] || 50) / 100;
+    const x = cx + r * val * Math.cos(angle);
+    const y = cy + r * val * Math.sin(angle);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(139,92,246,0.35)';
+  ctx.fill();
+  ctx.strokeStyle = '#8b5cf6';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Dot on each vertex
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const val = (scores[axes[i]] || 50) / 100;
+    const x = cx + r * val * Math.cos(angle);
+    const y = cy + r * val * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#8b5cf6';
+    ctx.fill();
+  }
+
+  // Labels
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = '11px Inter, -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const x = cx + (r + 22) * Math.cos(angle);
+    const y = cy + (r + 22) * Math.sin(angle);
+    ctx.fillText(labels[i], x, y + 4);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   OUTCOME BUTTON HANDLERS
+══════════════════════════════════════════════════════════ */
+document.getElementById('try-again-btn').addEventListener('click', () => {
+  if (currentScenario) startScenario(currentScenario.id);
+});
+document.getElementById('choose-scenario-btn').addEventListener('click', () => {
+  showScreen('screen-select');
+});
+document.getElementById('back-to-select-btn').addEventListener('click', () => {
+  showScreen('screen-select');
+});
+
+/* ══════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════ */
+buildSelectScreen();
+showScreen('screen-select');
+</script>
+</body>
+</html>

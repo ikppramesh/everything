@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regulatory Explorer — FinCrime | Everything</title>
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#4b5563; --accent2:#1d4ed8;
+  --nav-h:52px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:14px;}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ---- NAV ---- */
+#nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;z-index:1000;}
+#nav a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .15s;}
+#nav a:hover{color:var(--text);}
+#nav .sep{color:var(--border);font-size:16px;}
+#nav .title{font-weight:600;font-size:14px;color:var(--text);}
+#nav .badge{background:#1e3a5f;color:#58a6ff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.3px;}
+
+/* ---- LAYOUT ---- */
+#layout{display:flex;height:calc(100vh - var(--nav-h));margin-top:var(--nav-h);overflow:hidden;}
+
+/* ---- SIDEBAR ---- */
+#sidebar{width:240px;min-width:240px;background:var(--bg2);border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+#sidebar-header{padding:14px 14px 10px;border-bottom:1px solid var(--border);}
+#sidebar-header h3{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+#sidebar-search{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 10px;font-size:12px;margin-top:8px;outline:none;}
+#sidebar-search::placeholder{color:var(--muted);}
+#sidebar-search:focus{border-color:#58a6ff;}
+#nav-tree{padding:8px 0;flex:1;}
+.framework-group{margin-bottom:2px;}
+.framework-toggle{width:100%;background:none;border:none;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:13px;font-weight:500;text-align:left;transition:background .1s;}
+.framework-toggle:hover{background:var(--bg3);}
+.framework-toggle .fw-icon{font-size:15px;width:18px;text-align:center;}
+.framework-toggle .fw-label{flex:1;}
+.framework-toggle .fw-jur{font-size:10px;color:var(--muted);background:var(--bg3);padding:1px 5px;border-radius:3px;}
+.framework-toggle .chevron{color:var(--muted);font-size:10px;transition:transform .2s;}
+.framework-toggle.open .chevron{transform:rotate(90deg);}
+.section-list{display:none;padding-left:0;}
+.section-list.open{display:block;}
+.section-item{display:flex;align-items:flex-start;gap:6px;padding:6px 14px 6px 34px;cursor:pointer;font-size:12px;color:var(--muted);transition:background .1s, color .1s;border-left:2px solid transparent;line-height:1.4;}
+.section-item:hover{background:var(--bg3);color:var(--text);}
+.section-item.active{background:rgba(29,78,216,.15);color:#58a6ff;border-left-color:#1d4ed8;}
+.section-item .dot{width:4px;height:4px;border-radius:50%;background:currentColor;margin-top:5px;flex-shrink:0;}
+
+/* ---- MOBILE SIDEBAR DROPDOWN ---- */
+#mobile-sidebar-btn{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 12px;font-size:12px;cursor:pointer;margin:8px 12px;}
+#mobile-nav-select{display:none;width:calc(100% - 24px);margin:0 12px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:6px 10px;font-size:12px;}
+
+/* ---- CENTER ---- */
+#center{flex:1;overflow-y:auto;padding:24px;}
+#welcome{max-width:720px;margin:0 auto;}
+#welcome h1{font-size:22px;font-weight:600;margin-bottom:6px;}
+#welcome .sub{color:var(--muted);font-size:14px;margin-bottom:28px;line-height:1.6;}
+.fw-tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.fw-tile{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;cursor:pointer;transition:border-color .15s,transform .1s;}
+.fw-tile:hover{border-color:#58a6ff;transform:translateY(-2px);}
+.fw-tile .tile-icon{font-size:24px;margin-bottom:8px;}
+.fw-tile h4{font-size:13px;font-weight:600;margin-bottom:4px;}
+.fw-tile p{font-size:11px;color:var(--muted);line-height:1.5;}
+.fw-tile .tile-count{font-size:10px;color:var(--accent2);margin-top:8px;font-weight:500;}
+
+/* ---- REFERENCE CARD ---- */
+#ref-card{max-width:720px;margin:0 auto;}
+.card-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.jur-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.jur-india{background:#1c3f1c;color:#56d364;}
+.jur-international{background:#1a3a5c;color:#58a6ff;}
+.jur-us{background:#3a1c1c;color:#ff7b72;}
+.fw-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--bg3);color:var(--muted);}
+.card-title{font-size:18px;font-weight:700;line-height:1.35;margin-bottom:6px;color:var(--text);}
+.card-date{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.card-section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;}
+.card-section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px;}
+.card-section-text{font-size:13px;line-height:1.7;color:var(--text);}
+.penalty-section{background:rgba(255,123,114,.06);border-color:rgba(255,123,114,.25);}
+.penalty-section .card-section-label{color:#ff7b72;}
+.penalty-icon{display:inline-block;margin-right:6px;}
+.enforcement-section{background:rgba(88,166,255,.06);border-color:rgba(88,166,255,.2);}
+.enforcement-section .card-section-label{color:#58a6ff;}
+
+/* TOGGLE */
+.lang-toggle{display:flex;gap:0;margin-bottom:20px;background:var(--bg3);border-radius:6px;padding:3px;width:fit-content;}
+.lang-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:5px 14px;border-radius:4px;font-size:12px;font-weight:500;transition:background .15s,color .15s;}
+.lang-btn.active{background:var(--bg2);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.3);}
+
+/* CROSS REFS */
+.xref-section{margin-top:20px;}
+.xref-section h4{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:10px;}
+.xref-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.xref-chip{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 10px;font-size:11px;color:var(--muted);cursor:pointer;transition:border-color .15s,color .15s;}
+.xref-chip:hover{border-color:#58a6ff;color:#58a6ff;}
+
+/* ---- RIGHT PANEL ---- */
+#right-panel{width:320px;min-width:320px;background:var(--bg2);border-left:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;}
+#rp-header{padding:14px 14px 12px;border-bottom:1px solid var(--border);}
+#rp-header h3{font-size:13px;font-weight:700;margin-bottom:2px;}
+#rp-header p{font-size:11px;color:var(--muted);}
+#rp-body{padding:14px;flex:1;}
+
+/* Mode toggle */
+.mode-toggle{display:flex;gap:0;background:var(--bg3);border-radius:6px;padding:3px;margin-bottom:14px;}
+.mode-btn{flex:1;background:none;border:none;color:var(--muted);cursor:pointer;padding:5px 10px;border-radius:4px;font-size:11px;font-weight:600;transition:background .15s,color .15s;text-align:center;}
+.mode-btn.active{background:var(--bg);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.35);}
+
+/* Scenario select */
+.scenario-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:6px;}
+#scenario-select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;color:var(--text);padding:7px 10px;font-size:12px;margin-bottom:12px;outline:none;}
+#scenario-select:focus{border-color:#58a6ff;}
+.scenario-text{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:12px;line-height:1.65;color:var(--text);margin-bottom:14px;}
+
+/* MCQ */
+.mcq-options{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+.mcq-opt{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:9px 12px;cursor:pointer;font-size:12px;color:var(--muted);transition:border-color .15s,background .15s;}
+.mcq-opt:hover{border-color:#58a6ff;color:var(--text);}
+.mcq-opt.correct{background:rgba(86,211,100,.12);border-color:#56d364;color:#56d364;}
+.mcq-opt.wrong{background:rgba(255,123,114,.1);border-color:#ff7b72;color:#ff7b72;}
+.mcq-opt.disabled{pointer-events:none;opacity:.6;}
+
+/* Analysis card */
+.analysis-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px;animation:slideDown .25s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+.analysis-card h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px;}
+.law-badges{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.law-badge{background:rgba(29,78,216,.2);border:1px solid rgba(29,78,216,.4);color:#93c5fd;font-size:10px;padding:3px 7px;border-radius:4px;line-height:1.4;}
+.obligations-list{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:12px;}
+.obligations-list li{display:flex;gap:7px;align-items:flex-start;font-size:11px;line-height:1.5;color:var(--text);}
+.obligations-list li::before{content:'✓';color:#56d364;font-size:11px;flex-shrink:0;margin-top:1px;}
+.deadline-box{background:rgba(255,166,0,.08);border:1px solid rgba(255,166,0,.25);border-radius:6px;padding:8px 10px;margin-bottom:10px;}
+.deadline-box .dl-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:#f0a500;margin-bottom:3px;}
+.deadline-box p{font-size:11px;color:var(--text);line-height:1.5;}
+.penalty-box{background:rgba(255,123,114,.08);border:1px solid rgba(255,123,114,.2);border-radius:6px;padding:8px 10px;}
+.penalty-box .pl-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:#ff7b72;margin-bottom:3px;}
+.penalty-box p{font-size:11px;color:var(--text);line-height:1.5;}
+
+.analyze-btn{width:100%;background:#1d4ed8;border:none;border-radius:6px;color:#fff;padding:9px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;}
+.analyze-btn:hover{background:#1e40af;}
+
+/* FATF Map */
+#fatf-section{padding:14px;border-top:1px solid var(--border);}
+#fatf-section h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:10px;}
+.fatf-region{margin-bottom:10px;}
+.fatf-region-label{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.fatf-chips{display:flex;flex-wrap:wrap;gap:4px;}
+.fatf-chip{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:500;}
+.fatf-grey{background:rgba(150,130,40,.25);color:#e3c060;border:1px solid rgba(200,170,50,.25);}
+.fatf-black{background:rgba(200,50,50,.2);color:#ff7b72;border:1px solid rgba(200,50,50,.25);}
+.fatf-legend{display:flex;gap:10px;margin-bottom:10px;}
+.fatf-legend span{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.fatf-legend span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;}
+.fatf-legend .gl::before{background:rgba(200,170,50,.5);}
+.fatf-legend .bl::before{background:rgba(200,50,50,.4);}
+
+/* ---- SCROLLBARS ---- */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:1100px){
+  #right-panel{width:280px;min-width:280px;}
+}
+@media(max-width:768px){
+  #layout{flex-direction:column;height:auto;overflow:visible;}
+  #sidebar{width:100%;min-width:unset;height:auto;overflow:visible;border-right:none;border-bottom:1px solid var(--border);}
+  #nav-tree{display:none;}
+  #mobile-sidebar-btn{display:block;}
+  #mobile-nav-select{display:block;}
+  #center{overflow-y:visible;padding:16px;}
+  #right-panel{width:100%;min-width:unset;border-left:none;border-top:1px solid var(--border);}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="../../index.html">&#8592; Everything</a>
+  <span class="sep">/</span>
+  <span class="title">Regulatory Explorer</span>
+  <span class="badge">FinCrime</span>
+</nav>
+
+<!-- LAYOUT -->
+<div id="layout">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar">
+    <div id="sidebar-header">
+      <h3>Regulation Navigator</h3>
+      <input id="sidebar-search" type="text" placeholder="Search regulations..." oninput="filterTree(this.value)">
+    </div>
+    <!-- Mobile fallback -->
+    <button id="mobile-sidebar-btn" onclick="toggleMobileNav()">Browse Regulations ▾</button>
+    <select id="mobile-nav-select" onchange="loadSection(this.value)">
+      <option value="">Select a regulation...</option>
+    </select>
+    <div id="nav-tree"></div>
+  </aside>
+
+  <!-- CENTER -->
+  <main id="center">
+    <div id="content-area"></div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside id="right-panel">
+    <div id="rp-header">
+      <h3>Which Law Applies?</h3>
+      <p>Test your regulatory knowledge</p>
+    </div>
+    <div id="rp-body">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="btn-test" onclick="setMode('test')">Test Mode</button>
+        <button class="mode-btn" id="btn-ref" onclick="setMode('reference')">Reference Mode</button>
+      </div>
+      <div class="scenario-label">Scenario</div>
+      <select id="scenario-select" onchange="loadScenario()">
+        <option value="">Choose a scenario...</option>
+      </select>
+      <div id="scenario-body"></div>
+    </div>
+    <div id="fatf-section">
+      <h4>FATF Watch List</h4>
+      <div class="fatf-legend">
+        <span class="gl">Grey List</span>
+        <span class="bl">Black List</span>
+      </div>
+      <div id="fatf-regions"></div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+/* ================================================================
+   DATA
+================================================================ */
+const REGULATIONS = {
+  pmla: {
+    label: 'PMLA 2002', icon: '🇮🇳', jurisdiction: 'India',
+    sections: [
+      { id: 'pmla-s3', label: 'Section 3 — Money Laundering Offence', fullName: 'Prevention of Money-Laundering Act, 2002 — Section 3', date: '2002 (last amended 2023)', obligation: 'Whosoever directly or indirectly attempts to indulge in, or knowingly assists, or is involved in any process or activity connected with the proceeds of crime and projecting it as untainted property shall be guilty of money laundering.', penalty: 'Rigorous imprisonment: 3 to 7 years (up to 10 years for drug offences). Fine with no upper limit.', enforcement: 'Enforcement Directorate (ED)', plainEnglish: 'If you handle or help hide money from crime — even indirectly — you commit money laundering under Indian law.', xrefs: ['pmla-s12','pmla-s45','fatf-r1'] },
+      { id: 'pmla-s12', label: 'Section 12 — Reporting Obligations', fullName: 'PMLA 2002 — Section 12 (Maintenance of Records)', date: '2002 (amended 2019)', obligation: 'Every reporting entity must maintain records of all transactions, verify identity of clients, identify beneficial owners, and preserve records for 5 years. Must also furnish information to the Director, FIU-IND.', penalty: 'Failure to maintain records: fine up to ₹1 lakh per day of default. Continuing default: imprisonment up to 1 year.', enforcement: 'FIU-IND, RBI, SEBI, IRDAI (sectoral regulators)', plainEnglish: 'Banks and fintechs must keep clean KYC records for 5 years and report suspicious activity to FIU-IND.', xrefs: ['pmla-s13','pmla-rbi','rbi-kyc'] },
+      { id: 'pmla-s13', label: 'Section 13 — Powers of FIU Director', fullName: 'PMLA 2002 — Section 13 (Powers of the Director)', date: '2002', obligation: 'The FIU Director may call for records, examine officers of reporting entities, issue directions, and impose fines for non-compliance with reporting obligations.', penalty: 'Non-compliance with Director\'s order: fine up to ₹1 lakh.', enforcement: 'FIU-IND', plainEnglish: 'FIU-IND has the power to examine your records and fine your institution if you fail to report properly.', xrefs: ['pmla-s12','pmla-pmladirections','rbi-nbfc'] },
+      { id: 'pmla-s45', label: 'Section 45 — Tipping Off Prohibition', fullName: 'PMLA 2002 — Section 45 (Offences to be cognizable and non-bailable)', date: '2002 (amended 2012)', obligation: 'A reporting entity that has filed or is about to file an STR must not disclose this fact to the person named in the report or to any other person. Tipping off is a criminal offence.', penalty: 'Imprisonment up to 7 years and/or fine.', enforcement: 'ED, Police', plainEnglish: 'Never tell a customer that you\'ve reported them to the FIU. Even hinting at it is a crime.', xrefs: ['pmla-s3','bsa-sar','fatf-r10'] },
+      { id: 'pmla-rbi', label: 'RBI KYC Master Direction 2016', fullName: 'Reserve Bank of India — Master Direction on Know Your Customer (KYC), 2016 (updated 2023)', date: '2016 (last updated Dec 2023)', obligation: 'All RBI-regulated entities (banks, NBFCs, payment banks) must implement a KYC Policy covering Customer Acceptance Policy, Customer Identification Procedures, Monitoring of Transactions, and Risk Management.', penalty: 'Monetary penalties under Banking Regulation Act. Suspension of operations. Public notice.', enforcement: 'Reserve Bank of India', plainEnglish: 'Every bank and NBFC must have a written KYC policy, verify customers before onboarding, and monitor accounts throughout the relationship.', xrefs: ['pmla-s12','rbi-kyc','fatf-r10'] },
+      { id: 'pmla-pmladirections', label: 'PMLA Rules 2005 — Reporting Formats', fullName: 'Prevention of Money-Laundering (Maintenance of Records) Rules, 2005', date: '2005 (amended 2023)', obligation: 'Specifies formats and timelines for: Cash Transaction Reports (CTRs) — transactions ≥ ₹10 lakh in a month; Suspicious Transaction Reports (STRs) — no threshold; Non-Profit Organisation Transaction Reports (NTRs); Cross-Border Wire Transfer Reports (CBWTRs).', penalty: 'Non-filing: monetary penalty under PMLA Section 13. Repeat violations: referral to ED.', enforcement: 'FIU-IND', plainEnglish: 'If a customer deposits ₹10 lakh+ in cash in a month, file a CTR. If any transaction seems suspicious, file an STR — no minimum amount.', xrefs: ['pmla-s12','pmla-s13','bsa-ctr'] }
+    ]
+  },
+  fema: {
+    label: 'FEMA 1999', icon: '💱', jurisdiction: 'India',
+    sections: [
+      { id: 'fema-s2', label: 'Section 2 — Key Definitions', fullName: 'Foreign Exchange Management Act, 1999 — Section 2 (Definitions)', date: '1999', obligation: 'Defines key terms: "authorised person" (banks/dealers licensed to deal in foreign exchange), "current account transaction", "capital account transaction", "foreign exchange", "person resident in India".', penalty: 'N/A — definitional provision.', enforcement: 'Reserve Bank of India / ED', plainEnglish: 'FEMA defines who can deal in foreign exchange (authorised dealers) and what types of foreign exchange transactions are allowed.', xrefs: ['fema-s3','fema-s6','pmla-s3'] },
+      { id: 'fema-s3', label: 'Section 3 — Dealing in Foreign Exchange', fullName: 'FEMA 1999 — Section 3 (Dealing in Foreign Exchange)', date: '1999', obligation: 'No person other than an authorised person shall deal in or transfer any foreign exchange or security to any person not being an authorised person.', penalty: 'Civil penalty: up to 3x the amount involved. Criminal prosecution for willful violations.', enforcement: 'RBI / ED', plainEnglish: 'Only RBI-authorised banks and money changers can buy and sell foreign currency. Everyone else needs their permission.', xrefs: ['fema-s13','fema-lrs','pmla-s3'] },
+      { id: 'fema-s6', label: 'Section 6 — Capital Account Transactions', fullName: 'FEMA 1999 — Section 6 (Capital Account Transactions)', date: '1999', obligation: 'Capital account transactions (e.g., investments, loans, acquisition of property abroad) require prior permission from RBI, except those permitted under Schedule I. Current account transactions are generally permissible subject to reasonable restrictions.', penalty: 'Up to 3x the amount involved for contravention.', enforcement: 'RBI / ED', plainEnglish: 'Sending large amounts of money abroad for investment requires RBI approval. Small current account transactions (travel, fees) are largely free.', xrefs: ['fema-lrs','fema-s13','rbi-kyc'] },
+      { id: 'fema-s13', label: 'Section 13 — Penalties', fullName: 'FEMA 1999 — Section 13 (Penalties)', date: '1999', obligation: 'If any person contravenes any provision of FEMA or any rule or regulation made thereunder: civil penalty up to 3 times the sum involved, or up to ₹2 lakh where the amount cannot be quantified.', penalty: 'Civil: up to 3x amount or ₹2 lakh. Continuing violations: ₹5,000 per day.', enforcement: 'ED (Adjudicating Authority)', plainEnglish: 'Breaking FEMA rules means fines of up to 3x the illegal transaction amount. The ED handles these as civil matters (unlike PMLA which is criminal).', xrefs: ['fema-s3','fema-s6','pmla-s3'] },
+      { id: 'fema-lrs', label: 'Liberalised Remittance Scheme (LRS)', fullName: 'RBI Liberalised Remittance Scheme — A.P. (DIR Series) Circular', date: '2004 (current limit set 2023)', obligation: 'Resident individuals may remit up to USD 250,000 per financial year for permissible current or capital account transactions without RBI approval. TCS of 20% applies above ₹7 lakh from July 2023 (except education and medical).', penalty: 'Exceeding LRS limit without approval: FEMA Section 13 penalty.', enforcement: 'RBI / Income Tax Department', plainEnglish: 'An individual can send up to $250,000 abroad per year for studying, travel, or investment without special RBI permission. Above ₹7 lakh, 20% TCS applies.', xrefs: ['fema-s6','fema-s13','pmla-s12'] }
+    ]
+  },
+  rbi: {
+    label: 'RBI Directions', icon: '🏦', jurisdiction: 'India',
+    sections: [
+      { id: 'rbi-kyc', label: 'KYC Master Direction 2016', fullName: 'RBI Master Direction — Know Your Customer (KYC) Direction, 2016', date: 'Jan 2016 (updated Dec 2023)', obligation: 'All regulated entities must establish a KYC Policy covering: Customer Acceptance Policy, Customer Identification Procedure, Monitoring of Transactions, and Risk Management. Periodic KYC updation: High risk every 2 years, Medium risk every 8 years, Low risk every 10 years.', penalty: 'Monetary penalties under RBI Act. Public disclosure of penalties. License conditions.', enforcement: 'Reserve Bank of India (Department of Regulation)', plainEnglish: 'Banks must check who their customers are before opening accounts, keep records updated, and review high-risk customers every 2 years.', xrefs: ['pmla-rbi','pmla-s12','fatf-r10'] },
+      { id: 'rbi-ppi', label: 'PPI Master Directions 2021', fullName: 'RBI Master Directions on Prepaid Payment Instruments (PPIs), 2021', date: 'Aug 2021', obligation: 'PPIs (wallets, gift cards, forex cards) require full KYC for balances above ₹10,000 or for card-based instruments. Minimum KYC PPIs capped at ₹10,000 balance with ₹10,000 credit limit per month. Full KYC allows up to ₹2 lakh.', penalty: 'Non-compliance: cancellation of PPI licence, monetary penalty.', enforcement: 'RBI (Department of Payment and Settlement Systems)', plainEnglish: 'Mobile wallets and prepaid cards have strict KYC limits. If your wallet balance exceeds ₹10,000, you must provide full KYC documents.', xrefs: ['rbi-kyc','pmla-s12','pmla-pmladirections'] },
+      { id: 'rbi-cyber', label: 'Cybersecurity Framework for Banks 2016', fullName: 'RBI Circular — Cybersecurity Framework in Banks, June 2016', date: 'Jun 2016 (updated 2021)', obligation: 'Banks must implement a cybersecurity policy approved by the board, establish a Security Operations Centre (SOC), conduct annual cyber risk assessment, report significant cyber incidents to RBI within 6 hours, and conduct VAPT annually.', penalty: 'Non-reporting of cyber incidents: monetary penalty. Regulatory action on repeated lapses.', enforcement: 'RBI (Department of Information Technology)', plainEnglish: 'Banks need 24/7 security monitoring, must test for vulnerabilities every year, and must tell RBI within 6 hours of a serious cyberattack.', xrefs: ['rbi-kyc','rbi-nbfc','pmla-s12'] },
+      { id: 'rbi-nbfc', label: 'NBFC AML/CFT Directions 2023', fullName: 'RBI Master Direction — Non-Banking Financial Companies (NBFCs) AML/CFT, 2023', date: '2023', obligation: 'All NBFCs (including fintechs) must appoint a Principal Officer responsible for AML compliance, implement a risk-based KYC/CDD program, file STRs and CTRs with FIU-IND, conduct ongoing monitoring, and screen customers against sanction lists.', penalty: 'Non-compliance: cancellation of NBFC registration. Civil penalties up to ₹2 crore.', enforcement: 'RBI / FIU-IND', plainEnglish: 'Fintechs and NBFCs must follow the same AML rules as banks — appoint a compliance officer, check customers, and report suspicious transactions.', xrefs: ['rbi-kyc','pmla-s12','pmla-s13'] },
+      { id: 'rbi-correspondent', label: 'Correspondent Banking Guidelines 2022', fullName: 'RBI Guidance Note on Correspondent Banking, 2022', date: '2022', obligation: 'Before entering a correspondent relationship, banks must conduct EDD on the respondent bank: assess its AML/CFT controls, verify its regulatory standing, understand its customer base, and document the relationship. Must not enter relationships with shell banks.', penalty: 'Regulatory action. Reputational risk.', enforcement: 'RBI / FATF Recommendation 13', plainEnglish: 'Before allowing a foreign bank to use your network, you must thoroughly check their compliance standards. Never work with "shell banks" — banks with no physical presence.', xrefs: ['bsa-usa-patriot','fatf-r1','rbi-kyc'] }
+    ]
+  },
+  fatf40: {
+    label: 'FATF 40 Recs', icon: '🌐', jurisdiction: 'International',
+    sections: [
+      { id: 'fatf-r1', label: 'R.1 — Risk Assessment', fullName: 'FATF Recommendation 1 — Assessing and Managing Risks', date: '2012 (updated 2023)', obligation: 'Countries must identify, assess, and understand their ML/TF/PF risks and designate an authority to coordinate actions. Financial institutions must apply a risk-based approach — enhanced measures for higher risks, simplified measures for proven lower risks.', penalty: 'Non-compliance: technical compliance downgrade in Mutual Evaluation. Potential grey-listing.', enforcement: 'FATF / National supervisors', plainEnglish: 'Know your risk. Focus your AML resources where the real risks are — not just ticking compliance boxes for every customer equally.', xrefs: ['fatf-r10','pmla-rbi','rbi-kyc'] },
+      { id: 'fatf-r10', label: 'R.10 — Customer Due Diligence', fullName: 'FATF Recommendation 10 — Customer Due Diligence', date: '2012 (updated 2022)', obligation: 'Financial institutions must: identify and verify customer identity, identify beneficial owners, understand the business relationship, and conduct ongoing monitoring. CDD required: on establishing business relationships, for occasional transactions above USD 15,000, for wire transfers, when ML/TF suspected, and when doubt arises about previously obtained information.', penalty: 'Supervisory sanctions. Criminal/civil liability for serious violations.', enforcement: 'National financial supervisors', plainEnglish: 'Know who your customer is, who owns the business, and why they are transacting — and keep checking throughout the relationship.', xrefs: ['rbi-kyc','bsa-cdd','pmla-rbi'] },
+      { id: 'fatf-r15', label: 'R.15 — Virtual Assets', fullName: 'FATF Recommendation 15 — New Technologies and Virtual Assets', date: '2012 (updated 2019 — VASP provisions added)', obligation: 'Countries must apply the 40 Recommendations to VASPs — exchanges, custodial wallets, trading platforms. VASPs must be registered/licensed, supervised, and subject to AML/CFT obligations including Travel Rule (R.16) requirements. Countries must identify and assess ML/TF risks from virtual assets.', penalty: 'Grey listing risk for countries failing to regulate VASPs. Supervisory sanctions for non-compliant VASPs.', enforcement: 'National VASP supervisors / FATF ICRG', plainEnglish: 'Crypto exchanges must follow the same AML rules as banks: verify customers, monitor transactions, report suspicious activity, and pass sender/receiver information with transfers.', xrefs: ['fatf-r16','pmla-pmladirections','bsa-sar'] },
+      { id: 'fatf-r16', label: 'R.16 — Wire Transfers / Travel Rule', fullName: 'FATF Recommendation 16 — Wire Transfers (The Travel Rule)', date: '2012 (updated 2019)', obligation: 'Ordering FIs must include and send originator information (name, account, address/DOB/ID) and beneficiary information (name, account) with ALL wire transfers. Receiving FIs must verify and retain this information. Intermediary FIs must pass it through. Applies to VA transfers above USD 1,000.', penalty: 'Supervisory action, fines, suspension of wire transfer services.', enforcement: 'National supervisors / FinCEN (US) / FCA (UK)', plainEnglish: 'All wire transfers — including crypto — must carry who sent it and who receives it. No anonymous transfers allowed.', xrefs: ['fatf-r15','bsa-ctr','pmla-pmladirections'] }
+    ]
+  },
+  bsa: {
+    label: 'BSA / USA', icon: '🇺🇸', jurisdiction: 'United States',
+    sections: [
+      { id: 'bsa-main', label: 'Bank Secrecy Act 1970', fullName: 'Bank Secrecy Act (BSA) / Anti-Money Laundering Act — 31 U.S.C. §§ 5311–5336', date: '1970 (amended by AMLA 2020)', obligation: 'US financial institutions must maintain records and file reports (SARs, CTRs) to help identify, detect and deter money laundering and other financial crimes. The BSA is the foundation of US AML law, enforced by FinCEN.', penalty: 'Civil: up to $25,000 per violation per day. Criminal: up to $250,000 and/or 5 years imprisonment.', enforcement: 'FinCEN (Financial Crimes Enforcement Network) / OCC / Federal Reserve / FDIC', plainEnglish: 'US banks must report large cash transactions and suspicious activity to FinCEN — the US financial intelligence unit.', xrefs: ['bsa-sar','bsa-ctr','bsa-usa-patriot'] },
+      { id: 'bsa-sar', label: 'Suspicious Activity Reports (SARs)', fullName: 'FinCEN SAR Filing Requirements — 31 CFR Part 1020 (Banks)', date: '1996 (updated 2002 by PATRIOT Act)', obligation: 'US banks must file a SAR within 30 days of detecting suspicious activity involving $5,000+ (or $2,000 for MSBs) when the transaction involves funds from illegal activity, is designed to evade BSA, lacks lawful purpose, or involves suspicious individuals. Safe harbour protects filers from liability.', penalty: 'Failure to file: civil penalty up to $25,000 per violation. Willful failure: up to $250,000 or 5 years imprisonment.', enforcement: 'FinCEN', plainEnglish: 'When a US bank spots suspicious activity involving $5,000+, they must file a confidential report with FinCEN within 30 days. Filing is protected by law — you can\'t be sued for reporting.', xrefs: ['bsa-main','pmla-s45','pmla-pmladirections'] },
+      { id: 'bsa-ctr', label: 'Currency Transaction Reports (CTRs)', fullName: 'FinCEN CTR Filing Requirements — 31 CFR § 1010.311', date: '1972', obligation: 'Financial institutions must file a CTR for each cash transaction (deposit, withdrawal, exchange) exceeding $10,000 in a single business day involving the same person/account. Must aggregate multiple transactions by the same person in a day.', penalty: 'Failure to file: civil penalty. Structuring to avoid CTR: criminal felony under 31 U.S.C. § 5324.', enforcement: 'FinCEN / IRS', plainEnglish: 'If a customer deposits or withdraws more than $10,000 in cash in one day, the bank must report it to FinCEN. Splitting cash to avoid this is a crime called "structuring."', xrefs: ['bsa-sar','bsa-main','pmla-pmladirections'] },
+      { id: 'bsa-cdd', label: 'FinCEN CDD Rule 2018', fullName: 'FinCEN Customer Due Diligence Rule — 31 CFR § 1010.230', date: '2018 (effective May 2018)', obligation: 'Covered financial institutions must identify and verify the identity of beneficial owners (individuals who own 25%+ of a legal entity or who control the entity) when legal entities open accounts. Must collect name, DOB, address, and ID number.', penalty: 'Failure to comply: same as BSA — civil and criminal penalties.', enforcement: 'FinCEN / Federal banking regulators', plainEnglish: 'When a company opens a US bank account, the bank must identify and verify the real people who own 25%+ of the company or control it — not just the company itself.', xrefs: ['bsa-main','fatf-r10','rbi-kyc'] },
+      { id: 'bsa-usa-patriot', label: 'USA PATRIOT Act 2001 — Title III', fullName: 'USA PATRIOT Act, 2001 — Title III: International Money Laundering Abatement and Anti-Terrorist Financing Act', date: '2001', obligation: 'Expanded BSA obligations: requires all financial institutions to establish AML programs (4 pillars: policies, employee training, internal controls, independent testing + compliance officer). Enhanced correspondent banking EDD. Prohibited shell bank relationships. Extended SAR requirements to brokers, mutual funds, MSBs.', penalty: 'Same as BSA. Additional criminal penalties for terrorist financing.', enforcement: 'FinCEN / DOJ / OFAC', plainEnglish: 'After 9/11, US AML rules were dramatically expanded. Banks must have formal AML programs with four elements: written policies, staff training, internal controls, and independent testing.', xrefs: ['bsa-main','bsa-sar','rbi-correspondent'] }
+    ]
+  }
+};
+
+const SCENARIOS_WLA = [
+  { id:1, text:'An Indian bank receives a $2M wire transfer from a UAE-based entity. The remitter has no prior transaction history and the purpose is listed as "business consultancy." The bank\'s relationship manager cannot verify the underlying transaction.', mcqOptions:['FEMA — Section 6 (capital account)', 'PMLA — EDD obligations on high-value inbound wire', 'BSA — CTR requirement', 'RBI PPI Directions 2021'], correctIndex:1, answer:{ laws:['PMLA 2002 — Section 12 (CDD/EDD obligations)','FEMA 1999 — Section 6 (capital account monitoring)','RBI KYC Master Direction — EDD for high-value inbound transfers','FATF Recommendation 10 — CDD; R.19 — Higher-Risk Countries (UAE was recently grey-listed)'], obligations:['Conduct Enhanced Due Diligence on the remitter and beneficiary','Request and verify supporting documentation for the transaction purpose','Assess whether the transaction is consistent with the customer\'s profile','Consider filing STR with FIU-IND if EDD cannot be satisfied'], deadline:'CDD to be completed before processing. STR within working hours of suspicion arising.', penalty:'Failure to conduct EDD: PMLA Section 13 fine. Processing without CDD: regulatory action.' } },
+  { id:2, text:'A compliance officer at a payment gateway discovers that a merchant has been splitting large transactions into smaller amounts just below the ₹10 lakh CTR threshold over 30 days.', mcqOptions:['FEMA — Structuring of foreign exchange', 'RBI PPI Directions — wallet limit breach', 'PMLA — Structuring as predicate offence / STR obligation', 'Income Tax Act — TDS evasion'], correctIndex:2, answer:{ laws:['PMLA 2002 — Structuring is a predicate offence for money laundering','PMLA Rules 2005 — CTR obligations triggered despite structuring','RBI KYC Master Direction — Ongoing transaction monitoring'], obligations:['File STR with FIU-IND immediately — structuring is inherently suspicious regardless of amounts','Continue to file CTRs for any single-day total exceeding ₹10 lakh after aggregation','Consider enhanced monitoring or account restriction pending investigation'], deadline:'STR must be filed without delay. No minimum amount threshold for STR.', penalty:'Failure to file STR: PMLA Section 13 penalty up to ₹1 lakh per day.' } },
+  { id:3, text:'A crypto exchange registered in Singapore is processing a transfer of 2.5 BTC from a user in India to a wallet with a 78% Chainalysis risk score (mixer interactions flagged).', mcqOptions:['BSA — FinCEN SAR requirement only', 'FEMA — Capital account violation', 'FATF R.15 (VASP) + R.16 (Travel Rule) + PMLA 2002 (VASP amendment)', 'RBI PPI Master Directions 2021'], correctIndex:2, answer:{ laws:['FATF Recommendation 15 — VASP obligations','FATF Recommendation 16 — Travel Rule for virtual asset transfers','PMLA 2002 — Applies to VASPs registered in India or serving Indian customers (per 2023 PMLA amendment)','OFAC SDN List — if wallet is sanctions-linked'], obligations:['Apply Travel Rule: collect and transmit originator and beneficiary information','Screen the destination wallet against sanctions lists and blockchain analytics','File STR/SAR if mixer interaction confirms suspicious layering','Consider blocking the transaction if risk score exceeds internal threshold'], deadline:'Real-time screening before transaction processing. STR within reporting deadline.', penalty:'Non-compliance with VASP AML obligations: FIU-IND penalty, potential deregistration.' } },
+  { id:4, text:'A US bank customer deposits $9,500 in cash on Monday, $9,800 on Wednesday, and $9,200 on Friday. Each transaction is below the $10,000 CTR threshold.', mcqOptions:['No reporting required — each transaction is under $10,000', 'BSA — Structuring (31 U.S.C. § 5324) + SAR obligation', 'FATF R.16 — Travel Rule applies', 'FinCEN CDD Rule 2018 — beneficial ownership required'], correctIndex:1, answer:{ laws:['Bank Secrecy Act — 31 U.S.C. § 5324 (Structuring is a federal crime)','FinCEN CTR Rule — Aggregation requirement applies','FinCEN SAR Rule — Structuring triggers mandatory SAR'], obligations:['File a CTR: aggregate daily transactions — if the same individual exceeds $10,000 in a day after aggregation, CTR is required','File a SAR for structuring activity — the pattern itself is suspicious','Do not tip off the customer about the SAR filing'], deadline:'CTR: next business day after triggering transaction. SAR: within 30 days of detection.', penalty:'Structuring: up to 5 years imprisonment for the customer. Bank failure to file: civil and criminal penalties.' } },
+  { id:5, text:'An Indian NBFC\'s KYC team identifies that a corporate borrower\'s UBO (Ultimate Beneficial Owner) is a foreign national who is a senior official in a foreign government, owning 34% of the entity.', mcqOptions:['No action — below 50% ownership threshold', 'PMLA + RBI KYC — Foreign PEP EDD mandatory', 'FEMA — Foreign ownership reporting to RBI only', 'BSA CDD Rule — beneficial ownership verification'], correctIndex:1, answer:{ laws:['PMLA 2002 — PEP definition and EDD obligations','RBI KYC Master Direction 2016 — Foreign PEP procedures','FATF Recommendation 12 — Politically Exposed Persons'], obligations:['Classify the UBO as a Foreign PEP — mandatory under RBI KYC Master Direction','Apply Enhanced Due Diligence: obtain senior management approval for the relationship','Establish source of wealth and source of funds for the PEP','Conduct annual review of the relationship'], deadline:'EDD to be completed before account activation/loan disbursement.', penalty:'Failure to identify and apply EDD to PEP: RBI monetary penalty. PMLA exposure if funds are ML proceeds.' } },
+  { id:6, text:'A fintech company in India processes ₹50 crore in cross-border wire transfers monthly. They have not registered with FIU-IND and have no STR filing mechanism.', mcqOptions:['FEMA — Unauthorised foreign exchange dealing', 'No obligation — fintechs exempt from PMLA if not an NBFC', 'PMLA — Reporting entity obligation + FIU-IND registration required', 'RBI Cybersecurity Framework — incident reporting only'], correctIndex:2, answer:{ laws:['PMLA 2002 — Section 2(wa): Fintech is a "reporting entity" if it facilitates fund transfers','PMLA Rules 2005 — Reporting entity registration with FIU-IND','RBI NBFC AML/CFT Master Directions 2023 — If NBFC-licensed'], obligations:['Register immediately with FIU-IND as a reporting entity','Appoint a Principal Officer responsible for AML compliance','Implement a written AML/KYC policy and procedures','Begin filing CTRs and STRs for historical transactions where possible'], deadline:'Registration and compliance required immediately — operating without registration is a continuing offence.', penalty:'Non-registration: PMLA Section 13 fine. ED investigation possible. RBI may take action if NBFC-registered.' } },
+  { id:7, text:'An Indian bank\'s customer travels to Iran and withdraws cash there using their debit card. The bank\'s transaction system flags the transaction.', mcqOptions:['PMLA — STR required immediately', 'FEMA + FATF R.19 + potential OFAC exposure', 'RBI PPI Directions — wallet blocked in sanctioned country', 'BSA — CTR required for foreign cash withdrawal'], correctIndex:1, answer:{ laws:['FEMA 1999 — Transactions with Iran may violate capital/current account restrictions','OFAC SDN List — If cardholder is US-connected or transaction routes through US correspondent','RBI/GOI — India maintains limited specific sanctions on Iran, but FATF black-list status requires EDD'], obligations:['Review whether the transaction is permitted under FEMA/RBI foreign exchange rules','Apply enhanced scrutiny given FATF black-list status of Iran (R.19 — counter-measures)','Consider flagging for AML review given jurisdiction risk','Check OFAC implications if any US-dollar routing is involved'], deadline:'Review within standard transaction monitoring cycle.', penalty:'FEMA contravention: civil penalty up to 3x amount. OFAC violation (if applicable): severe US sanctions penalties.' } },
+  { id:8, text:'A real estate developer in India receives ₹3 crore in cash as advance payment for an apartment sale.', mcqOptions:['No reporting — property transactions are exempt from PMLA', 'Income Tax Act only — Section 269SS', 'PMLA (real estate reporting entity 2023) + Income Tax Act + CTR obligation', 'FEMA — Foreign exchange rules apply only'], correctIndex:2, answer:{ laws:['PMLA 2002 — Real estate agents are "reporting entities" under PMLA Schedule A (added 2023)','PMLA Rules — CTR required for cash transactions ≥ ₹10 lakh (aggregate ₹3 crore in one transaction far exceeds threshold)','Income Tax Act — Cash transactions above ₹20,000 for property prohibited under Section 269SS'], obligations:['File CTR with FIU-IND for the ₹3 crore cash receipt','Conduct CDD on the buyer — verify identity and source of funds','Consider filing STR given the large cash advance — inconsistent with normal real estate practice','Cannot legally accept ₹3 crore cash — Income Tax Act prohibits cash property payments above ₹20,000'], deadline:'CTR: within prescribed timeline. STR: promptly upon suspicion.', penalty:'Accepting cash above ₹20,000 for property: 100% tax penalty under Income Tax Act. PMLA violation for failing to report.' } },
+  { id:9, text:'A US bank discovers that one of its correspondent banking relationships is with a bank that has no physical presence in any jurisdiction (a "shell bank").', mcqOptions:['Enhanced monitoring sufficient — no immediate action required', 'FATF R.13 review — annual correspondent EDD update', 'BSA § 5318(j) + PATRIOT Act — terminate relationship immediately, file SAR', 'RBI Correspondent Banking Guidelines — notify RBI'], correctIndex:2, answer:{ laws:['Bank Secrecy Act — 31 U.S.C. § 5318(j) — Shell banks prohibited','USA PATRIOT Act Section 312 — Correspondent banking EDD requirements','FATF Recommendation 13 — Correspondent banking; prohibition on shell bank relationships'], obligations:['Terminate the correspondent relationship immediately — BSA prohibits US banks from maintaining accounts for shell banks','File a SAR documenting the discovery','Review all transactions processed through this correspondent for suspicious activity','Enhance screening to prevent future shell bank relationships'], deadline:'Termination must be immediate upon discovery. SAR within 30 days.', penalty:'Maintaining correspondent relationship with shell bank: criminal violation of BSA. Significant DOJ/FinCEN enforcement action.' } },
+  { id:10, text:'A customer at an Indian bank is identified as a domestic PEP (state-level politician) during a periodic KYC review. Their account was opened 5 years ago without PEP identification.', mcqOptions:['No action — domestic PEP rules apply only to new accounts', 'PMLA + RBI KYC — retrospective reclassification and EDD required', 'FEMA — Politician accounts require ED clearance', 'BSA CDD Rule — UBO verification needed'], correctIndex:1, answer:{ laws:['PMLA 2002 — Retrospective identification of PEPs','RBI KYC Master Direction 2016 — Periodic KYC updation obligation; PEP EDD requirements','FATF Recommendation 12 — Domestic PEP obligations'], obligations:['Immediately reclassify the customer as a PEP in the system','Apply Enhanced Due Diligence retrospectively: verify source of wealth and funds','Obtain senior management approval to continue the relationship','Review last 12 months of transactions for unusual patterns','Schedule annual EDD review going forward'], deadline:'EDD must be completed within the next periodic review cycle or immediately if risk warrants.', penalty:'Failure to identify and apply EDD to domestic PEP: RBI monetary penalty. PMLA exposure for any suspicious transactions not reported.' } }
+];
+
+const FATF_WATCHLIST = {
+  'Africa': { grey:['Algeria','Angola','Côte d\'Ivoire','Ethiopia','Kenya','Mozambique','Nigeria','Senegal','South Africa','Tanzania'], black:[] },
+  'Asia–Pacific': { grey:['Bangladesh','Myanmar (Burma)','Pakistan','Philippines','Vietnam'], black:['Democratic People\'s Republic of Korea (DPRK)'] },
+  'Middle East': { grey:['Lebanon','Syria','Yemen'], black:['Iran'] },
+  'Europe': { grey:['Bulgaria','Croatia'], black:[] },
+  'Americas': { grey:['Haiti','Jamaica','Trinidad and Tobago','Venezuela'], black:[] }
+};
+
+/* ================================================================
+   CROSS-REF LABEL LOOKUP
+================================================================ */
+function getSectionLabel(id) {
+  for (const fw of Object.values(REGULATIONS)) {
+    const s = fw.sections.find(x => x.id === id);
+    if (s) return s.label;
+  }
+  return id;
+}
+
+/* ================================================================
+   BUILD SIDEBAR TREE
+================================================================ */
+function buildTree() {
+  const tree = document.getElementById('nav-tree');
+  const mobileSelect = document.getElementById('mobile-nav-select');
+  tree.innerHTML = '';
+  for (const [fwKey, fw] of Object.entries(REGULATIONS)) {
+    const jurClass = fw.jurisdiction === 'India' ? 'jur-india' : fw.jurisdiction === 'United States' ? 'jur-us' : 'jur-international';
+    const group = document.createElement('div');
+    group.className = 'framework-group';
+    group.dataset.fw = fwKey;
+    const btn = document.createElement('button');
+    btn.className = 'framework-toggle';
+    btn.innerHTML = `<span class="fw-icon">${fw.icon}</span><span class="fw-label">${fw.label}</span><span class="fw-jur">${fw.jurisdiction}</span><span class="chevron">▶</span>`;
+    btn.onclick = () => toggleFramework(fwKey);
+    const list = document.createElement('ul');
+    list.className = 'section-list';
+    list.id = `fw-list-${fwKey}`;
+    fw.sections.forEach(sec => {
+      const li = document.createElement('li');
+      li.className = 'section-item';
+      li.id = `nav-${sec.id}`;
+      li.dataset.sectionId = sec.id;
+      li.dataset.label = sec.label.toLowerCase();
+      li.innerHTML = `<span class="dot"></span>${sec.label}`;
+      li.onclick = () => loadSection(sec.id);
+      list.appendChild(li);
+      // Mobile select
+      const opt = document.createElement('option');
+      opt.value = sec.id;
+      opt.textContent = `${fw.label} — ${sec.label}`;
+      mobileSelect.appendChild(opt);
+    });
+    group.appendChild(btn);
+    group.appendChild(list);
+    tree.appendChild(group);
+  }
+}
+
+function toggleFramework(fwKey, forceOpen) {
+  const list = document.getElementById(`fw-list-${fwKey}`);
+  const btn = list.previousElementSibling;
+  const isOpen = list.classList.contains('open');
+  if (forceOpen !== undefined) {
+    if (forceOpen) { list.classList.add('open'); btn.classList.add('open'); }
+    else { list.classList.remove('open'); btn.classList.remove('open'); }
+  } else {
+    list.classList.toggle('open');
+    btn.classList.toggle('open');
+  }
+}
+
+/* ================================================================
+   LOAD SECTION
+================================================================ */
+let currentLang = 'plain'; // 'plain' or 'legal'
+
+function loadSection(sectionId) {
+  if (!sectionId) return;
+  let section = null, fw = null;
+  for (const [key, f] of Object.entries(REGULATIONS)) {
+    const s = f.sections.find(x => x.id === sectionId);
+    if (s) { section = s; fw = f; break; }
+  }
+  if (!section) return;
+
+  // Highlight nav
+  document.querySelectorAll('.section-item').forEach(el => el.classList.remove('active'));
+  const navItem = document.getElementById(`nav-${sectionId}`);
+  if (navItem) {
+    navItem.classList.add('active');
+    // Ensure parent is open
+    const fwKey = sectionId.split('-')[0];
+    toggleFramework(fwKey, true);
+  }
+
+  const jurClass = fw.jurisdiction === 'India' ? 'jur-india' : fw.jurisdiction === 'United States' ? 'jur-us' : 'jur-international';
+
+  const xrefChips = (section.xrefs || []).map(xid => {
+    const lbl = getSectionLabel(xid);
+    return `<span class="xref-chip" onclick="loadSection('${xid}')">${lbl}</span>`;
+  }).join('');
+
+  const content = document.getElementById('content-area');
+  content.innerHTML = `
+    <div id="ref-card">
+      <div class="card-header">
+        <span class="jur-badge ${jurClass}">${fw.jurisdiction}</span>
+        <span class="fw-badge">${fw.icon} ${fw.label}</span>
+      </div>
+      <div class="card-title">${section.fullName}</div>
+      <div class="card-date">Effective: ${section.date}</div>
+
+      <div class="lang-toggle">
+        <button class="lang-btn ${currentLang==='plain'?'active':''}" onclick="setLang('plain')">Plain English</button>
+        <button class="lang-btn ${currentLang==='legal'?'active':''}" onclick="setLang('legal')">Regulatory Text</button>
+      </div>
+
+      <div class="card-section" id="obligation-section">
+        <div class="card-section-label">Obligation</div>
+        <div class="card-section-text" id="obligation-text">${currentLang==='plain' ? section.plainEnglish : section.obligation}</div>
+      </div>
+
+      <div class="card-section penalty-section">
+        <div class="card-section-label"><span class="penalty-icon">⚠</span>Penalty</div>
+        <div class="card-section-text">${section.penalty}</div>
+      </div>
+
+      <div class="card-section enforcement-section">
+        <div class="card-section-label">Enforcement Body</div>
+        <div class="card-section-text">${section.enforcement}</div>
+      </div>
+
+      ${xrefChips ? `<div class="xref-section"><h4>Related Regulations</h4><div class="xref-chips">${xrefChips}</div></div>` : ''}
+    </div>
+  `;
+
+  // Store for toggle
+  content.dataset.sectionId = sectionId;
+  document.getElementById('mobile-nav-select').value = sectionId;
+}
+
+function setLang(lang) {
+  currentLang = lang;
+  const sectionId = document.getElementById('content-area').dataset.sectionId;
+  if (sectionId) {
+    // Update just the text and button states
+    let section = null;
+    for (const f of Object.values(REGULATIONS)) {
+      const s = f.sections.find(x => x.id === sectionId);
+      if (s) { section = s; break; }
+    }
+    if (section) {
+      document.getElementById('obligation-text').textContent = lang === 'plain' ? section.plainEnglish : section.obligation;
+    }
+    document.querySelectorAll('.lang-btn').forEach((b, i) => {
+      b.classList.toggle('active', (i === 0 && lang === 'plain') || (i === 1 && lang === 'legal'));
+    });
+  }
+}
+
+/* ================================================================
+   WELCOME SCREEN
+================================================================ */
+function showWelcome() {
+  const tileHTML = Object.entries(REGULATIONS).map(([key, fw]) => {
+    const jurClass = fw.jurisdiction === 'India' ? 'jur-india' : fw.jurisdiction === 'United States' ? 'jur-us' : 'jur-international';
+    return `
+      <div class="fw-tile" onclick="toggleFramework('${key}', true); loadSection('${fw.sections[0].id}')">
+        <div class="tile-icon">${fw.icon}</div>
+        <h4>${fw.label}</h4>
+        <p>${fw.jurisdiction}</p>
+        <div class="tile-count">${fw.sections.length} sections</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('content-area').innerHTML = `
+    <div id="welcome">
+      <h1>Regulatory Explorer</h1>
+      <p class="sub">A reference tool for financial crime compliance professionals. Navigate frameworks, read obligations in plain English, and test your knowledge with real-world scenarios.</p>
+      <div class="fw-tiles">${tileHTML}</div>
+    </div>`;
+}
+
+/* ================================================================
+   SEARCH / FILTER
+================================================================ */
+function filterTree(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.framework-group').forEach(group => {
+    let anyVisible = false;
+    group.querySelectorAll('.section-item').forEach(item => {
+      const match = !q || item.dataset.label.includes(q);
+      item.style.display = match ? '' : 'none';
+      if (match) anyVisible = true;
+    });
+    group.style.display = anyVisible || !q ? '' : 'none';
+    if (q && anyVisible) toggleFramework(group.dataset.fw, true);
+  });
+}
+
+/* ================================================================
+   MOBILE SIDEBAR
+================================================================ */
+let mobileNavOpen = false;
+function toggleMobileNav() {
+  mobileNavOpen = !mobileNavOpen;
+  const navTree = document.getElementById('nav-tree');
+  navTree.style.display = mobileNavOpen ? 'block' : '';
+  document.getElementById('mobile-sidebar-btn').textContent = mobileNavOpen ? 'Browse Regulations ▲' : 'Browse Regulations ▾';
+}
+
+/* ================================================================
+   WHICH LAW APPLIES — SCENARIO CHECKER
+================================================================ */
+let currentMode = 'test';
+let currentScenario = null;
+let answered = false;
+
+function buildScenarioSelect() {
+  const sel = document.getElementById('scenario-select');
+  SCENARIOS_WLA.forEach((sc, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = `Scenario ${sc.id}`;
+    sel.appendChild(opt);
+  });
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('btn-test').classList.toggle('active', mode === 'test');
+  document.getElementById('btn-ref').classList.toggle('active', mode === 'reference');
+  if (currentScenario !== null) renderScenario(currentScenario);
+}
+
+function loadScenario() {
+  const val = document.getElementById('scenario-select').value;
+  if (val === '') { document.getElementById('scenario-body').innerHTML = ''; currentScenario = null; return; }
+  currentScenario = parseInt(val);
+  answered = false;
+  renderScenario(currentScenario);
+}
+
+function renderScenario(idx) {
+  const sc = SCENARIOS_WLA[idx];
+  const body = document.getElementById('scenario-body');
+  answered = false;
+  let html = `<div class="scenario-text">${sc.text}</div>`;
+
+  if (currentMode === 'test') {
+    html += `<div class="mcq-options">`;
+    sc.mcqOptions.forEach((opt, i) => {
+      html += `<div class="mcq-opt" id="mcq-opt-${i}" onclick="selectMCQ(${idx},${i})">${opt}</div>`;
+    });
+    html += `</div>`;
+    html += `<div id="analysis-reveal"></div>`;
+  } else {
+    html += `<button class="analyze-btn" onclick="revealAnalysis(${idx})">Analyze →</button>`;
+    html += `<div id="analysis-reveal" style="margin-top:12px;"></div>`;
+  }
+
+  body.innerHTML = html;
+}
+
+function selectMCQ(scenarioIdx, chosenIdx) {
+  if (answered) return;
+  answered = true;
+  const sc = SCENARIOS_WLA[scenarioIdx];
+  sc.mcqOptions.forEach((_, i) => {
+    const el = document.getElementById(`mcq-opt-${i}`);
+    el.classList.add('disabled');
+    if (i === sc.correctIndex) el.classList.add('correct');
+    else if (i === chosenIdx && chosenIdx !== sc.correctIndex) el.classList.add('wrong');
+  });
+  revealAnalysis(scenarioIdx);
+}
+
+function revealAnalysis(idx) {
+  const sc = SCENARIOS_WLA[idx];
+  const a = sc.answer;
+  const lawBadges = a.laws.map(l => `<span class="law-badge">${l}</span>`).join('');
+  const obls = a.obligations.map(o => `<li>${o}</li>`).join('');
+  document.getElementById('analysis-reveal').innerHTML = `
+    <div class="analysis-card">
+      <h4>Applicable Laws</h4>
+      <div class="law-badges">${lawBadges}</div>
+      <h4>Obligations</h4>
+      <ul class="obligations-list">${obls}</ul>
+      <div class="deadline-box">
+        <div class="dl-label">Deadline</div>
+        <p>${a.deadline}</p>
+      </div>
+      <div class="penalty-box">
+        <div class="pl-label">Penalty Exposure</div>
+        <p>${a.penalty}</p>
+      </div>
+    </div>`;
+}
+
+/* ================================================================
+   FATF WATCH LIST
+================================================================ */
+function buildFATFList() {
+  const container = document.getElementById('fatf-regions');
+  for (const [region, lists] of Object.entries(FATF_WATCHLIST)) {
+    const div = document.createElement('div');
+    div.className = 'fatf-region';
+    div.innerHTML = `<div class="fatf-region-label">${region}</div><div class="fatf-chips">
+      ${lists.grey.map(c=>`<span class="fatf-chip fatf-grey">${c}</span>`).join('')}
+      ${lists.black.map(c=>`<span class="fatf-chip fatf-black">${c}</span>`).join('')}
+    </div>`;
+    container.appendChild(div);
+  }
+}
+
+/* ================================================================
+   INIT
+================================================================ */
+buildTree();
+buildScenarioSelect();
+buildFATFList();
+showWelcome();
+</script>
+</body>
+</html>

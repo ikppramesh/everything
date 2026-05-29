@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethics Simulator — FinCrime · Everything</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f9fafb;
+    color: #111827;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  nav a {
+    text-decoration: none;
+    font-size: 13px;
+    color: #6b7280;
+    transition: color .18s;
+  }
+  nav a:hover { color: #111827; }
+  nav .nav-sep { color: #d1d5db; font-size: 13px; }
+  nav .nav-title { font-size: 13px; font-weight: 500; color: #111827; }
+  nav .nav-cta {
+    margin-left: auto;
+    background: #8b5cf6;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 7px;
+    transition: background .18s;
+  }
+  nav .nav-cta:hover { background: #7c3aed; }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 72px 32px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+  }
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; padding: 48px 20px 56px; }
+    .hero-right { display: none; }
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f3f0ff;
+    border: 1px solid #ddd6fe;
+    color: #7c3aed;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(28px, 4vw, 46px);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.15;
+    margin-bottom: 18px;
+    color: #0f172a;
+  }
+  .hero h1 span { color: #8b5cf6; }
+  .hero-lead {
+    font-size: 17px;
+    color: #4b5563;
+    line-height: 1.7;
+    margin-bottom: 28px;
+    max-width: 480px;
+  }
+  .features-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 36px;
+  }
+  .features-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: #374151;
+  }
+  .features-list li .feat-icon {
+    font-size: 15px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .cta-primary {
+    display: inline-block;
+    background: #8b5cf6;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px 28px;
+    border-radius: 9px;
+    transition: background .18s, transform .15s;
+  }
+  .cta-primary:hover { background: #7c3aed; transform: translateY(-1px); }
+  .cta-secondary {
+    display: inline-block;
+    border: 1.5px solid #d1d5db;
+    color: #374151;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 9px;
+    transition: border-color .18s, color .18s;
+  }
+  .cta-secondary:hover { border-color: #8b5cf6; color: #7c3aed; }
+
+  /* Hero right — iframe preview */
+  .hero-right {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.14), 0 0 0 1px #e5e7eb;
+    background: #0d1117;
+    aspect-ratio: 4/3;
+  }
+  .hero-right iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    transform-origin: top left;
+  }
+  .preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .hero-right:hover .preview-overlay { opacity: 1; }
+  .preview-overlay-inner {
+    background: rgba(139,92,246,0.9);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  /* ── STATS STRIP ── */
+  .stats-strip {
+    background: #fff;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 32px 32px;
+  }
+  .stats-strip-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    text-align: center;
+  }
+  @media(max-width:640px){ .stats-strip-inner { grid-template-columns: repeat(2,1fr); } }
+  .stat-num {
+    font-size: 30px;
+    font-weight: 800;
+    color: #8b5cf6;
+    letter-spacing: -.02em;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  /* ── DARK FEATURES SECTION ── */
+  .features-section {
+    background: #0d1117;
+    padding: 88px 32px;
+    color: #e6edf3;
+  }
+  .features-header {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 56px;
+  }
+  .features-header .section-tag {
+    display: inline-block;
+    background: rgba(139,92,246,0.12);
+    border: 1px solid rgba(139,92,246,0.3);
+    color: #a78bfa;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .features-header h2 {
+    font-size: clamp(24px, 3.5vw, 38px);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+  .features-header p {
+    color: #8b949e;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .features-cards {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  @media(max-width:640px){ .features-cards { grid-template-columns: 1fr; } }
+  .feat-card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 14px;
+    padding: 28px;
+    transition: border-color .2s, transform .2s;
+  }
+  .feat-card:hover {
+    border-color: rgba(139,92,246,0.5);
+    transform: translateY(-2px);
+  }
+  .feat-card-icon {
+    font-size: 28px;
+    margin-bottom: 14px;
+    display: block;
+  }
+  .feat-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #e6edf3;
+    margin-bottom: 8px;
+    letter-spacing: -.01em;
+  }
+  .feat-card p {
+    font-size: 13.5px;
+    color: #8b949e;
+    line-height: 1.65;
+  }
+  .feat-card .feat-detail {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .feat-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #6b7280;
+  }
+  .feat-detail-row::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #8b5cf6;
+    flex-shrink: 0;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section {
+    background: #f9fafb;
+    padding: 88px 32px;
+  }
+  .how-section-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .how-header {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+  .how-header .section-tag2 {
+    display: inline-block;
+    background: #f3f0ff;
+    border: 1px solid #ddd6fe;
+    color: #7c3aed;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .how-header h2 {
+    font-size: clamp(22px, 3vw, 34px);
+    font-weight: 800;
+    letter-spacing: -.03em;
+    color: #0f172a;
+    margin-bottom: 10px;
+  }
+  .how-header p { color: #6b7280; font-size: 15px; }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  @media(max-width:640px){ .steps { grid-template-columns: 1fr; } }
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .step-num {
+    width: 36px; height: 36px;
+    background: #8b5cf6;
+    color: #fff;
+    font-size: 15px; font-weight: 800;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step h4 {
+    font-size: 15px; font-weight: 700; color: #111827;
+  }
+  .step p { font-size: 13px; color: #6b7280; line-height: 1.6; }
+
+  /* ── SCENARIOS PREVIEW ── */
+  .scenarios-preview {
+    background: #fff;
+    padding: 72px 32px;
+    border-top: 1px solid #e5e7eb;
+  }
+  .scenarios-preview-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .scenarios-preview h2 {
+    font-size: clamp(20px, 2.5vw, 30px);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    margin-bottom: 32px;
+    color: #0f172a;
+  }
+  .scenario-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .scenario-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #374151;
+    font-weight: 500;
+  }
+  .chip-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .scenarios-preview-cta {
+    text-align: center;
+    padding-top: 16px;
+  }
+
+  /* ── RADAR DEMO ── */
+  .radar-demo {
+    background: linear-gradient(135deg, #0d1117 0%, #1a0a2e 100%);
+    padding: 80px 32px;
+    text-align: center;
+  }
+  .radar-demo-inner {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .radar-demo h2 {
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 800;
+    color: #e6edf3;
+    letter-spacing: -.03em;
+    margin-bottom: 10px;
+  }
+  .radar-demo p {
+    color: #8b949e;
+    font-size: 15px;
+    margin-bottom: 40px;
+    line-height: 1.65;
+  }
+  .radar-demo canvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+  .radar-demo-labels {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .rdl {
+    font-size: 12px;
+    color: #8b949e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .rdl::before {
+    content: '';
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #8b5cf6;
+    display: inline-block;
+  }
+
+  /* ── CTA BAND ── */
+  .cta-band {
+    background: #7c3aed;
+    padding: 64px 32px;
+    text-align: center;
+  }
+  .cta-band h2 {
+    font-size: clamp(22px, 3vw, 34px);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -.02em;
+    margin-bottom: 12px;
+  }
+  .cta-band p {
+    color: rgba(255,255,255,0.75);
+    font-size: 15px;
+    margin-bottom: 28px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-band a {
+    display: inline-block;
+    background: #fff;
+    color: #7c3aed;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 13px 32px;
+    border-radius: 9px;
+    text-decoration: none;
+    transition: transform .15s;
+  }
+  .cta-band a:hover { transform: translateY(-2px); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #0d1117;
+    border-top: 1px solid #1e293b;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .footer-left {
+    font-size: 13px;
+    color: #4b5563;
+  }
+  .footer-left a { color: #8b5cf6; text-decoration: none; }
+  .footer-left a:hover { text-decoration: underline; }
+  .footer-right {
+    display: flex;
+    gap: 20px;
+  }
+  .footer-right a {
+    font-size: 12px;
+    color: #4b5563;
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .footer-right a:hover { color: #8b949e; }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="../../">← Everything</a>
+  <span class="nav-sep">|</span>
+  <span class="nav-title">Ethics Simulator</span>
+  <a class="nav-cta" href="index.html">Demo →</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-badge">🕵️ FinCrime · Ethics</div>
+    <h1>Navigate <span>Ethical Dilemmas</span> in Financial Crime Compliance</h1>
+    <p class="hero-lead">
+      Six branching decision-tree scenarios drawn from real compliance situations.
+      Every choice carries regulatory, career, and ethical consequences — analysed across three philosophical frameworks.
+    </p>
+    <ul class="features-list">
+      <li>
+        <span class="feat-icon">🌲</span>
+        <span>Branching narrative trees with 2–4 choices per decision node</span>
+      </li>
+      <li>
+        <span class="feat-icon">⚖️</span>
+        <span>Immediate, regulatory, career, and ethical analysis per choice</span>
+      </li>
+      <li>
+        <span class="feat-icon">📊</span>
+        <span>Canvas radar chart scoring Integrity, Compliance, Loyalty, Courage, Prudence</span>
+      </li>
+      <li>
+        <span class="feat-icon">🧠</span>
+        <span>Utilitarian, Deontological, and Virtue Ethics frameworks per scenario</span>
+      </li>
+      <li>
+        <span class="feat-icon">🔒</span>
+        <span>No login, no tracking — fully client-side, runs anywhere</span>
+      </li>
+    </ul>
+    <div class="hero-ctas">
+      <a href="index.html" class="cta-primary">Launch Simulator →</a>
+      <a href="#features" class="cta-secondary">See What's Inside</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <iframe
+      src="index.html"
+      title="Ethics Simulator Preview"
+      loading="lazy"
+      tabindex="-1"
+      aria-hidden="true"
+    ></iframe>
+    <a href="index.html" class="preview-overlay">
+      <span class="preview-overlay-inner">Open Full App →</span>
+    </a>
+  </div>
+</section>
+
+<!-- ── STATS STRIP ── -->
+<div class="stats-strip">
+  <div class="stats-strip-inner">
+    <div>
+      <span class="stat-num">6</span>
+      <span class="stat-label">Scenarios</span>
+    </div>
+    <div>
+      <span class="stat-num">5</span>
+      <span class="stat-label">Ethics Dimensions</span>
+    </div>
+    <div>
+      <span class="stat-num">3</span>
+      <span class="stat-label">Philosophical Frameworks</span>
+    </div>
+    <div>
+      <span class="stat-num">0</span>
+      <span class="stat-label">Dependencies</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── DARK FEATURES SECTION ── -->
+<section class="features-section" id="features">
+  <div class="features-header">
+    <div class="section-tag">Inside the Simulator</div>
+    <h2>What You'll Face</h2>
+    <p>Every scenario is grounded in real regulatory frameworks — PMLA, FATF Recommendations, SEBI LODR, and the Banking Regulation Act.</p>
+  </div>
+  <div class="features-cards">
+
+    <div class="feat-card">
+      <span class="feat-card-icon">🎭</span>
+      <h3>6 Real Dilemmas</h3>
+      <p>From tipping off a client under PMLA to handling a regulator's off-the-record document request — each scenario is drawn from documented compliance failure patterns.</p>
+      <div class="feat-detail">
+        <div class="feat-detail-row">Confidentiality under PMLA Section 45</div>
+        <div class="feat-detail-row">Supervisor pressure and alert suppression</div>
+        <div class="feat-detail-row">Relationship loyalty versus CDD obligations</div>
+        <div class="feat-detail-row">Conflict of interest and SEBI LODR</div>
+        <div class="feat-detail-row">Whistleblowing through proper channels</div>
+        <div class="feat-detail-row">Regulatory boundary management</div>
+      </div>
+    </div>
+
+    <div class="feat-card">
+      <span class="feat-card-icon">🌲</span>
+      <h3>Decision Trees</h3>
+      <p>3–5 branching nodes per scenario. Choices at early nodes affect which path you walk — some routes end in inquiry, others in vindication.</p>
+      <div class="feat-detail">
+        <div class="feat-detail-row">2–4 choices per decision node</div>
+        <div class="feat-detail-row">Branching narrative paths</div>
+        <div class="feat-detail-row">First-person choice language throughout</div>
+        <div class="feat-detail-row">Context cards anchor each scene</div>
+      </div>
+    </div>
+
+    <div class="feat-card">
+      <span class="feat-card-icon">🧠</span>
+      <h3>Ethical Analysis</h3>
+      <p>Every choice is analysed through three philosophical lenses — so you understand not just what was right, but why it was right and what theory it aligns with.</p>
+      <div class="feat-detail">
+        <div class="feat-detail-row">Utilitarian: consequences for the greatest number</div>
+        <div class="feat-detail-row">Deontological: unconditional duties and rules</div>
+        <div class="feat-detail-row">Virtue Ethics: character and professional identity</div>
+        <div class="feat-detail-row">Immediate, regulatory, and career impact breakdown</div>
+      </div>
+    </div>
+
+    <div class="feat-card">
+      <span class="feat-card-icon">📊</span>
+      <h3>Competency Radar</h3>
+      <p>Your choices accumulate across five dimensions scored 0–100. The outcome screen renders a live canvas radar chart with your ethical profile label.</p>
+      <div class="feat-detail">
+        <div class="feat-detail-row">Integrity — adherence to standards under pressure</div>
+        <div class="feat-detail-row">Compliance — regulatory knowledge in action</div>
+        <div class="feat-detail-row">Loyalty — institutional versus personal allegiance</div>
+        <div class="feat-detail-row">Courage — willingness to hold difficult positions</div>
+        <div class="feat-detail-row">Prudence — procedural and tactical judgment</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section">
+  <div class="how-section-inner">
+    <div class="how-header">
+      <div class="section-tag2">How It Works</div>
+      <h2>Three Screens, One Lesson</h2>
+      <p>The simulator is designed to be completed in 8–12 minutes. No login, no server — everything runs in the browser.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Choose a Scenario</h4>
+        <p>Pick from six compliance dilemmas spanning confidentiality, integrity, whistleblowing, conflicts of interest, and regulatory boundaries.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Navigate the Story</h4>
+        <p>Read the narrative, understand the context, then make real-time decisions at key branching points. Each choice closes some paths and opens others.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>See Your Outcome</h4>
+        <p>Receive a radar chart, a score out of 100, your ethical profile, and three personalised reflection notes based on how your choices scored.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SCENARIO CHIPS ── -->
+<section class="scenarios-preview">
+  <div class="scenarios-preview-inner">
+    <h2>All Six Scenarios</h2>
+    <div class="scenario-chips">
+      <div class="scenario-chip">
+        <span class="chip-dot" style="background:#8b5cf6"></span>
+        The 3am Call — Confidentiality
+      </div>
+      <div class="scenario-chip">
+        <span class="chip-dot" style="background:#ef4444"></span>
+        The Supervisor's Pressure — Integrity
+      </div>
+      <div class="scenario-chip">
+        <span class="chip-dot" style="background:#f59e0b"></span>
+        The Loyal Banker — Loyalty vs Duty
+      </div>
+      <div class="scenario-chip">
+        <span class="chip-dot" style="background:#22c55e"></span>
+        The Anonymous Tip — Whistleblowing
+      </div>
+      <div class="scenario-chip">
+        <span class="chip-dot" style="background:#0891b2"></span>
+        The Friendly Regulator — Professional Boundaries
+      </div>
+      <div class="scenario-chip">
+        <span class="chip-dot" style="background:#f97316"></span>
+        The Conflict — Conflict of Interest
+      </div>
+    </div>
+    <div class="scenarios-preview-cta">
+      <a href="index.html" class="cta-primary">Start Any Scenario →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── RADAR DEMO ── -->
+<section class="radar-demo">
+  <div class="radar-demo-inner">
+    <h2>Your Ethical Competency Map</h2>
+    <p>After completing each scenario, a canvas radar chart renders your accumulated scores across five professional ethics dimensions. The polygon shape tells your story.</p>
+    <canvas id="demo-radar" width="280" height="280"></canvas>
+    <div class="radar-demo-labels">
+      <span class="rdl">Integrity</span>
+      <span class="rdl">Compliance</span>
+      <span class="rdl">Loyalty</span>
+      <span class="rdl">Courage</span>
+      <span class="rdl">Prudence</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BAND ── -->
+<section class="cta-band">
+  <h2>Ready to Test Your Ethics?</h2>
+  <p>Six scenarios. Real laws. Real consequences. Which compliance professional are you?</p>
+  <a href="index.html">Launch Ethics Simulator →</a>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-left">
+    Part of <a href="../../">Everything</a> · FinCrime Tools · Ethics Simulator
+  </div>
+  <div class="footer-right">
+    <a href="index.html">Launch App</a>
+    <a href="../../">Everything Hub</a>
+    <a href="../../fincrime/">FinCrime Tools</a>
+  </div>
+</footer>
+
+<script>
+/* Draw the demo radar chart on the marketing page */
+(function() {
+  const canvas = document.getElementById('demo-radar');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2, r = 100;
+  const N = 5;
+
+  // Example "ideal" scores for the demo
+  const demoScores = [88, 92, 35, 82, 90]; // integrity, compliance, loyalty, courage, prudence
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid rings
+  for (let lvl = 1; lvl <= 5; lvl++) {
+    ctx.beginPath();
+    for (let i = 0; i < N; i++) {
+      const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+      const rad = r * lvl / 5;
+      const x = cx + rad * Math.cos(angle);
+      const y = cy + rad * Math.sin(angle);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(139,92,246,0.18)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Axes
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+    ctx.strokeStyle = 'rgba(139,92,246,0.25)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const val = demoScores[i] / 100;
+    const x = cx + r * val * Math.cos(angle);
+    const y = cy + r * val * Math.sin(angle);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(139,92,246,0.3)';
+  ctx.fill();
+  ctx.strokeStyle = '#8b5cf6';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Vertex dots
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const val = demoScores[i] / 100;
+    const x = cx + r * val * Math.cos(angle);
+    const y = cy + r * val * Math.sin(angle);
+    ctx.beginPath();
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.fillStyle = '#8b5cf6';
+    ctx.fill();
+  }
+
+  // Labels
+  const labels = ['Integrity', 'Compliance', 'Loyalty', 'Courage', 'Prudence'];
+  ctx.fillStyle = '#e6edf3';
+  ctx.font = '10px Inter, -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  for (let i = 0; i < N; i++) {
+    const angle = (Math.PI * 2 * i / N) - Math.PI / 2;
+    const x = cx + (r + 18) * Math.cos(angle);
+    const y = cy + (r + 18) * Math.sin(angle);
+    ctx.fillText(labels[i], x, y + 4);
+  }
+})();
+</script>
+</body>
+</html>

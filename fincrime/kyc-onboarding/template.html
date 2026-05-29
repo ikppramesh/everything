@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC Onboarding Flow — Everything Platform</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }
+
+  /* NAV */
+  .nav { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 0 32px; height: 54px; display: flex; align-items: center; gap: 14px; position: sticky; top: 0; z-index: 50; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .nav a { color: #64748b; text-decoration: none; font-size: 13px; display: flex; align-items: center; gap: 6px; transition: color .2s; font-weight: 500; }
+  .nav a:hover { color: #0f172a; }
+  .nav .sep { color: #cbd5e1; }
+  .nav .title { color: #0f172a; font-weight: 700; font-size: 14px; }
+  .nav .spacer { flex: 1; }
+  .nav .demo-link { background: #16a34a; color: #fff !important; padding: 6px 16px; border-radius: 6px; font-weight: 600; font-size: 13px; }
+  .nav .demo-link:hover { background: #15803d; }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 40%, #f0f9ff 100%); padding: 80px 32px; }
+  .hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(22,163,74,.1); border: 1px solid rgba(22,163,74,.25); color: #16a34a; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 20px; letter-spacing: .4px; }
+  .hero h1 { font-size: 42px; font-weight: 800; line-height: 1.15; margin-bottom: 16px; color: #0f172a; }
+  .hero h1 span { color: #16a34a; }
+  .hero p { color: #475569; font-size: 16px; margin-bottom: 28px; max-width: 480px; }
+  .features-list { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 10px; }
+  .features-list li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: #334155; }
+  .features-list li::before { content: '✓'; color: #16a34a; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-green { background: #16a34a; color: #fff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; transition: all .2s; display: inline-block; }
+  .btn-green:hover { background: #15803d; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(22,163,74,.35); }
+  .btn-outline { background: transparent; color: #16a34a; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 14px; border: 2px solid #16a34a; transition: all .2s; display: inline-block; }
+  .btn-outline:hover { background: rgba(22,163,74,.05); }
+  .hero-preview { background: #0d1117; border-radius: 16px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.1); }
+  .preview-bar { background: #161b22; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #30363d; }
+  .preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .preview-iframe-wrap { position: relative; padding-top: 70%; background: #0d1117; }
+  .preview-iframe-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; transform-origin: top left; pointer-events: none; }
+
+  /* FEATURES SECTION */
+  .features { background: #0f172a; padding: 80px 32px; }
+  .features-inner { max-width: 1100px; margin: 0 auto; }
+  .section-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(22,163,74,.15); border: 1px solid rgba(22,163,74,.25); color: #4ade80; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 16px; letter-spacing: .5px; }
+  .features h2 { font-size: 36px; font-weight: 800; color: #f1f5f9; margin-bottom: 12px; }
+  .features h2 span { color: #4ade80; }
+  .features > .features-inner > p { color: #94a3b8; font-size: 15px; margin-bottom: 48px; max-width: 560px; }
+  .cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .feat-card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; transition: all .3s; }
+  .feat-card:hover { border-color: #4ade80; transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,.3); }
+  .feat-icon { font-size: 32px; margin-bottom: 14px; }
+  .feat-title { font-size: 15px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+  .feat-desc { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+  .feat-card ul { list-style: none; margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+  .feat-card ul li { font-size: 12px; color: #64748b; display: flex; align-items: flex-start; gap: 6px; }
+  .feat-card ul li::before { content: '→'; color: #4ade80; flex-shrink: 0; }
+
+  /* DETAIL SECTION */
+  .detail { background: #f8fafc; padding: 80px 32px; }
+  .detail-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .detail h2 { font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+  .detail h2 span { color: #16a34a; }
+  .detail p { color: #475569; font-size: 14px; margin-bottom: 24px; }
+  .steps-list { display: flex; flex-direction: column; gap: 0; }
+  .step-li { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #e2e8f0; }
+  .step-li:last-child { border-bottom: none; }
+  .step-num { width: 32px; height: 32px; border-radius: 50%; background: #16a34a; color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-content { flex: 1; }
+  .step-content strong { font-size: 13px; color: #0f172a; display: block; margin-bottom: 2px; }
+  .step-content span { font-size: 12px; color: #64748b; }
+  .detail-right { background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,.06); }
+  .detail-right h3 { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 16px; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .key { color: #64748b; font-weight: 500; }
+  .spec-row .val { color: #0f172a; font-weight: 600; }
+  .spec-tag { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+
+  /* FOOTER */
+  .footer { background: #0f172a; padding: 40px 32px; text-align: center; }
+  .footer a { color: #4ade80; text-decoration: none; font-weight: 600; font-size: 14px; }
+  .footer a:hover { color: #86efac; }
+  .footer p { color: #64748b; font-size: 13px; margin-top: 8px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    .cards-grid { grid-template-columns: 1fr 1fr; }
+    .detail-inner { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 30px; }
+  }
+  @media (max-width: 600px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .hero { padding: 48px 20px; }
+    .features { padding: 48px 20px; }
+    .detail { padding: 48px 20px; }
+    .nav { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="../../index.html">← Everything</a>
+  <span class="sep">/</span>
+  <span class="title">KYC Onboarding Flow</span>
+  <span class="spacer"></span>
+  <a href="index.html" class="demo-link">Demo →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge">🕵️ FinCrime · KYC/CDD</div>
+      <h1>Know Your Customer. <span>Really.</span></h1>
+      <p>A fully interactive KYC/CDD onboarding simulator. Walk through a real-world six-step compliance workflow — from identity verification to risk-rated approval decisions.</p>
+
+      <ul class="features-list">
+        <li>Six-step guided wizard with inline validation and smooth transitions</li>
+        <li>Live risk profile sidebar that updates in real time as you progress</li>
+        <li>PEP and sanctions screening against OFAC, EU, UN, Interpol lists</li>
+        <li>Composite risk scoring with animated SVG gauge (5 weighted factors)</li>
+        <li>Auto CDD/EDD decision engine with Standard / Enhanced / EDD / Decline tiers</li>
+        <li>Full audit trail timeline with approve and decline workflows</li>
+      </ul>
+
+      <div class="cta-row">
+        <a href="index.html" class="btn-green">Launch Simulator →</a>
+        <a href="../../index.html" class="btn-outline">← Back to Everything</a>
+      </div>
+    </div>
+
+    <div class="hero-preview">
+      <div class="preview-bar">
+        <div class="preview-dot" style="background:#ef4444"></div>
+        <div class="preview-dot" style="background:#f59e0b"></div>
+        <div class="preview-dot" style="background:#22c55e"></div>
+        <span style="color:#8b949e;font-size:11px;margin-left:8px;font-family:monospace">kyc-onboarding/index.html</span>
+      </div>
+      <div class="preview-iframe-wrap">
+        <iframe src="index.html" title="KYC Onboarding Flow Preview" loading="lazy" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES CARDS -->
+<section class="features">
+  <div class="features-inner">
+    <div class="section-badge">CAPABILITIES</div>
+    <h2>Built for <span>compliance realism</span></h2>
+    <p>Every screen mirrors the workflows used by compliance teams at banks and fintechs. Learn by doing — not by reading.</p>
+
+    <div class="cards-grid">
+      <div class="feat-card">
+        <div class="feat-icon">🪪</div>
+        <div class="feat-title">6-Step Wizard</div>
+        <div class="feat-desc">End-to-end onboarding flow with progress tracking and step-by-step validation.</div>
+        <ul>
+          <li>Personal details with 18+ age check</li>
+          <li>ID format validation per type</li>
+          <li>Country risk auto-detection</li>
+          <li>Address proof collection</li>
+        </ul>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">🔍</div>
+        <div class="feat-title">PEP Screening</div>
+        <div class="feat-desc">Simulated watchlist screening across multiple global sanctions databases.</div>
+        <ul>
+          <li>OFAC SDN, EU, UN, Interpol</li>
+          <li>Fuzzy name matching with %</li>
+          <li>Clear / Escalate per match</li>
+          <li>Analyst notes mandatory</li>
+        </ul>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">⚖️</div>
+        <div class="feat-title">Risk Scoring</div>
+        <div class="feat-desc">Five-factor composite risk model with real-time animated gauge.</div>
+        <ul>
+          <li>Country · PEP · SOF · TX · Product</li>
+          <li>Weighted composite score 0–100</li>
+          <li>Auto CDD / EDD / Decline decision</li>
+          <li>SVG arc gauge with needle</li>
+        </ul>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">✅</div>
+        <div class="feat-title">Audit Trail</div>
+        <div class="feat-desc">Every action recorded with timestamp — mirroring real compliance record-keeping.</div>
+        <ul>
+          <li>Timestamped event timeline</li>
+          <li>Approve with Customer ID</li>
+          <li>Structured decline workflow</li>
+          <li>Collapsible audit display</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DETAIL SECTION -->
+<section class="detail">
+  <div class="detail-inner">
+    <div>
+      <div style="display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:16px;letter-spacing:.5px">STEP BY STEP</div>
+      <h2>Six screens. <span>One complete workflow.</span></h2>
+      <p>The simulator walks through every stage of a real KYC/CDD onboarding process — from collecting personal details to issuing a risk-rated decision.</p>
+
+      <div class="steps-list">
+        <div class="step-li">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Personal Details</strong>
+            <span>Name, DOB (18+ validated), nationality with country risk badge, ID type with regex validation, residential address</span>
+          </div>
+        </div>
+        <div class="step-li">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Document Verification</strong>
+            <span>Simulated upload zones for ID and address proof. 3-second animated verification — auto-verified or flagged for manual review</span>
+          </div>
+        </div>
+        <div class="step-li">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>PEP & Sanctions Screening</strong>
+            <span>Five name entries across OFAC/EU/UN/Interpol. Analyst actions per match. Notes required if match detected</span>
+          </div>
+        </div>
+        <div class="step-li">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Source of Funds</strong>
+            <span>Six income categories with conditional fields. Inline red-flag indicators for high-risk sectors like crypto and cash-intensive</span>
+          </div>
+        </div>
+        <div class="step-li">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong>CDD / EDD Risk Assessment</strong>
+            <span>Five risk factor cards with animated SVG gauge. Composite score drives Standard / Enhanced / EDD / Decline decision</span>
+          </div>
+        </div>
+        <div class="step-li">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <strong>Risk Rating & Approval</strong>
+            <span>Full summary table, approve with auto-generated Customer ID, structured decline form, collapsible audit trail</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="detail-right">
+        <h3>Technical Specifications</h3>
+        <div class="spec-row"><span class="key">Tech Stack</span><span class="val spec-tag">Vanilla HTML/CSS/JS</span></div>
+        <div class="spec-row"><span class="key">Theme</span><span class="val">Dark (#0d1117)</span></div>
+        <div class="spec-row"><span class="key">Dependencies</span><span class="val">Zero — fully self-contained</span></div>
+        <div class="spec-row"><span class="key">Countries</span><span class="val">33 with risk ratings</span></div>
+        <div class="spec-row"><span class="key">Risk Model</span><span class="val">5-factor weighted composite</span></div>
+        <div class="spec-row"><span class="key">Screening Lists</span><span class="val">OFAC · EU · UN · Interpol · PEP</span></div>
+        <div class="spec-row"><span class="key">ID Formats</span><span class="val">Aadhaar · PAN · Passport · DL</span></div>
+        <div class="spec-row"><span class="key">Mobile</span><span class="val">Responsive single-column</span></div>
+        <div class="spec-row"><span class="key">Animations</span><span class="val">SVG gauge · progress bars · fade</span></div>
+        <div class="spec-row"><span class="key">Audit Trail</span><span class="val">Timestamped timeline</span></div>
+      </div>
+
+      <div style="background:#fef9c3;border:1px solid #fde047;border-radius:12px;padding:20px;margin-top:20px">
+        <div style="font-size:13px;font-weight:700;color:#713f12;margin-bottom:8px">⚠️ Simulator Disclaimer</div>
+        <p style="font-size:12px;color:#92400e;line-height:1.6;margin:0">This is an educational simulation only. All screening results, risk scores, and decisions are generated for training purposes. No real identity verification, sanctions screening, or compliance decision-making occurs.</p>
+      </div>
+
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px;margin-top:16px">
+        <div style="font-size:13px;font-weight:700;color:#14532d;margin-bottom:8px">📚 Learning Outcomes</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+          <li style="font-size:12px;color:#166534;display:flex;align-items:flex-start;gap:8px"><span style="color:#16a34a;font-weight:700;flex-shrink:0">→</span>Understand the CDD/EDD tiered approach to customer risk</li>
+          <li style="font-size:12px;color:#166534;display:flex;align-items:flex-start;gap:8px"><span style="color:#16a34a;font-weight:700;flex-shrink:0">→</span>Practice PEP screening decisions and false positive handling</li>
+          <li style="font-size:12px;color:#166534;display:flex;align-items:flex-start;gap:8px"><span style="color:#16a34a;font-weight:700;flex-shrink:0">→</span>Learn how risk factors are weighted in composite scoring</li>
+          <li style="font-size:12px;color:#166534;display:flex;align-items:flex-start;gap:8px"><span style="color:#16a34a;font-weight:700;flex-shrink:0">→</span>Experience the compliance analyst workflow end-to-end</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <a href="../../index.html">← Back to Everything</a>
+  <p>Part of the Everything platform · FinCrime Training Suite · KYC/CDD Simulator</p>
+</footer>
+
+</body>
+</html>

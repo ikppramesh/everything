@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KYC Onboarding Flow — Everything</title>
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#16a34a; --accent2:#0891b2;
+  --nav-h:52px; --green:#22c55e; --red:#ef4444; --yellow:#f59e0b; --blue:#3b82f6;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:100}
+nav a{color:var(--muted);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:6px;transition:color .2s}
+nav a:hover{color:var(--text)}
+nav .sep{color:var(--border);font-size:18px}
+nav .title{color:var(--text);font-weight:600;font-size:14px}
+nav .badge{background:rgba(22,163,74,.15);border:1px solid rgba(22,163,74,.3);color:var(--accent);font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.4px}
+nav .spacer{flex:1}
+
+/* LAYOUT */
+.page{margin-top:var(--nav-h);display:flex;gap:20px;padding:20px;min-height:calc(100vh - var(--nav-h));max-width:1200px;margin-left:auto;margin-right:auto}
+.wizard-col{flex:1;min-width:0}
+.sidebar-col{width:300px;flex-shrink:0}
+
+/* PROGRESS BAR */
+.progress-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.steps-row{display:flex;align-items:center;justify-content:space-between;position:relative}
+.steps-row::before{content:'';position:absolute;top:16px;left:16px;right:16px;height:2px;background:var(--border);z-index:0}
+.step-track{position:absolute;top:16px;left:16px;height:2px;background:var(--accent);transition:width .5s ease;z-index:1}
+.step-item{display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;z-index:2}
+.step-circle{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--muted);transition:all .3s}
+.step-item.done .step-circle{background:var(--accent);border-color:var(--accent);color:#fff}
+.step-item.active .step-circle{background:var(--accent2);border-color:var(--accent2);color:#fff;box-shadow:0 0 0 4px rgba(8,145,178,.2)}
+.step-label{font-size:10px;color:var(--muted);white-space:nowrap;font-weight:500;transition:color .3s}
+.step-item.active .step-label{color:var(--accent2)}
+.step-item.done .step-label{color:var(--accent)}
+
+/* CARD */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-sub{color:var(--muted);font-size:12px;margin-bottom:20px}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-row.full{grid-template-columns:1fr}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select,.field textarea{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:13px;font-family:inherit;transition:border-color .2s,box-shadow .2s;outline:none;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(8,145,178,.15)}
+.field input.err,.field select.err,.field textarea.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+.field input.ok,.field select.ok,.field textarea.ok{border-color:var(--green)}
+.field textarea{resize:vertical;min-height:80px}
+.field select option{background:var(--bg3)}
+.err-msg{color:var(--red);font-size:11px;margin-top:2px}
+.hint{color:var(--muted);font-size:11px}
+.country-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600;margin-left:8px;vertical-align:middle}
+.cb-low{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.cb-medium{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+.cb-high{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+
+/* BUTTONS */
+.btn{padding:10px 20px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#15803d;transform:translateY(-1px)}
+.btn-secondary{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--border)}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-amber{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+.btn-amber:hover{background:rgba(245,158,11,.25)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.nav-btns{display:flex;gap:12px;margin-top:24px;justify-content:flex-end}
+
+/* STEP PANELS */
+.step-panel{display:none;animation:fadeSlide .35s ease}
+.step-panel.active{display:block}
+@keyframes fadeSlide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* UPLOAD ZONES */
+.upload-zone{border:2px dashed var(--border);border-radius:10px;padding:32px;text-align:center;cursor:pointer;transition:all .3s;position:relative}
+.upload-zone:hover{border-color:var(--accent2);background:rgba(8,145,178,.05)}
+.upload-zone.verified{border-color:var(--green);background:rgba(34,197,94,.05);border-style:solid}
+.upload-zone.manual{border-color:var(--yellow);background:rgba(245,158,11,.05);border-style:solid}
+.upload-icon{font-size:32px;margin-bottom:8px}
+.upload-title{font-weight:600;margin-bottom:4px}
+.upload-sub{color:var(--muted);font-size:11px}
+.upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.upload-status{margin-top:12px;font-size:13px;font-weight:600}
+.status-green{color:var(--green)}
+.status-amber{color:var(--yellow)}
+
+/* PROGRESS BAR ANIMATED */
+.prog-bar-wrap{background:var(--bg3);border-radius:4px;height:6px;overflow:hidden;margin-top:12px;display:none}
+.prog-bar-fill{height:100%;width:0%;background:var(--accent2);border-radius:4px;transition:width .05s linear}
+
+/* SCREENING */
+.screening-loader{display:none;align-items:center;gap:12px;color:var(--muted);font-size:13px;margin-top:16px}
+.spin{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent2);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.results-table{width:100%;border-collapse:collapse;margin-top:16px;font-size:12px}
+.results-table th{text-align:left;padding:8px 12px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.4px}
+.results-table td{padding:8px 12px;border-bottom:1px solid var(--bg3)}
+.results-table tr:last-child td{border-bottom:none}
+.badge-clear{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px}
+.badge-possible{background:rgba(245,158,11,.15);color:var(--yellow);border:1px solid rgba(245,158,11,.3);padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px}
+.badge-match{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);padding:2px 8px;border-radius:20px;font-weight:600;font-size:11px}
+.action-btns{display:flex;gap:6px;flex-wrap:wrap}
+.action-btn{padding:3px 10px;border-radius:6px;border:none;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.ab-clear{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.ab-clear:hover{background:rgba(34,197,94,.25)}
+.ab-escalate{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.ab-escalate:hover{background:rgba(239,68,68,.25)}
+.ab-done{background:var(--bg3);color:var(--muted);border:1px solid var(--border);cursor:default}
+.notes-field{margin-top:16px}
+.banner-enhanced{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:var(--yellow);padding:10px 14px;border-radius:8px;font-size:12px;font-weight:600;margin-bottom:16px;display:none}
+
+/* SOURCE OF FUNDS */
+.radio-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.radio-card{background:var(--bg3);border:2px solid var(--border);border-radius:8px;padding:12px 14px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500}
+.radio-card:hover{border-color:var(--accent2)}
+.radio-card.selected{border-color:var(--accent2);background:rgba(8,145,178,.1)}
+.radio-card input{display:none}
+.red-flag{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red);padding:8px 12px;border-radius:8px;font-size:12px;margin-top:8px;display:none}
+.red-flag.show{display:block}
+.conditional-fields{display:none;animation:fadeSlide .3s ease}
+.conditional-fields.show{display:block}
+
+/* RISK CARDS */
+.risk-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.risk-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px}
+.risk-card-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.risk-select{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;font-family:inherit;width:100%;outline:none;cursor:pointer}
+.risk-select:focus{border-color:var(--accent2)}
+.risk-value-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:600;margin-top:8px}
+.rv-low{background:rgba(34,197,94,.15);color:var(--green)}
+.rv-medium{background:rgba(245,158,11,.15);color:var(--yellow)}
+.rv-high{background:rgba(239,68,68,.15);color:var(--red)}
+
+/* GAUGE */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;margin:20px 0}
+.gauge-svg{overflow:visible}
+.gauge-score{font-size:36px;font-weight:800;fill:var(--text)}
+.gauge-label{font-size:12px;fill:var(--muted)}
+.decision-badge{text-align:center;padding:12px 24px;border-radius:10px;font-size:15px;font-weight:700;margin-bottom:16px}
+.db-standard{background:rgba(34,197,94,.15);color:var(--green);border:2px solid rgba(34,197,94,.3)}
+.db-enhanced{background:rgba(245,158,11,.15);color:var(--yellow);border:2px solid rgba(245,158,11,.3)}
+.db-edd{background:rgba(239,68,68,.15);color:var(--red);border:2px solid rgba(239,68,68,.3)}
+.db-decline{background:rgba(239,68,68,.25);color:var(--red);border:2px solid var(--red)}
+
+/* STEP 6 */
+.rating-reveal{text-align:center;padding:32px;background:var(--bg3);border-radius:12px;margin-bottom:20px;animation:scaleIn .4s ease}
+@keyframes scaleIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.rating-icon{font-size:48px;margin-bottom:12px}
+.rating-label{font-size:24px;font-weight:800;margin-bottom:4px}
+.rating-desc{color:var(--muted);font-size:13px}
+.summary-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px}
+.summary-table tr{border-bottom:1px solid var(--bg3)}
+.summary-table tr:last-child{border-bottom:none}
+.summary-table td{padding:8px 12px}
+.summary-table td:first-child{color:var(--muted);width:40%;font-weight:600}
+.summary-table td:last-child{color:var(--text)}
+.action-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+
+/* AUDIT */
+.audit-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:12px 0;border-top:1px solid var(--border);font-weight:600;font-size:13px;color:var(--muted)}
+.audit-toggle:hover{color:var(--text)}
+.audit-body{display:none;padding-top:12px}
+.audit-body.open{display:block}
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:2px;background:var(--border)}
+.tl-item{position:relative;margin-bottom:16px}
+.tl-dot{width:12px;height:12px;border-radius:50%;background:var(--accent2);position:absolute;left:-17px;top:2px;border:2px solid var(--bg2)}
+.tl-time{font-size:10px;color:var(--muted);margin-bottom:2px}
+.tl-text{font-size:12px;color:var(--text)}
+
+/* SIDEBAR */
+.sidebar-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;position:sticky;top:calc(var(--nav-h) + 20px)}
+.sidebar-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.sidebar-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+.risk-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--bg3)}
+.risk-row:last-of-type{border-bottom:none}
+.risk-name{font-size:11px;color:var(--muted);font-weight:600}
+.risk-pill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}
+.rp-na{background:var(--bg3);color:var(--muted)}
+.rp-low{background:rgba(34,197,94,.15);color:var(--green)}
+.rp-medium{background:rgba(245,158,11,.15);color:var(--yellow)}
+.rp-high{background:rgba(239,68,68,.15);color:var(--red)}
+.score-bar-wrap{margin:16px 0}
+.score-bar-label{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}
+.score-bar-track{background:var(--bg3);border-radius:4px;height:8px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:4px;transition:width .5s ease,background .5s ease;width:0%}
+.sidebar-decision{text-align:center;padding:10px;border-radius:8px;font-size:12px;font-weight:700;margin-top:12px}
+.sd-pending{background:var(--bg3);color:var(--muted)}
+
+/* TOAST */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--accent);color:#fff;padding:14px 24px;border-radius:10px;font-weight:600;font-size:14px;z-index:999;transition:transform .4s ease;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* DECLINE FORM */
+.decline-form{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:16px;margin-top:16px;display:none}
+.decline-form.show{display:block;animation:fadeSlide .3s ease}
+
+/* INFO BOX */
+.info-box{background:rgba(8,145,178,.1);border:1px solid rgba(8,145,178,.2);color:var(--accent2);padding:10px 14px;border-radius:8px;font-size:12px;margin-top:12px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .page{flex-direction:column}
+  .sidebar-col{width:100%}
+  .form-row{grid-template-columns:1fr}
+  .radio-grid{grid-template-columns:1fr}
+  .risk-cards{grid-template-columns:1fr}
+  .upload-grid{grid-template-columns:1fr}
+  .steps-row{gap:4px}
+  .step-label{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="../../index.html">← Everything</a>
+  <span class="sep">/</span>
+  <span class="title">KYC Onboarding Flow</span>
+  <span class="spacer"></span>
+  <span class="badge">FinCrime</span>
+</nav>
+
+<div class="page" id="page">
+
+  <!-- WIZARD COLUMN -->
+  <div class="wizard-col">
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+      <div class="steps-row" id="stepsRow">
+        <div class="step-track" id="stepTrack"></div>
+        <div class="step-item active" data-step="1"><div class="step-circle">1</div><span class="step-label">Personal</span></div>
+        <div class="step-item" data-step="2"><div class="step-circle">2</div><span class="step-label">Documents</span></div>
+        <div class="step-item" data-step="3"><div class="step-circle">3</div><span class="step-label">Screening</span></div>
+        <div class="step-item" data-step="4"><div class="step-circle">4</div><span class="step-label">Funds</span></div>
+        <div class="step-item" data-step="5"><div class="step-circle">5</div><span class="step-label">Risk</span></div>
+        <div class="step-item" data-step="6"><div class="step-circle">6</div><span class="step-label">Decision</span></div>
+      </div>
+    </div>
+
+    <!-- STEP 1: PERSONAL DETAILS -->
+    <div class="step-panel active" id="step1">
+      <div class="card">
+        <div class="card-title">🪪 Personal Details</div>
+        <div class="card-sub">Provide basic identity information for KYC verification</div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Full Name <span style="color:var(--red)">*</span></label>
+            <input type="text" id="fullName" placeholder="As per government ID" autocomplete="off">
+            <span class="err-msg" id="fullNameErr"></span>
+          </div>
+          <div class="field">
+            <label>Date of Birth <span style="color:var(--red)">*</span></label>
+            <input type="date" id="dob">
+            <span class="err-msg" id="dobErr"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Nationality <span style="color:var(--red)">*</span></label>
+            <div style="display:flex;align-items:center;gap:8px">
+              <select id="nationality" style="flex:1">
+                <option value="">Select Country</option>
+                <option value="India">India</option>
+                <option value="Afghanistan">Afghanistan</option>
+                <option value="Australia">Australia</option>
+                <option value="Bangladesh">Bangladesh</option>
+                <option value="Brazil">Brazil</option>
+                <option value="Cambodia">Cambodia</option>
+                <option value="Canada">Canada</option>
+                <option value="China">China</option>
+                <option value="Egypt">Egypt</option>
+                <option value="France">France</option>
+                <option value="Germany">Germany</option>
+                <option value="Haiti">Haiti</option>
+                <option value="Indonesia">Indonesia</option>
+                <option value="Iran">Iran</option>
+                <option value="Japan">Japan</option>
+                <option value="Kenya">Kenya</option>
+                <option value="Myanmar">Myanmar</option>
+                <option value="Nigeria">Nigeria</option>
+                <option value="North Korea">North Korea</option>
+                <option value="Pakistan">Pakistan</option>
+                <option value="Philippines">Philippines</option>
+                <option value="Russia">Russia</option>
+                <option value="Saudi Arabia">Saudi Arabia</option>
+                <option value="Singapore">Singapore</option>
+                <option value="South Africa">South Africa</option>
+                <option value="Sri Lanka">Sri Lanka</option>
+                <option value="Syria">Syria</option>
+                <option value="Turkey">Turkey</option>
+                <option value="UAE">UAE</option>
+                <option value="UK">UK</option>
+                <option value="USA">USA</option>
+                <option value="Yemen">Yemen</option>
+                <option value="Other">Other</option>
+              </select>
+              <span id="countryBadge"></span>
+            </div>
+            <span class="err-msg" id="nationalityErr"></span>
+          </div>
+          <div class="field">
+            <label>ID Type <span style="color:var(--red)">*</span></label>
+            <select id="idType">
+              <option value="">Select ID Type</option>
+              <option value="aadhaar">Aadhaar Card</option>
+              <option value="pan">PAN Card</option>
+              <option value="passport">Passport</option>
+              <option value="driving">Driving License</option>
+            </select>
+            <span class="err-msg" id="idTypeErr"></span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>ID Number <span style="color:var(--red)">*</span></label>
+            <input type="text" id="idNumber" placeholder="Enter ID number" autocomplete="off">
+            <span class="hint" id="idHint">Select an ID type first</span>
+            <span class="err-msg" id="idNumberErr"></span>
+          </div>
+          <div class="field" style="grid-column:1"><!-- placeholder --></div>
+        </div>
+
+        <div class="form-row full">
+          <div class="field">
+            <label>Residential Address <span style="color:var(--red)">*</span></label>
+            <textarea id="address" placeholder="Full residential address including pin/zip code" rows="3"></textarea>
+            <span class="err-msg" id="addressErr"></span>
+          </div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-primary" onclick="proceedStep1()">Proceed to Documents →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: DOCUMENT VERIFICATION -->
+    <div class="step-panel" id="step2">
+      <div class="card">
+        <div class="card-title">📄 Document Verification</div>
+        <div class="card-sub">Upload identity and address proof documents</div>
+
+        <div class="banner-enhanced" id="enhancedBanner">
+          ⚠️ Enhanced Verification Required — High-risk jurisdiction detected. Additional documents may be requested.
+        </div>
+
+        <div class="upload-grid">
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Identity Document</div>
+            <div class="upload-zone" id="upzone1" onclick="simulateUpload(1)">
+              <div class="upload-icon">🪪</div>
+              <div class="upload-title">Click to Upload</div>
+              <div class="upload-sub">Aadhaar / PAN / Passport / License</div>
+              <div class="upload-status" id="upstatus1"></div>
+              <div class="prog-bar-wrap" id="upbar1"><div class="prog-bar-fill" id="upfill1"></div></div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Address Proof</div>
+            <div class="upload-zone" id="upzone2" onclick="simulateUpload(2)">
+              <div class="upload-icon">🏠</div>
+              <div class="upload-title">Click to Upload</div>
+              <div class="upload-sub">Utility bill / Bank statement</div>
+              <div class="upload-status" id="upstatus2"></div>
+              <div class="prog-bar-wrap" id="upbar2"><div class="prog-bar-fill" id="upfill2"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="verifyDocBtn" onclick="verifyDocuments()">🔍 Verify Documents</button>
+        <span class="err-msg" id="docErr" style="margin-left:12px"></span>
+
+        <div style="height:16px"></div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-primary" id="step2Next" onclick="proceedStep2()" disabled>Continue to Screening →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: PEP & SANCTIONS SCREENING -->
+    <div class="step-panel" id="step3">
+      <div class="card">
+        <div class="card-title">🔍 PEP & Sanctions Screening</div>
+        <div class="card-sub">Screen customer against global watchlists and PEP databases</div>
+
+        <button class="btn btn-primary" id="screenBtn" onclick="runScreening()">▶ Run Screening</button>
+
+        <div class="screening-loader" id="screenLoader">
+          <div class="spin"></div>
+          <span>Querying watchlists — OFAC SDN, EU Consolidated, UN Sanctions, PEP Global...</span>
+        </div>
+
+        <div id="screenResults" style="display:none">
+          <table class="results-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>List</th>
+                <th>Match %</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="screenTbody"></tbody>
+          </table>
+
+          <div class="notes-field" id="notesWrap" style="display:none">
+            <div class="field">
+              <label>Analyst Notes <span style="color:var(--red)">*</span> (required when match found)</label>
+              <textarea id="screenNotes" placeholder="Document your review and justification for clearing or escalating the match..." rows="3"></textarea>
+              <span class="err-msg" id="notesErr"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-primary" id="step3Next" onclick="proceedStep3()" disabled>Continue to Source of Funds →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: SOURCE OF FUNDS -->
+    <div class="step-panel" id="step4">
+      <div class="card">
+        <div class="card-title">💰 Source of Funds</div>
+        <div class="card-sub">Understand the origin of the customer's wealth and funds</div>
+
+        <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Primary Source of Funds</div>
+        <div class="radio-grid">
+          <label class="radio-card" id="rc_employment">
+            <input type="radio" name="sof" value="employment" onchange="selectSOF('employment')">
+            <span>💼 Employment Income</span>
+          </label>
+          <label class="radio-card" id="rc_business">
+            <input type="radio" name="sof" value="business" onchange="selectSOF('business')">
+            <span>🏢 Business Income</span>
+          </label>
+          <label class="radio-card" id="rc_investment">
+            <input type="radio" name="sof" value="investment" onchange="selectSOF('investment')">
+            <span>📈 Investment Returns</span>
+          </label>
+          <label class="radio-card" id="rc_inheritance">
+            <input type="radio" name="sof" value="inheritance" onchange="selectSOF('inheritance')">
+            <span>🏛️ Inheritance</span>
+          </label>
+          <label class="radio-card" id="rc_gift">
+            <input type="radio" name="sof" value="gift" onchange="selectSOF('gift')">
+            <span>🎁 Gift</span>
+          </label>
+          <label class="radio-card" id="rc_other">
+            <input type="radio" name="sof" value="other" onchange="selectSOF('other')">
+            <span>📋 Other</span>
+          </label>
+        </div>
+        <span class="err-msg" id="sofErr"></span>
+
+        <!-- Conditional fields -->
+        <div class="conditional-fields" id="cf_employment">
+          <div class="form-row">
+            <div class="field">
+              <label>Employer Name</label>
+              <input type="text" id="employerName" placeholder="Company / Organisation name">
+            </div>
+            <div class="field">
+              <label>Annual Income Range</label>
+              <select id="incomeRange">
+                <option value="">Select range</option>
+                <option value="low">Below ₹5L</option>
+                <option value="low">₹5L – ₹15L</option>
+                <option value="medium">₹15L – ₹50L</option>
+                <option value="high">₹50L – ₹2Cr</option>
+                <option value="high">Above ₹2Cr</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="conditional-fields" id="cf_business">
+          <div class="form-row">
+            <div class="field">
+              <label>Business Name</label>
+              <input type="text" id="businessName" placeholder="Registered business name">
+            </div>
+            <div class="field">
+              <label>Industry Sector</label>
+              <select id="bizSector" onchange="checkBizRedFlag()">
+                <option value="">Select sector</option>
+                <option value="tech">Technology</option>
+                <option value="manufacturing">Manufacturing</option>
+                <option value="retail">Retail</option>
+                <option value="finance">Financial Services</option>
+                <option value="real_estate">Real Estate</option>
+                <option value="crypto">Cryptocurrency</option>
+                <option value="cash_intensive">Cash-Intensive Business</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="red-flag" id="rf_biz">🚩 Red Flag: High-risk sector identified. Enhanced documentation required for cash-intensive businesses and cryptocurrency activities.</div>
+        </div>
+
+        <div class="conditional-fields" id="cf_investment">
+          <div class="form-row">
+            <div class="field">
+              <label>Investment Type</label>
+              <select id="investType">
+                <option value="">Select type</option>
+                <option value="stocks">Stocks / Equities</option>
+                <option value="bonds">Bonds / Fixed Income</option>
+                <option value="mutual_funds">Mutual Funds</option>
+                <option value="real_estate">Real Estate</option>
+                <option value="crypto">Cryptocurrency</option>
+                <option value="derivatives">Derivatives / Options</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Approximate Portfolio Value</label>
+              <select id="portfolioValue">
+                <option value="">Select range</option>
+                <option value="low">Below ₹25L</option>
+                <option value="medium">₹25L – ₹1Cr</option>
+                <option value="high">₹1Cr – ₹10Cr</option>
+                <option value="high">Above ₹10Cr</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="conditional-fields" id="cf_inheritance">
+          <div class="form-row">
+            <div class="field">
+              <label>Deceased's Name</label>
+              <input type="text" id="deceasedName" placeholder="Name of the deceased">
+            </div>
+            <div class="field">
+              <label>Relationship</label>
+              <select id="inheritRelation">
+                <option value="">Select</option>
+                <option>Parent</option>
+                <option>Grandparent</option>
+                <option>Spouse</option>
+                <option>Sibling</option>
+                <option>Other Relative</option>
+              </select>
+            </div>
+          </div>
+          <div class="red-flag show" id="rf_inheritance">⚠️ Note: Probate documents / succession certificate required for inheritance claims above ₹25 lakhs.</div>
+        </div>
+
+        <div class="conditional-fields" id="cf_gift">
+          <div class="form-row">
+            <div class="field">
+              <label>Donor's Name</label>
+              <input type="text" id="donorName" placeholder="Full name of donor">
+            </div>
+            <div class="field">
+              <label>Relationship to Donor</label>
+              <select id="giftRelation" onchange="checkGiftRedFlag()">
+                <option value="">Select</option>
+                <option value="family">Immediate Family</option>
+                <option value="extended">Extended Family</option>
+                <option value="friend">Friend</option>
+                <option value="business">Business Associate</option>
+                <option value="unknown">Unknown / Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="red-flag" id="rf_gift">🚩 Red Flag: Gift from unknown or unrelated party requires enhanced due diligence and gift deed documentation.</div>
+        </div>
+
+        <div class="conditional-fields" id="cf_other">
+          <div class="form-row full">
+            <div class="field">
+              <label>Please describe the source of funds</label>
+              <textarea id="otherSOF" placeholder="Provide a detailed explanation of the source of funds..." rows="3"></textarea>
+            </div>
+          </div>
+          <div class="red-flag show">⚠️ "Other" source requires additional documentation and senior officer review.</div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="goStep(3)">← Back</button>
+          <button class="btn btn-primary" onclick="proceedStep4()">Continue to Risk Assessment →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: CDD/EDD DECISION -->
+    <div class="step-panel" id="step5">
+      <div class="card">
+        <div class="card-title">⚖️ CDD / EDD Risk Assessment</div>
+        <div class="card-sub">Composite risk scoring across five weighted factors</div>
+
+        <div class="risk-cards" id="riskCards">
+          <div class="risk-card">
+            <div class="risk-card-title">🌍 Country Risk (25%)</div>
+            <div id="countryRiskDisplay" class="risk-value-badge rv-low" style="display:inline-flex">—</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Auto-detected from Step 1</div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-card-title">🔍 PEP / Sanctions Status (30%)</div>
+            <div id="pepRiskDisplay" class="risk-value-badge rv-low" style="display:inline-flex">—</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Auto-detected from Step 3</div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-card-title">💰 Source of Funds Risk (20%)</div>
+            <div id="sofRiskDisplay" class="risk-value-badge rv-low" style="display:inline-flex">—</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Auto-detected from Step 4</div>
+          </div>
+          <div class="risk-card">
+            <div class="risk-card-title">📊 Transaction Pattern (15%)</div>
+            <select class="risk-select" id="txRisk" onchange="updateRiskScore()">
+              <option value="low">Low — Regular small transactions</option>
+              <option value="medium">Medium — Occasional large transfers</option>
+              <option value="high">High — Frequent large / unusual patterns</option>
+            </select>
+          </div>
+          <div class="risk-card" style="grid-column:1/-1">
+            <div class="risk-card-title">🏦 Product / Service Risk (10%)</div>
+            <select class="risk-select" id="productRisk" onchange="updateRiskScore()">
+              <option value="low">Standard — Regular savings / current account</option>
+              <option value="medium">Premium — Private banking / wealth management</option>
+              <option value="medium">Cross-border — International transfers</option>
+              <option value="high">High-Value — Large loans / investment products</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" width="220" height="130" viewBox="0 0 220 130">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#22c55e"/>
+                <stop offset="40%" style="stop-color:#f59e0b"/>
+                <stop offset="70%" style="stop-color:#ef4444"/>
+                <stop offset="100%" style="stop-color:#7f1d1d"/>
+              </linearGradient>
+            </defs>
+            <!-- Track -->
+            <path d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="#21262d" stroke-width="16" stroke-linecap="round"/>
+            <!-- Fill -->
+            <path id="gaugeArc" d="M 20 110 A 90 90 0 0 1 200 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="16" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="283"/>
+            <!-- Needle -->
+            <line id="gaugeNeedle" x1="110" y1="110" x2="110" y2="30" stroke="var(--text)" stroke-width="2" stroke-linecap="round" transform="rotate(-90, 110, 110)"/>
+            <circle cx="110" cy="110" r="6" fill="var(--text)"/>
+            <!-- Labels -->
+            <text x="16" y="128" fill="#22c55e" font-size="9" font-family="monospace">0</text>
+            <text x="96" y="22" fill="#f59e0b" font-size="9" font-family="monospace" text-anchor="middle">50</text>
+            <text x="202" y="128" fill="#ef4444" font-size="9" font-family="monospace" text-anchor="end">100</text>
+            <!-- Score text -->
+            <text class="gauge-score" id="gaugeScoreText" x="110" y="100" text-anchor="middle" font-family="monospace">0</text>
+            <text class="gauge-label" x="110" y="116" text-anchor="middle">Risk Score</text>
+          </svg>
+        </div>
+
+        <div class="decision-badge db-standard" id="cddDecision">⏳ Calculating...</div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="goStep(4)">← Back</button>
+          <button class="btn btn-primary" onclick="proceedStep5()">Continue to Decision →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 6: RISK RATING & APPROVAL -->
+    <div class="step-panel" id="step6">
+      <div class="card">
+        <div class="card-title">✅ Risk Rating & Approval</div>
+        <div class="card-sub">Final compliance decision for customer onboarding</div>
+
+        <div class="rating-reveal" id="ratingReveal">
+          <div class="rating-icon" id="ratingIcon">⏳</div>
+          <div class="rating-label" id="ratingLabel">Calculating...</div>
+          <div class="rating-desc" id="ratingDesc"></div>
+        </div>
+
+        <div class="card" style="background:var(--bg3);padding:16px">
+          <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Application Summary</div>
+          <table class="summary-table" id="summaryTable">
+            <tr><td>Customer Name</td><td id="s_name">—</td></tr>
+            <tr><td>Date of Birth</td><td id="s_dob">—</td></tr>
+            <tr><td>Nationality</td><td id="s_nat">—</td></tr>
+            <tr><td>ID Type / Number</td><td id="s_id">—</td></tr>
+            <tr><td>Country Risk</td><td id="s_country_risk">—</td></tr>
+            <tr><td>PEP / Sanctions</td><td id="s_pep">—</td></tr>
+            <tr><td>Source of Funds</td><td id="s_sof">—</td></tr>
+            <tr><td>Composite Risk Score</td><td id="s_score">—</td></tr>
+            <tr><td>CDD Decision</td><td id="s_decision">—</td></tr>
+            <tr><td>Application Date</td><td id="s_date">—</td></tr>
+          </table>
+        </div>
+
+        <div class="action-row" id="actionRow">
+          <button class="btn btn-primary" id="approveBtn" onclick="approveApplication()">✅ Approve &amp; Create Account</button>
+          <button class="btn btn-danger" id="declineBtn" onclick="showDeclineForm()">✕ Decline Application</button>
+        </div>
+
+        <div class="decline-form" id="declineFormWrap">
+          <div class="field" style="margin-bottom:12px">
+            <label>Decline Reason</label>
+            <select id="declineReason">
+              <option value="">Select reason</option>
+              <option>High-risk jurisdiction</option>
+              <option>PEP / Sanctions match</option>
+              <option>Unable to verify identity</option>
+              <option>Source of funds unclear</option>
+              <option>Suspicious activity indicators</option>
+              <option>Senior officer decision</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:12px">
+            <label>Analyst Notes</label>
+            <textarea placeholder="Provide detailed justification for decline decision..." rows="3" id="declineNotes"></textarea>
+          </div>
+          <button class="btn btn-danger" onclick="confirmDecline()">Confirm Decline</button>
+        </div>
+
+        <div>
+          <div class="audit-toggle" onclick="toggleAudit()">
+            <span>📋 Audit Trail</span>
+            <span id="auditArrow">▼</span>
+          </div>
+          <div class="audit-body" id="auditBody">
+            <div class="timeline" id="auditTimeline"></div>
+          </div>
+        </div>
+
+        <div class="nav-btns">
+          <button class="btn btn-secondary" onclick="goStep(5)">← Back</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /wizard-col -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar-col">
+    <div class="sidebar-card">
+      <div class="sidebar-title">📊 Customer Risk Profile</div>
+      <div class="sidebar-sub">Live — updates as you progress</div>
+
+      <div class="risk-row">
+        <span class="risk-name">🌍 Country Risk</span>
+        <span class="risk-pill rp-na" id="sb_country">N/A</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">🔍 PEP / Sanctions</span>
+        <span class="risk-pill rp-na" id="sb_pep">N/A</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">💰 Source of Funds</span>
+        <span class="risk-pill rp-na" id="sb_sof">N/A</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">📊 Transaction Pattern</span>
+        <span class="risk-pill rp-na" id="sb_tx">N/A</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">🏦 Product / Service</span>
+        <span class="risk-pill rp-na" id="sb_product">N/A</span>
+      </div>
+
+      <div class="score-bar-wrap">
+        <div class="score-bar-label">
+          <span style="color:var(--muted);font-size:11px">Risk Score</span>
+          <span style="font-weight:700;font-size:13px" id="sb_score">0</span>
+        </div>
+        <div class="score-bar-track">
+          <div class="score-bar-fill" id="sb_scoreBar" style="background:var(--green)"></div>
+        </div>
+      </div>
+
+      <div class="sidebar-decision sd-pending" id="sb_decision">⏳ In Progress</div>
+
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bg3)">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600">CURRENT STEP</div>
+        <div style="font-size:12px;color:var(--text)" id="sb_step">Step 1 — Personal Details</div>
+      </div>
+
+      <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--bg3)">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600">CUSTOMER</div>
+        <div style="font-size:12px;color:var(--text)" id="sb_name">—</div>
+        <div style="font-size:11px;color:var(--muted)" id="sb_nat">—</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+const COUNTRY_RISK = {
+  'India':'low','USA':'low','UK':'low','Germany':'low','Japan':'low',
+  'Singapore':'low','Australia':'low','Canada':'low','France':'low',
+  'UAE':'medium','Saudi Arabia':'medium','Nigeria':'high',
+  'China':'medium','Russia':'high','Pakistan':'high',
+  'Bangladesh':'medium','Sri Lanka':'medium','Kenya':'medium',
+  'Turkey':'medium','Philippines':'medium','Indonesia':'low',
+  'Brazil':'low','South Africa':'medium','Egypt':'medium',
+  'Myanmar':'high','Cambodia':'high','Haiti':'high',
+  'Yemen':'high','Syria':'high','Iran':'high','North Korea':'high','Other':'medium'
+};
+const RISK_WEIGHTS = { country:0.25, pep:0.30, source:0.20, tx:0.15, product:0.10 };
+
+const ID_FORMATS = {
+  aadhaar: { pattern:/^\d{4}\s?\d{4}\s?\d{4}$/, hint:'12-digit number (e.g. 1234 5678 9012)' },
+  pan:     { pattern:/^[A-Z]{5}[0-9]{4}[A-Z]$/, hint:'10-char alphanumeric (e.g. ABCDE1234F)' },
+  passport:{ pattern:/^[A-Z][1-9][0-9]{7}$/, hint:'8-char (letter + 7 digits, e.g. A1234567)' },
+  driving: { pattern:/^[A-Z]{2}\d{2}\s?\d{4}\s?\d{7}$/, hint:'State code + numbers (e.g. DL0120110012345)' }
+};
+
+const SOF_RISK = {
+  employment:'low', business:'medium', investment:'medium',
+  inheritance:'high', gift:'high', other:'high'
+};
+
+// State
+let state = {
+  currentStep: 1,
+  fullName: '', dob: '', nationality: '', idType: '', idNumber: '', address: '',
+  countryRisk: 'low', pepRisk: 'low', sofRisk: 'low',
+  txRisk: 'low', productRisk: 'low',
+  sof: '',
+  screeningDone: false, pepMatchFound: false, pepEscalated: false,
+  docsVerified: false,
+  riskScore: 0,
+  auditLog: [],
+  upDone: [false, false],
+  upVerified: [false, false],
+  rowActions: {},
+  hasHighMatch: false
+};
+
+// ===== UTILS =====
+function riskVal(r) { return r==='low'?0 : r==='medium'?0.5 : 1.0; }
+function showErr(id, msg) { const e=document.getElementById(id); if(e){e.textContent=msg;} }
+function clearErr(id) { const e=document.getElementById(id); if(e){e.textContent='';} }
+function markErr(id) { const e=document.getElementById(id); if(e){e.classList.add('err');e.classList.remove('ok');} }
+function markOk(id) { const e=document.getElementById(id); if(e){e.classList.add('ok');e.classList.remove('err');} }
+function markNeutral(id) { const e=document.getElementById(id); if(e){e.classList.remove('err','ok');} }
+
+function showToast(msg, dur=4000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), dur);
+}
+
+function addAudit(text) {
+  const now = new Date();
+  const time = now.toLocaleTimeString('en-IN',{hour12:true,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  state.auditLog.push({ time, text });
+  renderAudit();
+}
+
+function renderAudit() {
+  const tl = document.getElementById('auditTimeline');
+  if (!tl) return;
+  tl.innerHTML = state.auditLog.slice().reverse().map(e=>`
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-time">${e.time}</div>
+      <div class="tl-text">${e.text}</div>
+    </div>
+  `).join('');
+}
+
+function toggleAudit() {
+  const b = document.getElementById('auditBody');
+  const a = document.getElementById('auditArrow');
+  b.classList.toggle('open');
+  a.textContent = b.classList.contains('open') ? '▲' : '▼';
+}
+
+// ===== STEP NAVIGATION =====
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  state.currentStep = n;
+
+  document.querySelectorAll('.step-item').forEach(item=>{
+    const s = parseInt(item.dataset.step);
+    item.classList.remove('active','done');
+    if (s < n) item.classList.add('done');
+    else if (s === n) item.classList.add('active');
+  });
+
+  // Update track
+  const totalSteps = 6;
+  const pct = (n-1) / (totalSteps-1) * 100;
+  const track = document.getElementById('stepTrack');
+  if (track) {
+    const row = document.getElementById('stepsRow');
+    track.style.width = pct + '%';
+  }
+
+  updateSidebar();
+  updateStepDone(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateStepDone(n) {
+  const labels = ['','Personal Details','Document Verification','PEP & Sanctions','Source of Funds','Risk Assessment','Risk Rating'];
+  document.getElementById('sb_step').textContent = 'Step '+n+' — '+labels[n];
+}
+
+// ===== SIDEBAR =====
+function updateSidebar() {
+  setPill('sb_country', state.countryRisk);
+  setPill('sb_pep', state.pepRisk);
+  setPill('sb_sof', state.sofRisk);
+  setPill('sb_tx', state.txRisk);
+  setPill('sb_product', state.productRisk);
+
+  const score = calcScore();
+  state.riskScore = score;
+  document.getElementById('sb_score').textContent = Math.round(score);
+
+  const bar = document.getElementById('sb_scoreBar');
+  bar.style.width = Math.min(score, 100) + '%';
+  bar.style.background = score < 40 ? 'var(--green)' : score < 70 ? 'var(--yellow)' : 'var(--red)';
+
+  const dec = document.getElementById('sb_decision');
+  dec.className = 'sidebar-decision';
+  if (score < 40) {
+    dec.textContent = '✓ Standard CDD'; dec.style.background='rgba(34,197,94,.15)';dec.style.color='var(--green)';
+  } else if (score < 70) {
+    dec.textContent = '⚡ Enhanced CDD'; dec.style.background='rgba(245,158,11,.15)';dec.style.color='var(--yellow)';
+  } else if (score < 85) {
+    dec.textContent = '🔴 EDD + Senior Approval'; dec.style.background='rgba(239,68,68,.15)';dec.style.color='var(--red)';
+  } else {
+    dec.textContent = '⛔ High Risk / Consider Decline'; dec.style.background='rgba(239,68,68,.25)';dec.style.color='var(--red)';
+  }
+
+  if (state.currentStep < 5) {
+    dec.textContent = '⏳ In Progress'; dec.style.background='var(--bg3)';dec.style.color='var(--muted)';
+  }
+
+  if (state.fullName) document.getElementById('sb_name').textContent = state.fullName;
+  if (state.nationality) document.getElementById('sb_nat').textContent = state.nationality + ' · ' + (state.countryRisk||'').toUpperCase();
+}
+
+function setPill(id, risk) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'risk-pill';
+  if (!risk || risk==='na') { el.classList.add('rp-na'); el.textContent='N/A'; return; }
+  const map = {low:'rp-low',medium:'rp-medium',high:'rp-high'};
+  el.classList.add(map[risk]||'rp-na');
+  el.textContent = risk.charAt(0).toUpperCase()+risk.slice(1);
+}
+
+// ===== SCORE CALC =====
+function calcScore() {
+  const c = riskVal(state.countryRisk);
+  const p = riskVal(state.pepRisk);
+  const s = riskVal(state.sofRisk);
+  const t = riskVal(state.txRisk);
+  const pr = riskVal(state.productRisk);
+  return (c*0.25 + p*0.30 + s*0.20 + t*0.15 + pr*0.10) * 100;
+}
+
+// ===== STEP 1 =====
+document.getElementById('nationality').addEventListener('change', function() {
+  const val = this.value;
+  state.nationality = val;
+  const risk = COUNTRY_RISK[val] || 'medium';
+  state.countryRisk = risk;
+  const badge = document.getElementById('countryBadge');
+  if (val) {
+    const cls = {'low':'cb-low','medium':'cb-medium','high':'cb-high'}[risk];
+    badge.className = 'country-badge '+cls;
+    badge.textContent = risk.toUpperCase()+' RISK';
+  } else { badge.className=''; badge.textContent=''; }
+  updateSidebar();
+});
+
+document.getElementById('idType').addEventListener('change', function() {
+  state.idType = this.value;
+  const hint = document.getElementById('idHint');
+  if (this.value && ID_FORMATS[this.value]) {
+    hint.textContent = 'Format: ' + ID_FORMATS[this.value].hint;
+  } else {
+    hint.textContent = 'Select an ID type first';
+  }
+  document.getElementById('idNumber').value = '';
+  markNeutral('idNumber');
+});
+
+document.getElementById('idNumber').addEventListener('input', function() {
+  if (!state.idType) return;
+  const fmt = ID_FORMATS[state.idType];
+  if (!fmt) return;
+  if (fmt.pattern.test(this.value.toUpperCase())) {
+    markOk('idNumber'); clearErr('idNumberErr');
+  } else {
+    markErr('idNumber');
+  }
+});
+
+document.getElementById('fullName').addEventListener('input', function() {
+  state.fullName = this.value.trim();
+  document.getElementById('sb_name').textContent = state.fullName || '—';
+});
+
+function proceedStep1() {
+  let ok = true;
+  const name = document.getElementById('fullName').value.trim();
+  const dob  = document.getElementById('dob').value;
+  const nat  = document.getElementById('nationality').value;
+  const idt  = document.getElementById('idType').value;
+  const idn  = document.getElementById('idNumber').value.trim();
+  const addr = document.getElementById('address').value.trim();
+
+  if (!name) { showErr('fullNameErr','Full name is required'); markErr('fullName'); ok=false; }
+  else { clearErr('fullNameErr'); markOk('fullName'); }
+
+  if (!dob) { showErr('dobErr','Date of birth is required'); markErr('dob'); ok=false; }
+  else {
+    const age = (new Date() - new Date(dob)) / (365.25*24*3600*1000);
+    if (age < 18) { showErr('dobErr','Customer must be at least 18 years old'); markErr('dob'); ok=false; }
+    else { clearErr('dobErr'); markOk('dob'); }
+  }
+
+  if (!nat) { showErr('nationalityErr','Please select nationality'); markErr('nationality'); ok=false; }
+  else { clearErr('nationalityErr'); markOk('nationality'); }
+
+  if (!idt) { showErr('idTypeErr','Please select ID type'); markErr('idType'); ok=false; }
+  else { clearErr('idTypeErr'); markOk('idType'); }
+
+  if (!idn) { showErr('idNumberErr','ID number is required'); markErr('idNumber'); ok=false; }
+  else if (idt && ID_FORMATS[idt] && !ID_FORMATS[idt].pattern.test(idn.toUpperCase())) {
+    showErr('idNumberErr','Invalid format: ' + ID_FORMATS[idt].hint); markErr('idNumber'); ok=false;
+  } else { clearErr('idNumberErr'); markOk('idNumber'); }
+
+  if (!addr) { showErr('addressErr','Residential address is required'); markErr('address'); ok=false; }
+  else { clearErr('addressErr'); markOk('address'); }
+
+  if (!ok) return;
+
+  state.fullName = name; state.dob = dob; state.nationality = nat;
+  state.idType = idt; state.idNumber = idn; state.address = addr;
+  state.countryRisk = COUNTRY_RISK[nat] || 'medium';
+
+  addAudit('Personal details submitted — ' + name + ' (' + nat + ')');
+  goStep(2);
+
+  // Set enhanced banner for step 2
+  const enhanced = state.countryRisk === 'high';
+  document.getElementById('enhancedBanner').style.display = enhanced ? 'block' : 'none';
+}
+
+// ===== STEP 2 =====
+let upProgress = [0, 0];
+
+function simulateUpload(n) {
+  if (state.upDone[n-1]) return;
+  const bar = document.getElementById('upbar'+n);
+  const fill = document.getElementById('upfill'+n);
+  const status = document.getElementById('upstatus'+n);
+  const zone = document.getElementById('upzone'+n);
+
+  bar.style.display = 'block';
+  fill.style.width = '0%';
+  status.textContent = '';
+
+  let w = 0;
+  const iv = setInterval(()=>{
+    w += 2 + Math.random()*4;
+    fill.style.width = Math.min(w,100)+'%';
+    if (w >= 100) {
+      clearInterval(iv);
+      state.upDone[n-1] = true;
+      status.innerHTML = '<span style="color:var(--muted);font-size:12px">📁 Document ready for verification</span>';
+    }
+  }, 60);
+}
+
+function verifyDocuments() {
+  if (!state.upDone[0] || !state.upDone[1]) {
+    document.getElementById('docErr').textContent = 'Please upload both documents first';
+    return;
+  }
+  document.getElementById('docErr').textContent = '';
+
+  const btn = document.getElementById('verifyDocBtn');
+  btn.disabled = true; btn.textContent = 'Verifying...';
+
+  // Simulate 3-second verification
+  [1,2].forEach(n => {
+    const bar = document.getElementById('upbar'+n);
+    const fill = document.getElementById('upfill'+n);
+    bar.style.display = 'block';
+    fill.style.width = '0%';
+    fill.style.background = 'var(--accent2)';
+    let w=0;
+    const iv = setInterval(()=>{
+      w += 1.2;
+      fill.style.width = Math.min(w,100)+'%';
+      if (w>=100) clearInterval(iv);
+    }, 36);
+  });
+
+  setTimeout(()=>{
+    [1,2].forEach(n => {
+      const zone = document.getElementById('upzone'+n);
+      const status = document.getElementById('upstatus'+n);
+      // High-risk country → manual review for doc 2
+      const isManual = n===2 && state.countryRisk==='high';
+      if (isManual) {
+        zone.className='upload-zone manual';
+        status.innerHTML='<span class="status-amber">⚠ Manual Review Required</span>';
+        state.upVerified[n-1] = 'manual';
+      } else {
+        zone.className='upload-zone verified';
+        status.innerHTML='<span class="status-green">✓ Verified</span>';
+        state.upVerified[n-1] = true;
+      }
+    });
+    btn.disabled=false; btn.textContent='✓ Verification Complete';
+    state.docsVerified = true;
+    document.getElementById('step2Next').disabled = false;
+    addAudit('Documents uploaded and ' + (state.countryRisk==='high'?'flagged for manual review':'verified automatically'));
+  }, 3000);
+}
+
+function proceedStep2() {
+  if (!state.docsVerified) { document.getElementById('docErr').textContent='Please verify documents first'; return; }
+  addAudit('Document verification step completed');
+  goStep(3);
+}
+
+// ===== STEP 3 =====
+function runScreening() {
+  const btn = document.getElementById('screenBtn');
+  const loader = document.getElementById('screenLoader');
+  btn.disabled = true; btn.textContent = 'Running...';
+  loader.style.display = 'flex';
+  document.getElementById('screenResults').style.display = 'none';
+  document.getElementById('step3Next').disabled = true;
+
+  setTimeout(()=>{
+    loader.style.display = 'none';
+    renderScreeningResults();
+    btn.textContent = '✓ Screening Complete';
+  }, 2000);
+}
+
+function renderScreeningResults() {
+  const name = state.fullName || 'John Doe';
+  const firstLetter = name.trim()[0]?.toUpperCase() || 'Z';
+  const hasRedMatch = firstLetter >= 'A' && firstLetter <= 'F';
+  state.hasHighMatch = hasRedMatch;
+
+  const entries = [
+    { name: mutateName(name, 0), list: 'OFAC SDN', match: Math.floor(Math.random()*15)+1, type: 'clear' },
+    { name: mutateName(name, 1), list: 'EU Consolidated', match: Math.floor(Math.random()*15)+1, type: 'clear' },
+    { name: mutateName(name, 2), list: 'UN Sanctions', match: Math.floor(Math.random()*15)+1, type: 'clear' },
+    { name: mutateName(name, 3), list: 'PEP Global', match: Math.floor(Math.random()*20)+45, type: 'possible' },
+  ];
+  if (hasRedMatch) {
+    entries.push({ name: name.split(' ')[0] + ' ' + name.split(' ').slice(1).map(w=>w[0]||'').join(''), list: 'Interpol Notices', match: 73, type: 'match' });
+  } else {
+    entries.push({ name: mutateName(name, 4), list: 'Interpol Notices', match: Math.floor(Math.random()*15)+2, type: 'clear' });
+  }
+
+  state.screenEntries = entries;
+  state.rowActions = {};
+
+  const tbody = document.getElementById('screenTbody');
+  tbody.innerHTML = entries.map((e,i) => {
+    const badgeCls = e.type==='clear'?'badge-clear':e.type==='possible'?'badge-possible':'badge-match';
+    const badgeTxt = e.type==='clear'?'Clear':e.type==='possible'?'Possible Match':'Match Found';
+    const actionHtml = e.type==='clear' ? `<span style="color:var(--muted);font-size:11px">Auto-cleared</span>` :
+      `<div class="action-btns" id="actions_${i}">
+         <button class="action-btn ab-clear" onclick="handleMatch(${i},'clear')">✓ False Positive</button>
+         <button class="action-btn ab-escalate" onclick="handleMatch(${i},'escalate')">↑ Escalate EDD</button>
+       </div>`;
+    return `<tr>
+      <td>${e.name}</td>
+      <td style="color:var(--muted)">${e.list}</td>
+      <td style="font-weight:700;color:${e.type==='clear'?'var(--green)':e.type==='possible'?'var(--yellow)':'var(--red)'}">${e.match}%</td>
+      <td><span class="${badgeCls}">${badgeTxt}</span></td>
+      <td>${actionHtml}</td>
+    </tr>`;
+  }).join('');
+
+  const hasAnyMatch = entries.some(e=>e.type!=='clear');
+  document.getElementById('notesWrap').style.display = hasAnyMatch ? 'block' : 'none';
+
+  document.getElementById('screenResults').style.display = 'block';
+
+  // Check if all non-clear rows have been actioned
+  checkScreeningComplete();
+}
+
+function mutateName(name, idx) {
+  const parts = name.split(' ');
+  const variants = [
+    parts.join(' '),
+    (parts[0]||'') + ' ' + (parts.slice(1).map(w=>w[0]||'').join('.') || 'X') + '.',
+    (parts[0]||'').slice(0,-1) + 'a ' + (parts[1]||'').slice(0,-1) + 'i',
+    (parts[0]||'').toUpperCase(),
+    (parts.reverse().join(' '))
+  ];
+  return variants[idx] || name;
+}
+
+function handleMatch(idx, action) {
+  state.rowActions[idx] = action;
+  const actDiv = document.getElementById('actions_'+idx);
+  if (actDiv) {
+    actDiv.innerHTML = action==='clear'
+      ? '<span class="action-btn ab-done">✓ Cleared as FP</span>'
+      : '<span class="action-btn ab-escalate" style="cursor:default">↑ Escalated to EDD</span>';
+  }
+  if (action==='escalate') {
+    state.pepEscalated = true;
+    state.pepRisk = 'high';
+  }
+  updateSidebar();
+  checkScreeningComplete();
+}
+
+function checkScreeningComplete() {
+  const entries = state.screenEntries || [];
+  const needsAction = entries.filter((_,i)=>entries[i].type!=='clear');
+  const allActioned = needsAction.every((_,i)=>{
+    const globalIdx = entries.findIndex((e,j)=>entries[j].type!=='clear' && !Object.keys(state.rowActions).includes(String(j)));
+    return true;
+  });
+
+  // Check by index
+  const nonClearIdxs = entries.map((e,i)=>e.type!=='clear'?i:-1).filter(i=>i!==-1);
+  const acted = nonClearIdxs.every(i=>state.rowActions[i]!==undefined);
+
+  if (acted) {
+    state.screeningDone = true;
+    document.getElementById('step3Next').disabled = false;
+    if (!state.pepEscalated) state.pepRisk = 'low';
+  }
+}
+
+function proceedStep3() {
+  if (state.hasHighMatch) {
+    const notes = document.getElementById('screenNotes').value.trim();
+    if (!notes) { showErr('notesErr','Analyst notes are required when a match is found'); return; }
+    clearErr('notesErr');
+  }
+  addAudit('PEP/Sanctions screening completed — PEP risk: ' + state.pepRisk);
+  updateSidebar();
+  goStep(4);
+}
+
+// ===== STEP 4 =====
+function selectSOF(type) {
+  state.sof = type;
+  document.querySelectorAll('.radio-card').forEach(c=>c.classList.remove('selected'));
+  const rc = document.getElementById('rc_'+type);
+  if (rc) rc.classList.add('selected');
+
+  document.querySelectorAll('.conditional-fields').forEach(f=>f.classList.remove('show'));
+  const cf = document.getElementById('cf_'+type);
+  if (cf) cf.classList.add('show');
+
+  state.sofRisk = SOF_RISK[type] || 'medium';
+  updateSidebar();
+  clearErr('sofErr');
+}
+
+function checkBizRedFlag() {
+  const sector = document.getElementById('bizSector').value;
+  const rf = document.getElementById('rf_biz');
+  rf.classList.toggle('show', sector==='crypto'||sector==='cash_intensive'||sector==='real_estate');
+  if (sector==='crypto'||sector==='cash_intensive') {
+    state.sofRisk = 'high';
+  } else if (sector==='real_estate'||sector==='finance') {
+    state.sofRisk = 'medium';
+  } else {
+    state.sofRisk = SOF_RISK[state.sof] || 'medium';
+  }
+  updateSidebar();
+}
+
+function checkGiftRedFlag() {
+  const rel = document.getElementById('giftRelation').value;
+  const rf = document.getElementById('rf_gift');
+  rf.classList.toggle('show', rel==='business'||rel==='unknown');
+}
+
+function proceedStep4() {
+  if (!state.sof) { showErr('sofErr','Please select a source of funds'); return; }
+  addAudit('Source of funds declared — ' + state.sof + ' (Risk: ' + state.sofRisk + ')');
+  goStep(5);
+  setTimeout(updateRiskScore, 100);
+}
+
+// ===== STEP 5 =====
+function updateRiskScore() {
+  const txSel = document.getElementById('txRisk');
+  const prSel = document.getElementById('productRisk');
+  if (txSel) state.txRisk = txSel.value;
+  if (prSel) state.productRisk = prSel.value;
+
+  // Update auto-detected displays
+  const crd = document.getElementById('countryRiskDisplay');
+  if (crd) {
+    const cls = {low:'rv-low',medium:'rv-medium',high:'rv-high'}[state.countryRisk]||'rv-low';
+    crd.className='risk-value-badge '+cls;
+    crd.textContent = (state.countryRisk||'low').charAt(0).toUpperCase()+(state.countryRisk||'low').slice(1)+' Risk';
+  }
+  const prd = document.getElementById('pepRiskDisplay');
+  if (prd) {
+    const cls = {low:'rv-low',medium:'rv-medium',high:'rv-high'}[state.pepRisk]||'rv-low';
+    prd.className='risk-value-badge '+cls;
+    prd.textContent = (state.pepRisk||'low').charAt(0).toUpperCase()+(state.pepRisk||'low').slice(1)+' Risk';
+  }
+  const sfd = document.getElementById('sofRiskDisplay');
+  if (sfd) {
+    const cls = {low:'rv-low',medium:'rv-medium',high:'rv-high'}[state.sofRisk]||'rv-low';
+    sfd.className='risk-value-badge '+cls;
+    sfd.textContent = (state.sofRisk||'low').charAt(0).toUpperCase()+(state.sofRisk||'low').slice(1)+' Risk';
+  }
+
+  const score = calcScore();
+  state.riskScore = score;
+  animateGauge(score);
+  updateDecisionBadge(score);
+  updateSidebar();
+}
+
+function animateGauge(score) {
+  const arc = document.getElementById('gaugeArc');
+  const needle = document.getElementById('gaugeNeedle');
+  const scoreText = document.getElementById('gaugeScoreText');
+  if (!arc) return;
+
+  const total = 283; // approx arc length for semicircle
+  const pct = Math.min(score/100, 1);
+  const offset = total - (total * pct);
+  arc.style.strokeDashoffset = offset;
+
+  // Needle rotation: -90deg (left) to +90deg (right)
+  const rot = -90 + pct * 180;
+  needle.setAttribute('transform', `rotate(${rot}, 110, 110)`);
+
+  let current = parseInt(scoreText.textContent) || 0;
+  const target = Math.round(score);
+  const step = (target - current) / 20;
+  let frame = 0;
+  const iv = setInterval(()=>{
+    frame++;
+    current += step;
+    scoreText.textContent = Math.round(current);
+    if (frame>=20) { scoreText.textContent = target; clearInterval(iv); }
+  }, 30);
+}
+
+function updateDecisionBadge(score) {
+  const dec = document.getElementById('cddDecision');
+  if (!dec) return;
+  dec.className = 'decision-badge';
+  if (score < 40) {
+    dec.classList.add('db-standard');
+    dec.textContent = '✓ Standard CDD — Low risk customer';
+  } else if (score < 70) {
+    dec.classList.add('db-enhanced');
+    dec.textContent = '⚡ Enhanced CDD — Elevated risk factors';
+  } else if (score < 85) {
+    dec.classList.add('db-edd');
+    dec.textContent = '🔴 EDD Required + Senior Officer Approval';
+  } else {
+    dec.classList.add('db-decline');
+    dec.textContent = '⛔ High Risk — Consider Decline';
+  }
+}
+
+function proceedStep5() {
+  updateRiskScore();
+  addAudit('Risk assessment completed — Score: '+Math.round(state.riskScore)+', Decision: '+getCDDLabel());
+  goStep(6);
+  setTimeout(buildStep6, 200);
+}
+
+function getCDDLabel() {
+  const s = state.riskScore;
+  if (s < 40) return 'Standard CDD';
+  if (s < 70) return 'Enhanced CDD';
+  if (s < 85) return 'EDD + Senior Approval';
+  return 'High Risk / Consider Decline';
+}
+
+function getRatingInfo() {
+  const s = state.riskScore;
+  if (s < 40) return {icon:'🟢',label:'Low Risk',desc:'Standard CDD procedures apply. Customer may be onboarded with routine monitoring.',cls:'db-standard',rating:'Low'};
+  if (s < 70) return {icon:'🟡',label:'Medium Risk',desc:'Enhanced CDD required. Ongoing monitoring and periodic review recommended.',cls:'db-enhanced',rating:'Medium'};
+  if (s < 85) return {icon:'🔴',label:'High Risk',desc:'EDD required. Senior officer approval mandatory before account activation.',cls:'db-edd',rating:'High'};
+  return {icon:'⛔',label:'Prohibited',desc:'Customer presents unacceptable risk. Application should be declined and reported.',cls:'db-decline',rating:'Prohibited'};
+}
+
+function buildStep6() {
+  const ri = getRatingInfo();
+  document.getElementById('ratingIcon').textContent = ri.icon;
+  document.getElementById('ratingLabel').textContent = ri.label;
+  document.getElementById('ratingLabel').style.color = ri.rating==='Low'?'var(--green)':ri.rating==='Medium'?'var(--yellow)':'var(--red)';
+  document.getElementById('ratingDesc').textContent = ri.desc;
+
+  const sof_labels = {employment:'Employment Income',business:'Business Income',investment:'Investment Returns',inheritance:'Inheritance',gift:'Gift',other:'Other'};
+  document.getElementById('s_name').textContent = state.fullName;
+  document.getElementById('s_dob').textContent = state.dob ? new Date(state.dob).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) : '—';
+  document.getElementById('s_nat').textContent = state.nationality;
+  document.getElementById('s_id').textContent = (state.idType||'').toUpperCase() + ' — ' + state.idNumber;
+  document.getElementById('s_country_risk').textContent = (state.countryRisk||'').toUpperCase() + ' RISK';
+  document.getElementById('s_pep').textContent = state.pepEscalated ? 'Escalated to EDD' : 'No adverse match';
+  document.getElementById('s_sof').textContent = sof_labels[state.sof] || state.sof;
+  document.getElementById('s_score').textContent = Math.round(state.riskScore) + ' / 100';
+  document.getElementById('s_decision').textContent = getCDDLabel();
+  document.getElementById('s_date').textContent = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+
+  // Disable approve for prohibited
+  if (ri.rating === 'Prohibited') {
+    document.getElementById('approveBtn').disabled = true;
+    document.getElementById('approveBtn').title = 'Cannot approve — prohibited risk level';
+  }
+}
+
+// ===== STEP 6 ACTIONS =====
+function approveApplication() {
+  const cid = 'CID-' + Math.floor(100000 + Math.random()*900000);
+  addAudit('Application APPROVED — Customer ID issued: ' + cid);
+  document.getElementById('approveBtn').textContent = '✅ Approved — ' + cid;
+  document.getElementById('approveBtn').disabled = true;
+  document.getElementById('declineBtn').disabled = true;
+  showToast('Account created successfully! Customer ID: ' + cid, 6000);
+  document.getElementById('auditBody').classList.add('open');
+  document.getElementById('auditArrow').textContent = '▲';
+}
+
+function showDeclineForm() {
+  const f = document.getElementById('declineFormWrap');
+  f.classList.toggle('show');
+}
+
+function confirmDecline() {
+  const reason = document.getElementById('declineReason').value;
+  const notes = document.getElementById('declineNotes').value.trim();
+  if (!reason) { alert('Please select a decline reason'); return; }
+  addAudit('Application DECLINED — Reason: ' + reason);
+  document.getElementById('approveBtn').disabled = true;
+  document.getElementById('declineBtn').textContent = '✕ Application Declined';
+  document.getElementById('declineBtn').disabled = true;
+  document.getElementById('declineFormWrap').classList.remove('show');
+  showToast('Application declined and recorded in audit trail.', 5000);
+  document.getElementById('auditBody').classList.add('open');
+  document.getElementById('auditArrow').textContent = '▲';
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', ()=>{
+  addAudit('KYC onboarding session initiated');
+  updateSidebar();
+  updateStepDone(1);
+  goStep(1);
+
+  // Init risk score display
+  document.getElementById('txRisk').addEventListener('change', updateRiskScore);
+  document.getElementById('productRisk').addEventListener('change', updateRiskScore);
+});
+</script>
+</body>
+</html>

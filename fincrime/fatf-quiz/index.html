@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FATF Quiz · FinCrime</title>
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#1d4ed8; --accent2:#0891b2;
+  --nav-h:52px; --green:#22c55e; --red:#ef4444; --yellow:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,sans-serif;padding-top:var(--nav-h);min-height:100vh}
+a{color:inherit;text-decoration:none}
+
+/* ── SCREENS ── */
+.screen{display:none;padding:2rem 1rem 4rem}
+
+/* ── START SCREEN ── */
+#screen-start{padding-top:2.5rem}
+.start-card{max-width:600px;margin:0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2.25rem 2rem}
+.start-title{font-size:1.75rem;font-weight:800;letter-spacing:-.03em;margin-bottom:.35rem}
+.start-sub{color:var(--muted);font-size:.9rem;margin-bottom:2rem;line-height:1.5}
+.section-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:.75rem}
+.pill-group{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+.pill-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:.4rem .9rem;border-radius:999px;font-size:.8rem;cursor:pointer;transition:all .18s;font-family:inherit;font-weight:500}
+.pill-btn:hover{border-color:var(--accent2);color:var(--text)}
+.pill-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.count-group{display:flex;gap:.5rem;margin-bottom:2rem}
+.count-btn{flex:1;background:var(--bg3);border:1px solid var(--border);color:var(--muted);padding:.5rem;border-radius:8px;font-size:.9rem;cursor:pointer;transition:all .18s;font-family:inherit;font-weight:600}
+.count-btn:hover{border-color:var(--accent2);color:var(--text)}
+.count-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.start-btn{width:100%;padding:.85rem;background:var(--accent);border:none;border-radius:10px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:-.01em;transition:all .18s}
+.start-btn:hover{background:#2563eb;transform:translateY(-1px);box-shadow:0 6px 20px rgba(29,78,216,.35)}
+.start-btn:active{transform:translateY(0)}
+
+/* ── QUESTION SCREEN ── */
+#screen-question{padding-top:1.5rem}
+.q-wrap{max-width:760px;margin:0 auto}
+.q-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;gap:1rem}
+.q-progress-text{font-size:.85rem;color:var(--muted);font-weight:500}
+.timer-ring{flex-shrink:0}
+.timer-ring svg{display:block}
+.timer-track{fill:none;stroke:var(--bg3);stroke-width:4}
+.timer-arc{fill:none;stroke:var(--accent2);stroke-width:4;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
+.timer-text{font-size:.75rem;font-weight:700;fill:var(--text);dominant-baseline:middle;text-anchor:middle}
+.topic-badge{display:inline-block;background:var(--bg3);border:1px solid var(--border);color:var(--accent2);font-size:.7rem;font-weight:600;letter-spacing:.05em;padding:.25rem .7rem;border-radius:999px;margin-bottom:.85rem;text-transform:uppercase}
+.q-text{font-size:1.2rem;font-weight:700;line-height:1.5;margin-bottom:1.5rem;letter-spacing:-.02em}
+.options-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem}
+.opt-btn{width:100%;text-align:left;background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:.85rem 1rem;border-radius:10px;font-size:.9rem;cursor:pointer;font-family:inherit;font-weight:500;transition:background .15s,border-color .15s,color .15s;display:flex;align-items:center;gap:.75rem;line-height:1.4}
+.opt-btn:hover:not(:disabled){background:#1c2128;border-color:var(--accent2)}
+.opt-btn:disabled{cursor:default}
+.opt-btn.correct{background:rgba(34,197,94,.15)!important;border-color:var(--green)!important;color:var(--green)!important}
+.opt-btn.wrong{background:rgba(239,68,68,.15)!important;border-color:var(--red)!important;color:var(--red)!important}
+.opt-letter{width:1.6rem;height:1.6rem;min-width:1.6rem;background:var(--bg2);border:1px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:var(--muted)}
+.opt-btn.correct .opt-letter{background:rgba(34,197,94,.2);border-color:var(--green);color:var(--green)}
+.opt-btn.wrong   .opt-letter{background:rgba(239,68,68,.2);border-color:var(--red);color:var(--red)}
+
+/* ── EXPLANATION PANEL ── */
+.explanation{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.1rem;margin-top:.75rem;animation:slideDown .25s ease;border-left:3px solid var(--accent2)}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.expl-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent2);font-weight:700;margin-bottom:.35rem}
+.expl-text{font-size:.85rem;line-height:1.6;color:var(--text);margin-bottom:.5rem}
+.expl-ref{font-size:.75rem;color:var(--muted);font-style:italic}
+
+.next-btn{width:100%;margin-top:1rem;padding:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;display:none}
+.next-btn:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
+
+.progress-bar-wrap{height:4px;background:var(--bg3);border-radius:2px;margin-bottom:1.5rem;overflow:hidden}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width .4s ease}
+
+/* ── SCORE SCREEN ── */
+#screen-score{padding-top:1.5rem}
+.score-wrap{max-width:640px;margin:0 auto}
+.score-ring-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:2rem}
+.score-ring-track{fill:none;stroke:var(--bg3);stroke-width:12}
+.score-ring-arc{fill:none;stroke-width:12;stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
+.score-ring-label{font-size:2.25rem;font-weight:900;dominant-baseline:middle;text-anchor:middle;fill:var(--text);letter-spacing:-.03em}
+.score-ring-sub{font-size:.8rem;dominant-baseline:middle;text-anchor:middle;fill:var(--muted)}
+.tier-badge{display:inline-block;padding:.35rem 1.1rem;border-radius:999px;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-top:.75rem}
+.tier-expert   {background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.4)}
+.tier-proficient{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.4)}
+.tier-developing{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+.tier-needs    {background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+
+.breakdown-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin-bottom:1.25rem}
+.breakdown-title{font-size:.72rem;font-weight:700;margin-bottom:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.breakdown-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.6rem}
+.breakdown-topic{font-size:.83rem;color:var(--text);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.breakdown-bar-wrap{width:100px;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;flex-shrink:0}
+.breakdown-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.breakdown-stat{font-size:.78rem;font-weight:600;color:var(--muted);flex-shrink:0;width:36px;text-align:right}
+
+.review-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1.25rem}
+.review-toggle{width:100%;text-align:left;background:none;border:none;color:var(--text);padding:1rem 1.25rem;font-size:.9rem;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between}
+.review-toggle:hover{background:var(--bg3)}
+.review-toggle-icon{font-size:.75rem;color:var(--muted);transition:transform .25s}
+.review-body{padding:0 1.25rem 1.25rem;display:none}
+.review-body.open{display:block}
+.review-item{border-top:1px solid var(--border);padding:.85rem 0}
+.review-item:first-child{border-top:none;padding-top:0}
+.review-q{font-size:.82rem;font-weight:600;margin-bottom:.4rem;color:var(--text);line-height:1.4}
+.review-answer{font-size:.78rem;display:flex;align-items:flex-start;gap:.4rem;margin-bottom:.15rem;line-height:1.4}
+.rv-dot{width:.45rem;height:.45rem;border-radius:50%;flex-shrink:0;margin-top:.3rem}
+
+.score-actions{display:flex;gap:.75rem}
+.score-actions button{flex:1;padding:.75rem;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .18s}
+.btn-retry{background:var(--bg3);border:1px solid var(--border);color:var(--text)}
+.btn-retry:hover{background:var(--accent);border-color:var(--accent)}
+.btn-new{background:var(--accent);border:1px solid var(--accent);color:#fff}
+.btn-new:hover{background:#2563eb;transform:translateY(-1px);box-shadow:0 4px 14px rgba(29,78,216,.4)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .start-card{padding:1.5rem 1rem}
+  .start-title{font-size:1.4rem}
+  .q-text{font-size:1rem}
+  .count-group{flex-wrap:wrap}
+  .count-btn{flex:0 0 calc(50% - .25rem)}
+  .score-actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav style="position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.25rem;gap:1rem;z-index:100;">
+  <a href="../../" style="color:var(--muted);text-decoration:none;font-size:.875rem;">&#8592; Everything</a>
+  <span style="color:var(--text);font-weight:600;">FATF Quiz</span>
+  <span style="margin-left:auto;background:var(--accent);color:#fff;font-size:.75rem;padding:.25rem .75rem;border-radius:999px;">FinCrime</span>
+</nav>
+
+<!-- ════════════════════ SCREEN 1 — START ════════════════════ -->
+<div id="screen-start" class="screen" style="display:block">
+  <div class="start-card">
+    <div class="start-title">FATF Knowledge Quiz</div>
+    <div class="start-sub">Test your Financial Action Task Force expertise across 60 questions covering the 40 Recommendations, grey &amp; black lists, Travel Rule, and more.</div>
+
+    <div class="section-label">Category</div>
+    <div class="pill-group" id="cat-group">
+      <button class="pill-btn active" data-val="all"                onclick="setCategory(this)">All Topics</button>
+      <button class="pill-btn"        data-val="40 Recommendations" onclick="setCategory(this)">40 Recommendations</button>
+      <button class="pill-btn"        data-val="Grey &amp; Black Lists"   onclick="setCategory(this)">Grey &amp; Black Lists</button>
+      <button class="pill-btn"        data-val="Travel Rule"        onclick="setCategory(this)">Travel Rule</button>
+      <button class="pill-btn"        data-val="Mutual Evaluations" onclick="setCategory(this)">Mutual Evaluations</button>
+    </div>
+
+    <div class="section-label">Difficulty</div>
+    <div class="pill-group" id="diff-group">
+      <button class="pill-btn active" data-val="all"          onclick="setDifficulty(this)">All Levels</button>
+      <button class="pill-btn"        data-val="beginner"     onclick="setDifficulty(this)">Beginner</button>
+      <button class="pill-btn"        data-val="intermediate" onclick="setDifficulty(this)">Intermediate</button>
+      <button class="pill-btn"        data-val="expert"       onclick="setDifficulty(this)">Expert</button>
+    </div>
+
+    <div class="section-label">Number of Questions</div>
+    <div class="count-group" id="count-group">
+      <button class="count-btn"        data-val="5"  onclick="setCount(this)">5</button>
+      <button class="count-btn active" data-val="10" onclick="setCount(this)">10</button>
+      <button class="count-btn"        data-val="20" onclick="setCount(this)">20</button>
+      <button class="count-btn"        data-val="40" onclick="setCount(this)">40</button>
+    </div>
+
+    <button class="start-btn" onclick="startQuiz()">Start Quiz &#8594;</button>
+  </div>
+</div>
+
+<!-- ════════════════════ SCREEN 2 — QUESTION ════════════════════ -->
+<div id="screen-question" class="screen">
+  <div class="q-wrap">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+    </div>
+    <div class="q-topbar">
+      <div class="q-progress-text" id="q-progress-text">Question 1 of 10</div>
+      <!-- Timer ring: r=18, circumference = 2*PI*18 = 113.097 -->
+      <div class="timer-ring">
+        <svg width="52" height="52" viewBox="0 0 52 52">
+          <circle class="timer-track" cx="26" cy="26" r="18"/>
+          <circle class="timer-arc" id="timer-arc" cx="26" cy="26" r="18"
+                  stroke-dasharray="113.1" stroke-dashoffset="0"/>
+          <text class="timer-text" id="timer-text" x="26" y="26">30</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="topic-badge" id="topic-badge">Topic</div>
+    <div class="q-text" id="q-text"></div>
+
+    <div class="options-list" id="options-list"></div>
+    <div id="explanation-panel"></div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">Next Question &#8594;</button>
+  </div>
+</div>
+
+<!-- ════════════════════ SCREEN 3 — SCORE ════════════════════ -->
+<div id="screen-score" class="screen">
+  <div class="score-wrap">
+    <div class="score-ring-wrap">
+      <!-- Score ring: r=70, circumference = 2*PI*70 = 439.823 -->
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <circle class="score-ring-track" cx="90" cy="90" r="70"/>
+        <circle class="score-ring-arc" id="score-arc" cx="90" cy="90" r="70"
+                stroke-dasharray="439.8" stroke-dashoffset="439.8" stroke="var(--accent)"/>
+        <text class="score-ring-label" id="score-label" x="90" y="84">0/0</text>
+        <text class="score-ring-sub"   id="score-pct"   x="90" y="106">0%</text>
+      </svg>
+      <div class="tier-badge" id="tier-badge">—</div>
+    </div>
+
+    <div class="breakdown-card">
+      <div class="breakdown-title">Category Breakdown</div>
+      <div id="breakdown-rows"></div>
+    </div>
+
+    <div class="review-card">
+      <button class="review-toggle" onclick="toggleReview()">
+        <span>Review Questions</span>
+        <span class="review-toggle-icon" id="review-icon">&#9660;</span>
+      </button>
+      <div class="review-body" id="review-body"></div>
+    </div>
+
+    <div class="score-actions">
+      <button class="btn-retry" onclick="retryQuiz()">&#8635; Retry Same</button>
+      <button class="btn-new"   onclick="newQuiz()">New Quiz &#8594;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  QUESTION BANK  (60 questions)
+// ════════════════════════════════════════════════════════════
+var QUESTIONS = [
+  // ── 40 Recommendations ──────────────────────────────────
+  { id:1,  topic:'40 Recommendations', difficulty:'beginner',
+    question:'How many FATF Recommendations form the international standard for AML/CFT?',
+    options:['30','40','50','60'], answer:1,
+    explanation:'The FATF 40 Recommendations set the international standard for combating money laundering, terrorist financing, and proliferation financing.',
+    reference:'FATF 40 Recommendations (2012, updated 2023)' },
+
+  { id:2,  topic:'40 Recommendations', difficulty:'beginner',
+    question:'What does FATF stand for?',
+    options:['Financial Action Task Group','Financial Action Task Force','Financial Authority Task Force','Federal Action Task Force'], answer:1,
+    explanation:'FATF stands for Financial Action Task Force. It is an intergovernmental body established in 1989 by the G7 Summit in Paris.',
+    reference:'FATF Mandate' },
+
+  { id:3,  topic:'40 Recommendations', difficulty:'intermediate',
+    question:'Under FATF Recommendation 10, which customer due diligence measure is required for all customers?',
+    options:['Enhanced due diligence only','Identifying and verifying customer identity','Filing a suspicious transaction report','Freezing customer accounts'], answer:1,
+    explanation:'R.10 requires financial institutions to identify and verify the identity of customers and beneficial owners as a core CDD measure.',
+    reference:'FATF Recommendation 10 — Customer Due Diligence' },
+
+  { id:4,  topic:'40 Recommendations', difficulty:'intermediate',
+    question:'FATF Recommendation 16 (the Travel Rule) requires originator information for wire transfers above what threshold?',
+    options:['USD 500','USD 1,000','USD 3,000','No threshold — all transfers'], answer:3,
+    explanation:'R.16 requires originator and beneficiary information for ALL wire transfers regardless of amount. There is no minimum threshold.',
+    reference:'FATF Recommendation 16 — Wire Transfers' },
+
+  { id:5,  topic:'40 Recommendations', difficulty:'intermediate',
+    question:'Which FATF Recommendation specifically addresses Politically Exposed Persons (PEPs)?',
+    options:['Recommendation 10','Recommendation 12','Recommendation 15','Recommendation 20'], answer:1,
+    explanation:'Recommendation 12 requires financial institutions to apply enhanced due diligence measures to PEPs, both domestic and foreign.',
+    reference:'FATF Recommendation 12 — Politically Exposed Persons' },
+
+  { id:6,  topic:'40 Recommendations', difficulty:'expert',
+    question:'Under FATF Recommendation 24, what is the key obligation regarding beneficial ownership of legal persons?',
+    options:['Companies must list all shareholders publicly','Countries must ensure adequate, accurate and up-to-date information on beneficial ownership is available','All companies must register with FATF','Directors must undergo AML training'], answer:1,
+    explanation:'R.24 requires countries to ensure timely access to adequate, accurate and current beneficial ownership information for legal persons to prevent their misuse for ML/TF.',
+    reference:'FATF Recommendation 24 — Transparency and Beneficial Ownership of Legal Persons' },
+
+  { id:7,  topic:'40 Recommendations', difficulty:'expert',
+    question:'FATF Recommendation 15 on New Technologies requires countries to assess and mitigate ML/TF risks associated with which types of entities?',
+    options:['Only cryptocurrency exchanges','Virtual asset service providers (VASPs) and new payment technologies','Only peer-to-peer platforms','Only decentralized finance protocols'], answer:1,
+    explanation:'R.15 requires countries and financial institutions to identify and assess ML/TF risks arising from new products, technologies, and VASPs including crypto exchanges and wallet providers.',
+    reference:'FATF Recommendation 15 — New Technologies' },
+
+  { id:8,  topic:'40 Recommendations', difficulty:'beginner',
+    question:'What does STR stand for in the context of FATF requirements?',
+    options:['Standard Transaction Report','Suspicious Transaction Report','Structural Transfer Record','Systematic Tracking Report'], answer:1,
+    explanation:'STR stands for Suspicious Transaction Report. FATF Recommendation 20 requires financial institutions to file STRs with the national FIU when they suspect ML/TF.',
+    reference:'FATF Recommendation 20 — Reporting of Suspicious Transactions' },
+
+  { id:9,  topic:'40 Recommendations', difficulty:'intermediate',
+    question:'Under FATF standards, what is "tipping off"?',
+    options:['Paying informants for information','Disclosing to a customer or third party that an STR has been filed about them','Reporting a colleague to regulators','Providing transaction records to law enforcement'], answer:1,
+    explanation:'Tipping off occurs when a reporting entity (bank, VASP) discloses to a subject or related party that they have filed or are about to file an STR, potentially alerting them to avoid detection.',
+    reference:'FATF Recommendation 21 — Tipping Off and Confidentiality' },
+
+  { id:10, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'FATF Recommendation 6 targets which serious financial crime?',
+    options:['Tax evasion','Terrorist financing','Insider trading','Currency smuggling'], answer:1,
+    explanation:'Recommendation 6 specifically addresses targeted financial sanctions related to terrorism and terrorist financing, requiring countries to implement UN Security Council resolutions.',
+    reference:'FATF Recommendation 6 — Targeted Financial Sanctions Related to Terrorism' },
+
+  { id:11, topic:'40 Recommendations', difficulty:'expert',
+    question:'What is a DNFBP under FATF standards?',
+    options:['Digital Non-Financial Business Protocol','Designated Non-Financial Business or Profession','Data Network Financial Bureau Provider','Direct Non-Bank Financial Platform'], answer:1,
+    explanation:'DNFBPs (Designated Non-Financial Businesses and Professions) include real estate agents, lawyers, accountants, trust and company service providers, and dealers in precious metals — all subject to FATF AML obligations.',
+    reference:'FATF Glossary — DNFBP' },
+
+  { id:12, topic:'40 Recommendations', difficulty:'expert',
+    question:'Under FATF Recommendation 26, what is the primary role of a Financial Intelligence Unit (FIU)?',
+    options:['To prosecute money launderers','To receive, analyze, and disseminate financial intelligence to competent authorities','To license financial institutions','To set interest rates for banks'], answer:1,
+    explanation:'R.26 requires every country to establish an FIU as a central national agency that receives STRs and other relevant information, analyzes it, and disseminates it to competent authorities for investigation.',
+    reference:'FATF Recommendation 26 — Regulation and Supervision of Financial Institutions' },
+
+  // ── Grey & Black Lists ───────────────────────────────────
+  { id:13, topic:'Grey & Black Lists', difficulty:'beginner',
+    question:'What is the FATF "Grey List" formally known as?',
+    options:['The Non-Compliant Jurisdictions List','Jurisdictions Under Increased Monitoring','The High-Risk Jurisdictions List','The Sanctioned Countries Register'], answer:1,
+    explanation:'The Grey List is formally called "Jurisdictions Under Increased Monitoring." Countries on this list have committed to resolve deficiencies within agreed timeframes and are subject to increased scrutiny.',
+    reference:'FATF Public Statements — Jurisdictions Under Increased Monitoring' },
+
+  { id:14, topic:'Grey & Black Lists', difficulty:'beginner',
+    question:'Which two countries are currently on the FATF Black List (High-Risk Jurisdictions Subject to a Call for Action)?',
+    options:['Russia and China','Iran and North Korea','Pakistan and Turkey','Afghanistan and Syria'], answer:1,
+    explanation:'Iran and North Korea are the two countries on the FATF Black List. They have strategic deficiencies in their AML/CFT regimes that pose serious threats to the international financial system.',
+    reference:'FATF High-Risk Jurisdictions Subject to a Call for Action' },
+
+  { id:15, topic:'Grey & Black Lists', difficulty:'intermediate',
+    question:'What action must financial institutions take when dealing with a Black-Listed jurisdiction?',
+    options:['Refuse all transactions','Apply enhanced due diligence and consider filing STRs','Immediately freeze all accounts','Report to the UN Security Council'], answer:1,
+    explanation:'For black-listed jurisdictions, FATF calls on countries to apply enhanced due diligence proportionate to the risk, and in the most serious cases, to apply counter-measures such as refusing transactions.',
+    reference:'FATF Recommendation 19 — Higher-Risk Countries' },
+
+  { id:16, topic:'Grey & Black Lists', difficulty:'intermediate',
+    question:'How often does FATF update its grey and black lists?',
+    options:['Annually','Every 6 months','After each of the 3 FATF Plenary sessions per year','Only when a country requests it'], answer:2,
+    explanation:'FATF holds three Plenary sessions per year (February, June, October) and updates the grey and black lists after each Plenary based on country progress and new assessments.',
+    reference:'FATF Plenary Process' },
+
+  { id:17, topic:'Grey & Black Lists', difficulty:'expert',
+    question:'What is a Mutual Evaluation Report (MER) and how does it relate to grey listing?',
+    options:['It is a self-assessment by the country','It is a peer review assessing a country\'s AML/CFT system; poor results can trigger grey listing','It is an annual financial report submitted to FATF','It is a bilateral treaty between two countries'], answer:1,
+    explanation:'A Mutual Evaluation Report is a peer review conducted by FATF or an FATF-Style Regional Body assessing technical compliance with the 40 Recommendations and effectiveness. Countries with low effectiveness scores may be grey-listed.',
+    reference:'FATF Methodology for Mutual Evaluations' },
+
+  { id:18, topic:'Grey & Black Lists', difficulty:'expert',
+    question:'Which former grey-listed country was removed from the list in 2022 after successfully implementing AML reforms?',
+    options:['Pakistan','Malta','Cambodia','Cayman Islands'], answer:1,
+    explanation:'Malta was removed from the FATF grey list in June 2022 after successfully completing its action plan and demonstrating significant improvements to its AML/CFT regime.',
+    reference:'FATF Public Statement — June 2022 Plenary' },
+
+  // ── Travel Rule ──────────────────────────────────────────
+  { id:19, topic:'Travel Rule', difficulty:'beginner',
+    question:'The FATF Travel Rule requires financial institutions to "pass along" what information with wire transfers?',
+    options:['Only the amount transferred','Originator and beneficiary name, account number, and address','Only the originator\'s name','The transaction fee and processing time'], answer:1,
+    explanation:'The Travel Rule (R.16) requires ordering institutions to collect and transmit originator information (name, account, address/DOB/ID) and beneficiary information (name, account) for all wire transfers.',
+    reference:'FATF Recommendation 16 — Wire Transfers' },
+
+  { id:20, topic:'Travel Rule', difficulty:'intermediate',
+    question:'How does the Travel Rule apply to Virtual Asset transfers under FATF Recommendation 15?',
+    options:['It does not apply to virtual assets','VASPs must collect and transmit originator and beneficiary information for VA transfers above USD 1,000','VASPs must apply the Travel Rule to all VA transfers regardless of amount','Only regulated exchanges must comply with the Travel Rule'], answer:2,
+    explanation:'FATF updated R.15 in 2019 to extend the Travel Rule to VASPs. VASPs must collect and transmit originator and beneficiary information for all VA transfers above USD/EUR 1,000 (national threshold may vary).',
+    reference:'FATF Recommendation 15 and Interpretive Note — Updated 2019' },
+
+  { id:21, topic:'Travel Rule', difficulty:'intermediate',
+    question:'What is the "sunrise problem" in the context of the FATF Travel Rule for crypto?',
+    options:['Difficulty in processing transactions before market opening','Not all VASPs have implemented Travel Rule compliance simultaneously, creating compliance gaps','The delay in confirming blockchain transactions at start of day','Time zone differences affecting transaction reporting'], answer:1,
+    explanation:'The sunrise problem refers to the uneven global implementation of the VASP Travel Rule — when one VASP complies but its counterparty does not, information cannot be transmitted, creating compliance gaps.',
+    reference:'FATF Guidance on Virtual Assets and VASPs — 2021' },
+
+  { id:22, topic:'Travel Rule', difficulty:'expert',
+    question:'Under the Travel Rule, what must a beneficiary institution do when it receives a wire transfer without the required originator information?',
+    options:['Process the transaction normally','Return the funds immediately','Adopt a risk-based approach — request missing information or reject/suspend the transaction','File an STR automatically'], answer:2,
+    explanation:'Beneficiary institutions must have risk-based procedures when receiving transactions without required Travel Rule data. They must request the information, and may need to consider whether to reject, return or suspend funds pending resolution.',
+    reference:'FATF Recommendation 16 — Interpretive Note' },
+
+  // ── Mutual Evaluations ───────────────────────────────────
+  { id:23, topic:'Mutual Evaluations', difficulty:'beginner',
+    question:'What two dimensions does a FATF Mutual Evaluation assess?',
+    options:['Technical compliance and Financial stability','Technical compliance with the 40 Recommendations and Effectiveness of the AML/CFT system','Regulatory framework and Economic performance','Enforcement actions and Conviction rates'], answer:1,
+    explanation:'Mutual Evaluations assess (1) Technical Compliance: whether laws and regulations meet the 40 Recommendations, and (2) Effectiveness: whether the system actually works to prevent ML/TF.',
+    reference:'FATF Methodology for Assessing Compliance — 2013 (updated 2022)' },
+
+  { id:24, topic:'Mutual Evaluations', difficulty:'intermediate',
+    question:'How many Immediate Outcomes (IOs) does the FATF Methodology use to assess effectiveness?',
+    options:['5','8','11','15'], answer:2,
+    explanation:'The FATF Methodology uses 11 Immediate Outcomes to assess effectiveness across key areas including risk understanding, FIU functions, law enforcement, prosecution, sanctions, and financial sector supervision.',
+    reference:'FATF Methodology — 11 Immediate Outcomes' },
+
+  { id:25, topic:'Mutual Evaluations', difficulty:'intermediate',
+    question:'Which FATF-Style Regional Body (FSRB) covers the Asia-Pacific region?',
+    options:['ESAAMLG','APG','MONEYVAL','GAFILAT'], answer:1,
+    explanation:'The Asia/Pacific Group on Money Laundering (APG) is the FATF-Style Regional Body covering the Asia-Pacific region. India is an APG member in addition to being a full FATF member.',
+    reference:'FATF-Style Regional Bodies (FSRBs)' },
+
+  { id:26, topic:'Mutual Evaluations', difficulty:'expert',
+    question:'India\'s most recent FATF Mutual Evaluation (2024) resulted in which rating for technical compliance overall?',
+    options:['Largely Compliant','Highly Effective','Compliant in 37 of 40 Recommendations','Non-Compliant'], answer:2,
+    explanation:'India\'s 2024 Mutual Evaluation found it Compliant or Largely Compliant on 37 of the 40 Recommendations, a significant improvement reflecting India\'s strengthened AML/CFT framework under PMLA and related legislation.',
+    reference:'FATF Mutual Evaluation of India — 2024' },
+
+  // ── Additional mixed questions ───────────────────────────
+  { id:27, topic:'40 Recommendations', difficulty:'beginner',
+    question:'What does AML stand for?',
+    options:['Asset Management Lending','Anti-Money Laundering','Automated Market Liquidity','Advanced Monitoring Logistics'], answer:1,
+    explanation:'AML stands for Anti-Money Laundering — the set of laws, regulations, and procedures designed to prevent the practice of generating income through illegal actions.',
+    reference:'FATF Glossary' },
+
+  { id:28, topic:'40 Recommendations', difficulty:'beginner',
+    question:'What does CFT stand for in AML/CFT?',
+    options:['Counter-Fraud Techniques','Countering the Financing of Terrorism','Central Financial Transfer','Compliance and Financial Tracking'], answer:1,
+    explanation:'CFT stands for Countering the Financing of Terrorism. FATF\'s mandate covers both AML (money laundering) and CFT (terrorist financing).',
+    reference:'FATF Mandate' },
+
+  { id:29, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'Under the FATF risk-based approach, what should financial institutions do when they identify higher ML/TF risks?',
+    options:['Refuse the customer outright','Apply enhanced due diligence measures proportionate to the risk','Report immediately to law enforcement','Lower transaction limits'], answer:1,
+    explanation:'The risk-based approach (R.1) requires institutions to apply enhanced measures where higher risks are identified. The measures should be proportionate to the risk level — not automatically refusing customers.',
+    reference:'FATF Recommendation 1 — Assessing and Managing ML/TF Risks' },
+
+  { id:30, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'What is a National Risk Assessment (NRA) under FATF standards?',
+    options:['A bank\'s internal audit','A country-level assessment identifying and evaluating ML/TF risks it faces','A review of individual customer risk profiles','An annual regulatory filing'], answer:1,
+    explanation:'A National Risk Assessment is a country-wide exercise to identify, assess and understand the ML/TF risks it is exposed to. Countries must conduct NRAs to inform their AML/CFT policies (R.1).',
+    reference:'FATF Recommendation 1 — National Risk Assessment' },
+
+  { id:31, topic:'Grey & Black Lists', difficulty:'intermediate',
+    question:'What does FATF require of all countries when dealing with grey-listed jurisdictions?',
+    options:['Ban all financial transactions','Apply enhanced due diligence to transactions involving those jurisdictions','Automatically file STRs on all transactions','Revoke correspondent banking relationships'], answer:1,
+    explanation:'For grey-listed jurisdictions, FATF requires countries to apply enhanced due diligence (EDD) proportionate to the risks. The measures should be risk-proportionate, not a blanket ban.',
+    reference:'FATF Recommendation 19 — Higher-Risk Countries' },
+
+  { id:32, topic:'Travel Rule', difficulty:'beginner',
+    question:'Who coined the term "Travel Rule" for wire transfer information requirements?',
+    options:['FATF in 1989','The US FinCEN in the 1990s','The Bank for International Settlements','The IMF'], answer:1,
+    explanation:'The "Travel Rule" terminology originated with the US Financial Crimes Enforcement Network (FinCEN) in the 1990s, referring to the rule that certain information must "travel" with wire transfers. FATF later adopted the concept in Recommendation 16.',
+    reference:'FinCEN — Bank Secrecy Act Travel Rule; FATF R.16' },
+
+  { id:33, topic:'40 Recommendations', difficulty:'expert',
+    question:'What is the key obligation of FATF Recommendation 35 regarding sanctions and AML/CFT?',
+    options:['Countries must impose civil penalties only','Countries must have effective, proportionate, and dissuasive sanctions for violations of AML/CFT requirements','Countries should warn institutions before sanctioning them','Only criminal penalties are permitted'], answer:1,
+    explanation:'R.35 requires countries to have sanctions — civil, administrative, or criminal — that are effective, proportionate, and dissuasive for natural and legal persons that fail to comply with AML/CFT requirements.',
+    reference:'FATF Recommendation 35 — Sanctions' },
+
+  { id:34, topic:'Mutual Evaluations', difficulty:'expert',
+    question:'Which country was the first to undergo a 4th round FATF Mutual Evaluation?',
+    options:['United States','Australia','Norway','Italy'], answer:2,
+    explanation:'Norway was the first country to undergo a 4th Round Mutual Evaluation in 2014, which introduced the effectiveness dimension alongside technical compliance assessment.',
+    reference:'FATF 4th Round Evaluations' },
+
+  { id:35, topic:'40 Recommendations', difficulty:'beginner',
+    question:'What are the three stages of money laundering?',
+    options:['Detection, Investigation, Prosecution','Placement, Layering, Integration','Deposit, Transfer, Withdrawal','Collection, Conversion, Concealment'], answer:1,
+    explanation:'The three stages of money laundering are: (1) Placement — introducing illegal proceeds into the financial system; (2) Layering — concealing the trail through complex transactions; (3) Integration — returning funds to the economy appearing legitimate.',
+    reference:'FATF — Money Laundering' },
+
+  { id:36, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'FATF Recommendation 22 extends CDD obligations to which types of non-bank entities?',
+    options:['All companies globally','Designated Non-Financial Businesses and Professions (DNFBPs)','Only insurance companies','Retail traders above a turnover threshold'], answer:1,
+    explanation:'R.22 extends the CDD requirements of Recommendations 10-12, 15, and 17 to DNFBPs including casinos, real estate agents, dealers in precious metals/stones, lawyers, and accountants.',
+    reference:'FATF Recommendation 22 — DNFBPs: Customer Due Diligence' },
+
+  { id:37, topic:'Grey & Black Lists', difficulty:'intermediate',
+    question:'When a country is placed on the FATF Grey List, what is the typical immediate consequence for its banks?',
+    options:['All correspondent banking is terminated','International banks apply greater scrutiny and EDD to transactions involving that jurisdiction','The country is expelled from SWIFT','All cross-border payments are suspended'], answer:1,
+    explanation:'Grey-listing signals elevated risk, causing international correspondent banks to apply enhanced due diligence to transactions involving the grey-listed country\'s banks, potentially increasing costs and reducing financial access.',
+    reference:'FATF — Consequences of Grey Listing' },
+
+  { id:38, topic:'Travel Rule', difficulty:'intermediate',
+    question:'In the context of crypto Travel Rule, what does "VASP to VASP" transfer mean?',
+    options:['A transfer between two bank accounts','A virtual asset transfer where both sender and receiver use regulated VASP platforms','A peer-to-peer transfer with no intermediary','A cross-border SWIFT payment'], answer:1,
+    explanation:'A VASP-to-VASP transfer is one where both the originator and beneficiary use regulated Virtual Asset Service Providers (exchanges or custodial wallets). The Travel Rule requires both VASPs to exchange originator and beneficiary data.',
+    reference:'FATF Guidance on Virtual Assets — R.15 Travel Rule' },
+
+  { id:39, topic:'40 Recommendations', difficulty:'expert',
+    question:'What does FATF Recommendation 33 require regarding statistics?',
+    options:['Countries must publish annual GDP figures','Countries must maintain comprehensive statistics to monitor the effectiveness of their AML/CFT system','Central banks must report monthly transaction volumes','FIUs must publish all STR data publicly'], answer:1,
+    explanation:'R.33 requires countries to maintain comprehensive statistics on STRs, ML/TF investigations, prosecutions, convictions, and asset seizures to monitor effectiveness and identify gaps in the AML/CFT system.',
+    reference:'FATF Recommendation 33 — Statistics' },
+
+  { id:40, topic:'Mutual Evaluations', difficulty:'intermediate',
+    question:'What is the "Follow-Up" process after a FATF Mutual Evaluation?',
+    options:['A second full evaluation 1 year later','A process where evaluated countries report progress on technical compliance and effectiveness improvements','A voluntary self-assessment process','An appeal mechanism against the evaluation findings'], answer:1,
+    explanation:'After a Mutual Evaluation, countries enter a follow-up process where they report progress to FATF on addressing technical compliance and effectiveness deficiencies. Progress is reviewed at subsequent Plenary sessions.',
+    reference:'FATF Follow-Up Process' },
+
+  { id:41, topic:'40 Recommendations', difficulty:'beginner',
+    question:'Which UN convention does FATF Recommendation 3 on money laundering offences reference?',
+    options:['The Vienna Convention (1988)','The Palermo Convention (2000)','Both the Vienna and Palermo Conventions','The New York Convention (1958)'], answer:2,
+    explanation:'R.3 on money laundering offences refers to both the Vienna Convention (1988, on drug trafficking) and the Palermo Convention (2000, on transnational organized crime) as the basis for criminalizing ML.',
+    reference:'FATF Recommendation 3 — Money Laundering Offence' },
+
+  { id:42, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'Under FATF standards, what is a "shell company" risk?',
+    options:['A company operating from a small office','A legal entity with no real business activity, used to obscure beneficial ownership and launder funds','A company that imports shell products','A startup company in its initial phase'], answer:1,
+    explanation:'Shell companies are legal entities with no real operations, often used to hold assets or facilitate transactions while obscuring the true beneficial owner — a key ML/TF risk addressed by FATF Recommendations 24-25.',
+    reference:'FATF Recommendation 24 — Transparency and Beneficial Ownership of Legal Persons' },
+
+  { id:43, topic:'Grey & Black Lists', difficulty:'beginner',
+    question:'What is the purpose of FATF public statements on high-risk jurisdictions?',
+    options:['To promote tourism to those countries','To alert the global financial community to jurisdictions with strategic AML/CFT deficiencies','To impose trade sanctions','To facilitate foreign aid disbursement'], answer:1,
+    explanation:'FATF public statements identify jurisdictions with strategic deficiencies in their AML/CFT regimes to alert the global financial community, enabling them to apply appropriate risk-based measures when dealing with those jurisdictions.',
+    reference:'FATF Public Statements' },
+
+  { id:44, topic:'Travel Rule', difficulty:'expert',
+    question:'What is the "unhosted wallet" challenge for the FATF Travel Rule?',
+    options:['VASPs cannot connect to the internet','When a VASP sends VA to a non-custodial/self-hosted wallet, it cannot transmit Travel Rule data to a counterpart VASP','Hardware wallets cannot process Travel Rule information','Wallets hosted outside of regulated exchanges are automatically sanctioned'], answer:1,
+    explanation:'Unhosted (self-hosted/non-custodial) wallets present a Travel Rule challenge because there is no counterpart VASP to receive and verify beneficiary information, creating a gap in the Travel Rule chain.',
+    reference:'FATF Guidance on Virtual Assets and VASPs — 2021, para. 93-98' },
+
+  { id:45, topic:'Mutual Evaluations', difficulty:'beginner',
+    question:'What rating scale does FATF use for technical compliance in Mutual Evaluations?',
+    options:['A-F grades','Compliant / Largely Compliant / Partially Compliant / Non-Compliant','1-10 numerical scores','Pass/Fail binary'], answer:1,
+    explanation:'FATF uses a four-level technical compliance rating: Compliant (C), Largely Compliant (LC), Partially Compliant (PC), and Non-Compliant (NC) for each of the 40 Recommendations.',
+    reference:'FATF Methodology — Technical Compliance Rating Scale' },
+
+  { id:46, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'What is Enhanced Due Diligence (EDD) and when is it required under FATF standards?',
+    options:['Standard identity verification for all customers','Deeper verification measures applied for higher-risk customers, transactions, or relationships','A simplified KYC process for low-risk customers','Annual review of all customer files'], answer:1,
+    explanation:'EDD involves more intensive verification and ongoing monitoring. FATF R.10-12 and 19 require EDD for higher-risk situations including PEPs, correspondent banking relationships, non-face-to-face customers, and high-risk jurisdictions.',
+    reference:'FATF Recommendations 10, 12, 13, 19 — Enhanced Due Diligence' },
+
+  { id:47, topic:'40 Recommendations', difficulty:'expert',
+    question:'Under FATF standards, what is "proliferation financing" and which Recommendation addresses it?',
+    options:['Financing of agricultural production under R.8','Financing for the development of WMDs, addressed in R.7','Funding of media proliferation under R.31','Financing of rapid business expansion under R.25'], answer:1,
+    explanation:'Proliferation financing is the provision of funds for the development of weapons of mass destruction (WMDs) by states or non-state actors. FATF Recommendation 7 requires targeted financial sanctions related to proliferation.',
+    reference:'FATF Recommendation 7 — Targeted Financial Sanctions Related to Proliferation' },
+
+  { id:48, topic:'Grey & Black Lists', difficulty:'expert',
+    question:'How can a grey-listed country be removed from the FATF grey list?',
+    options:['By paying a fine to FATF','By completing its agreed action plan and demonstrating improved effectiveness, confirmed through an on-site visit','By having another member nation vouch for it','By hosting an FATF Plenary meeting'], answer:1,
+    explanation:'Grey-listed countries must implement their agreed action plan to address identified deficiencies. FATF conducts an on-site visit to verify the reforms have been implemented and are working effectively before delisting.',
+    reference:'FATF Delisting Process for Grey List' },
+
+  { id:49, topic:'Travel Rule', difficulty:'intermediate',
+    question:'What is the role of inter-VASP messaging protocols like IVMS101 in Travel Rule compliance?',
+    options:['They are FATF-mandated software systems','They are standardized data formats enabling VASPs to exchange originator/beneficiary information for Travel Rule compliance','They are encryption protocols for blockchain transactions','They are reporting formats for filing STRs with FIUs'], answer:1,
+    explanation:'IVMS101 (Inter-VASP Messaging Standard) is a global data standard developed by financial industry groups to enable VASPs to exchange the originator and beneficiary information required by the Travel Rule consistently.',
+    reference:'IVMS101 Standard — FATF Travel Rule Technical Guidance' },
+
+  { id:50, topic:'Mutual Evaluations', difficulty:'intermediate',
+    question:'How many FATF member countries are there as of 2024?',
+    options:['37','39','40','42'], answer:0,
+    explanation:'FATF has 39 member jurisdictions plus 2 regional organisations (European Commission and Gulf Co-operation Council), for a total of 37 country members plus observer organisations. The EU and GCC are counted separately.',
+    reference:'FATF Membership' },
+
+  { id:51, topic:'40 Recommendations', difficulty:'beginner',
+    question:'Under FATF, who are "Politically Exposed Persons" (PEPs)?',
+    options:['Politicians who have committed financial crimes','Individuals who are or have been entrusted with prominent public functions, and their family/associates','Any government employee','Senior executives of large corporations'], answer:1,
+    explanation:'PEPs are individuals entrusted with prominent public functions (e.g., heads of state, senior politicians, judicial officials, military officers) and their immediate family members and close associates — subject to enhanced AML scrutiny.',
+    reference:'FATF Recommendation 12 — Glossary definition of PEP' },
+
+  { id:52, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'What is the key principle of the FATF risk-based approach?',
+    options:['Treat all customers equally with identical checks','Allocate AML resources proportionately to where risks are highest','Automatically decline high-risk customers','Report all unusual transactions as suspicious'], answer:1,
+    explanation:'The risk-based approach means financial institutions and countries should focus their AML/CFT resources where the ML/TF risks are greatest, applying enhanced measures for high risks and simplified measures where risks are demonstrably low.',
+    reference:'FATF Recommendation 1 — Risk-Based Approach' },
+
+  { id:53, topic:'Grey & Black Lists', difficulty:'intermediate',
+    question:'Which South Asian country was removed from the FATF grey list in October 2022?',
+    options:['Bangladesh','Sri Lanka','Pakistan','Nepal'], answer:2,
+    explanation:'Pakistan was removed from the FATF grey list in October 2022 after completing its two action plans (2018 and 2021), addressing over 34 specific deficiencies in its AML/CFT regime.',
+    reference:'FATF October 2022 Plenary Statement' },
+
+  { id:54, topic:'40 Recommendations', difficulty:'expert',
+    question:'FATF Recommendation 38 on mutual legal assistance requires countries to provide what type of assistance?',
+    options:['Only financial assistance to developing countries','Widest possible range of mutual legal assistance for ML, TF, predicate offences and related investigations and prosecutions','Only sharing of publicly available information','Assistance limited to civil matters'], answer:1,
+    explanation:'R.38 requires countries to rapidly, constructively, and effectively provide the widest possible range of mutual legal assistance in ML, TF, predicate offence investigations, prosecutions, and related proceedings.',
+    reference:'FATF Recommendation 38 — Mutual Legal Assistance' },
+
+  { id:55, topic:'Travel Rule', difficulty:'beginner',
+    question:'What information must travel with a wire transfer under the Travel Rule at minimum?',
+    options:['Just the amount','Originator name, account number, and either address, national identity number, or date and place of birth','Only the originator and beneficiary bank names','The purpose of the transfer only'], answer:1,
+    explanation:'Under R.16, at minimum the originator information must include: (1) name, (2) account number, and (3) either address, national identity number, or date and place of birth. Beneficiary name and account number must also be included.',
+    reference:'FATF Recommendation 16 — Wire Transfers (Interpretive Note)' },
+
+  { id:56, topic:'40 Recommendations', difficulty:'intermediate',
+    question:'What is Correspondent Banking in the context of FATF Recommendation 13?',
+    options:['A bank that sends letters to customers','The provision of banking services by one bank (correspondent) to another bank (respondent), often cross-border','Banks that share the same parent company','A retail banking arrangement for small businesses'], answer:1,
+    explanation:'Correspondent banking involves a bank (correspondent) providing banking services — such as maintaining accounts, processing payments, or providing trade finance — to another bank (respondent). R.13 requires EDD for cross-border correspondent banking.',
+    reference:'FATF Recommendation 13 — Correspondent Banking' },
+
+  { id:57, topic:'Mutual Evaluations', difficulty:'expert',
+    question:'What is the "effectiveness" component of FATF Mutual Evaluations measuring, specifically?',
+    options:['Whether laws are written correctly','Whether the AML/CFT system is achieving the intended outcomes — that is, whether it is actually working to prevent, detect, and disrupt ML/TF','The number of STRs filed','The size of the FIU budget'], answer:1,
+    explanation:'Effectiveness measures the extent to which countries achieve the defined Immediate Outcomes — the tangible results that a well-functioning AML/CFT system should produce. It goes beyond technical compliance to ask: does it actually work?',
+    reference:'FATF Methodology — Effectiveness Assessment' },
+
+  { id:58, topic:'40 Recommendations', difficulty:'beginner',
+    question:'What is the primary obligation of FATF Recommendation 20 on suspicious transaction reporting?',
+    options:['Report all large transactions','Report transactions promptly to the FIU when there are reasonable grounds to suspect ML/TF','Report quarterly summaries of transactions','Report all foreign currency transactions'], answer:1,
+    explanation:'R.20 requires financial institutions to report to the FIU promptly when they suspect or have reasonable grounds to suspect that funds are the proceeds of a criminal activity or are related to terrorism financing.',
+    reference:'FATF Recommendation 20 — Reporting of Suspicious Transactions' },
+
+  { id:59, topic:'Grey & Black Lists', difficulty:'intermediate',
+    question:'What financial inclusion concern has been raised about FATF grey-listing?',
+    options:['Grey-listed countries get too much IMF funding','Grey-listing can trigger de-risking by international banks, reducing financial access for people in those countries','Grey-listing increases local banking competition','Grey-listing forces central banks to raise interest rates'], answer:1,
+    explanation:'A documented concern is that grey-listing triggers de-risking — where international correspondent banks exit relationships with grey-listed countries\' banks to avoid compliance costs, reducing access to global financial services for ordinary citizens.',
+    reference:'FATF — De-risking and Financial Inclusion Research' },
+
+  { id:60, topic:'40 Recommendations', difficulty:'expert',
+    question:'Under FATF Recommendation 29, what powers should FIUs have to carry out their functions?',
+    options:['Only the power to receive STRs','The power to receive, analyze, and disseminate financial intelligence, plus access to financial, administrative, and law enforcement information needed for their analysis','Only the power to share information with foreign FIUs','The power to arrest suspects and freeze accounts directly'], answer:1,
+    explanation:'R.29 requires FIUs to have the power and authority to spontaneously disseminate intelligence to competent authorities, and to access a wide range of financial, administrative, and law enforcement information needed to analyze STRs effectively.',
+    reference:'FATF Recommendation 29 — Financial Intelligence Units' }
+];
+
+// ════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════
+var currentQuestions  = [];
+var currentIndex      = 0;
+var score             = 0;
+var timerInterval     = null;
+var timeLeft          = 30;
+var answered          = false;
+var categoryScores    = {};
+var quizResults       = [];
+var lastQuizPool      = [];
+
+var selectedCategory   = 'all';
+var selectedDifficulty = 'all';
+var questionCount      = 10;
+
+var TIMER_MAX = 30;
+var CIRCUMF   = 113.1;  // 2 * Math.PI * 18
+
+// ════════════════════════════════════════════════════════════
+//  UTILITY
+// ════════════════════════════════════════════════════════════
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+function showScreen(name) {
+  ['start','question','score'].forEach(function(s) {
+    document.getElementById('screen-' + s).style.display = (s === name) ? 'block' : 'none';
+  });
+  window.scrollTo(0, 0);
+}
+
+// ════════════════════════════════════════════════════════════
+//  FILTER CONTROLS
+// ════════════════════════════════════════════════════════════
+function setCategory(btn) {
+  document.querySelectorAll('#cat-group .pill-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  selectedCategory = btn.dataset.val;
+}
+
+function setDifficulty(btn) {
+  document.querySelectorAll('#diff-group .pill-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  selectedDifficulty = btn.dataset.val;
+}
+
+function setCount(btn) {
+  document.querySelectorAll('#count-group .count-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  questionCount = parseInt(btn.dataset.val, 10);
+}
+
+// ════════════════════════════════════════════════════════════
+//  QUIZ FLOW
+// ════════════════════════════════════════════════════════════
+function startQuiz() {
+  var pool = QUESTIONS.slice();
+  if (selectedCategory !== 'all')   pool = pool.filter(function(q){ return q.topic === selectedCategory; });
+  if (selectedDifficulty !== 'all') pool = pool.filter(function(q){ return q.difficulty === selectedDifficulty; });
+
+  if (pool.length === 0) {
+    alert('No questions match your selection. Please adjust the filters.');
+    return;
+  }
+
+  // Fisher-Yates shuffle
+  for (var i = pool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+  }
+
+  currentQuestions = pool.slice(0, Math.min(questionCount, pool.length));
+  lastQuizPool     = currentQuestions.slice();
+  currentIndex     = 0;
+  score            = 0;
+  categoryScores   = {};
+  quizResults      = [];
+
+  showScreen('question');
+  showQuestion();
+}
+
+function showQuestion() {
+  var q = currentQuestions[currentIndex];
+  answered = false;
+  timeLeft = TIMER_MAX;
+
+  // Progress bar
+  document.getElementById('progress-bar').style.width = ((currentIndex / currentQuestions.length) * 100) + '%';
+
+  // Progress text
+  document.getElementById('q-progress-text').textContent =
+    'Question ' + (currentIndex + 1) + ' of ' + currentQuestions.length;
+
+  // Topic badge
+  document.getElementById('topic-badge').textContent = q.topic;
+
+  // Question text
+  document.getElementById('q-text').textContent = q.question;
+
+  // Build option buttons
+  var letters = ['A','B','C','D'];
+  var list = document.getElementById('options-list');
+  list.innerHTML = '';
+  q.options.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML =
+      '<span class="opt-letter">' + letters[i] + '</span>' +
+      '<span>' + escHtml(opt) + '</span>';
+    btn.addEventListener('click', (function(idx){ return function(){ selectAnswer(idx); }; })(i));
+    list.appendChild(btn);
+  });
+
+  // Reset explanation & next button
+  var panel = document.getElementById('explanation-panel');
+  panel.innerHTML = '';
+
+  var nb = document.getElementById('next-btn');
+  nb.style.display = 'none';
+  nb.textContent = (currentIndex + 1 < currentQuestions.length) ? 'Next Question \u2192' : 'See Results \u2192';
+
+  // Start timer
+  updateTimerDisplay(TIMER_MAX);
+  clearInterval(timerInterval);
+  timerInterval = setInterval(tickTimer, 1000);
+}
+
+function tickTimer() {
+  timeLeft--;
+  updateTimerDisplay(timeLeft);
+  if (timeLeft <= 0) {
+    clearInterval(timerInterval);
+    selectAnswer(-1); // timeout treated as wrong
+  }
+}
+
+function updateTimerDisplay(t) {
+  var arc  = document.getElementById('timer-arc');
+  var txt  = document.getElementById('timer-text');
+  var frac = Math.max(0, t / TIMER_MAX);
+  arc.style.strokeDashoffset = CIRCUMF * (1 - frac);
+  // Colour: teal -> yellow -> red
+  if (frac > 0.5)       arc.style.stroke = 'var(--accent2)';
+  else if (frac > 0.25) arc.style.stroke = 'var(--yellow)';
+  else                  arc.style.stroke = 'var(--red)';
+  txt.textContent = Math.max(0, t);
+}
+
+function selectAnswer(index) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  var q       = currentQuestions[currentIndex];
+  var correct = q.answer;
+  var isRight = (index === correct);
+
+  if (isRight) score++;
+
+  // Per-question result
+  quizResults[currentIndex] = { selected: index, isRight: isRight };
+
+  // Category breakdown
+  if (!categoryScores[q.topic]) categoryScores[q.topic] = { correct: 0, total: 0 };
+  categoryScores[q.topic].total++;
+  if (isRight) categoryScores[q.topic].correct++;
+
+  // Colour buttons
+  var buttons = document.querySelectorAll('#options-list .opt-btn');
+  buttons.forEach(function(btn, i) {
+    btn.disabled = true;
+    if (i === correct) {
+      btn.classList.add('correct');
+    } else if (i === index && index !== correct) {
+      btn.classList.add('wrong');
+    }
+  });
+
+  // Explanation
+  var resultLabel;
+  if (isRight) {
+    resultLabel = '<span style="color:var(--green);font-weight:700;">Correct!</span>';
+  } else if (index === -1) {
+    resultLabel = '<span style="color:var(--red);font-weight:700;">Time\'s up!</span>';
+  } else {
+    resultLabel = '<span style="color:var(--red);font-weight:700;">Incorrect</span>';
+  }
+
+  var panel = document.getElementById('explanation-panel');
+  panel.innerHTML =
+    '<div class="explanation">' +
+      '<div class="expl-label">' + resultLabel + ' &mdash; Explanation</div>' +
+      '<div class="expl-text">'  + escHtml(q.explanation) + '</div>' +
+      '<div class="expl-ref">Reference: ' + escHtml(q.reference) + '</div>' +
+    '</div>';
+
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex >= currentQuestions.length) {
+    showScore();
+  } else {
+    showQuestion();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  SCORE SCREEN
+// ════════════════════════════════════════════════════════════
+function showScore() {
+  clearInterval(timerInterval);
+  showScreen('score');
+
+  var total       = currentQuestions.length;
+  var pct         = total > 0 ? Math.round((score / total) * 100) : 0;
+  var SCORE_CIRC  = 439.8; // 2 * Math.PI * 70
+
+  document.getElementById('score-label').textContent = score + '/' + total;
+  document.getElementById('score-pct').textContent   = pct + '%';
+
+  // Arc colour
+  var arcColor;
+  if      (pct >= 90) arcColor = '#f59e0b';
+  else if (pct >= 70) arcColor = 'var(--green)';
+  else if (pct >= 50) arcColor = 'var(--yellow)';
+  else                arcColor = 'var(--red)';
+
+  var arc = document.getElementById('score-arc');
+  arc.style.stroke           = arcColor;
+  arc.style.transition       = 'none';
+  arc.style.strokeDashoffset = SCORE_CIRC;
+
+  // Animate after paint
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      arc.style.transition       = 'stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)';
+      arc.style.strokeDashoffset = SCORE_CIRC * (1 - pct / 100);
+    });
+  });
+
+  // Tier badge
+  var tierClass, tierText;
+  if      (pct >= 90) { tierClass = 'tier-expert';    tierText = 'Expert'; }
+  else if (pct >= 70) { tierClass = 'tier-proficient';tierText = 'Proficient'; }
+  else if (pct >= 50) { tierClass = 'tier-developing';tierText = 'Developing'; }
+  else                { tierClass = 'tier-needs';      tierText = 'Needs Review'; }
+
+  var tb = document.getElementById('tier-badge');
+  tb.className  = 'tier-badge ' + tierClass;
+  tb.textContent = tierText;
+
+  // Category breakdown
+  var topicColors = {
+    '40 Recommendations': '#1d4ed8',
+    'Grey & Black Lists':  '#0891b2',
+    'Travel Rule':         '#7c3aed',
+    'Mutual Evaluations':  '#059669'
+  };
+
+  var bRows = document.getElementById('breakdown-rows');
+  bRows.innerHTML = '';
+  Object.keys(categoryScores).forEach(function(topic) {
+    var data     = categoryScores[topic];
+    var topicPct = data.total > 0 ? (data.correct / data.total) * 100 : 0;
+    var color    = topicColors[topic] || 'var(--accent)';
+    bRows.innerHTML +=
+      '<div class="breakdown-row">' +
+        '<div class="breakdown-topic" title="' + escHtml(topic) + '">' + escHtml(topic) + '</div>' +
+        '<div class="breakdown-bar-wrap">' +
+          '<div class="breakdown-bar-fill" style="width:' + topicPct + '%;background:' + color + '"></div>' +
+        '</div>' +
+        '<div class="breakdown-stat" style="color:' + color + '">' + data.correct + '/' + data.total + '</div>' +
+      '</div>';
+  });
+  if (!Object.keys(categoryScores).length) {
+    bRows.innerHTML = '<div style="font-size:.83rem;color:var(--muted)">No data available.</div>';
+  }
+
+  // Review questions
+  var reviewBody = document.getElementById('review-body');
+  reviewBody.innerHTML = '';
+  reviewBody.classList.remove('open');
+  document.getElementById('review-icon').style.transform = 'rotate(0deg)';
+
+  var letters = ['A','B','C','D'];
+  currentQuestions.forEach(function(q, qi) {
+    var res     = quizResults[qi] || { selected: -2, isRight: false };
+    var userIdx = res.selected;
+
+    var answerHtml = '';
+    q.options.forEach(function(opt, oi) {
+      var isRight = (oi === q.answer);
+      var isUser  = (oi === userIdx);
+      var color    = 'var(--muted)';
+      var dotColor = '#30363d';
+      var weight   = '400';
+      if (isRight)            { color = 'var(--green)'; dotColor = 'var(--green)'; weight = '600'; }
+      if (isUser && !isRight) { color = 'var(--red)';   dotColor = 'var(--red)';   weight = '600'; }
+      answerHtml +=
+        '<div class="review-answer" style="color:' + color + ';font-weight:' + weight + '">' +
+          '<div class="rv-dot" style="background:' + dotColor + '"></div>' +
+          escHtml(letters[oi] + '. ' + opt) +
+          (isRight ? ' \u2713' : '') +
+          (isUser && !isRight ? ' \u2717' : '') +
+        '</div>';
+    });
+
+    reviewBody.innerHTML +=
+      '<div class="review-item">' +
+        '<div class="review-q">' + (qi + 1) + '. ' + escHtml(q.question) + '</div>' +
+        answerHtml +
+        '<div style="font-size:.73rem;color:var(--muted);margin-top:.4rem;font-style:italic">' + escHtml(q.reference) + '</div>' +
+      '</div>';
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+//  RETRY / NEW QUIZ
+// ════════════════════════════════════════════════════════════
+function retryQuiz() {
+  currentQuestions = lastQuizPool.slice();
+  currentIndex     = 0;
+  score            = 0;
+  categoryScores   = {};
+  quizResults      = [];
+  showScreen('question');
+  showQuestion();
+}
+
+function newQuiz() {
+  showScreen('start');
+}
+
+function toggleReview() {
+  var body = document.getElementById('review-body');
+  var icon = document.getElementById('review-icon');
+  var isOpen = body.classList.toggle('open');
+  icon.style.transform = isOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+}
+</script>
+</body>
+</html>

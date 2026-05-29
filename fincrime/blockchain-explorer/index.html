@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blockchain Explorer — Everything</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg:#0d1117; --bg2:#161b22; --bg3:#21262d; --border:#30363d;
+  --text:#e6edf3; --muted:#8b949e; --accent:#6366f1; --accent2:#8b5cf6;
+  --nav-h:52px; --green:#22c55e; --red:#ef4444; --yellow:#f59e0b;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+html,body {
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:14px;
+  overflow:hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  height:var(--nav-h);
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; gap:12px;
+  padding:0 20px;
+}
+nav a {
+  color:var(--muted);
+  text-decoration:none;
+  font-size:13px;
+  display:flex; align-items:center; gap:6px;
+  transition:color .15s;
+}
+nav a:hover { color:var(--text); }
+nav .sep { color:var(--border); font-size:16px; }
+nav .title { font-weight:600; color:var(--text); font-size:15px; }
+nav .badge {
+  margin-left:auto;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  color:#fff;
+  font-size:11px; font-weight:600;
+  padding:3px 10px; border-radius:12px;
+  letter-spacing:.5px; text-transform:uppercase;
+}
+
+/* ── LAYOUT ── */
+.layout {
+  position:fixed;
+  top:var(--nav-h); left:0; right:0; bottom:0;
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+
+/* ── TOP: CHAIN VISUALIZER ── */
+.chain-section {
+  flex:0 0 46%;
+  border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  background:var(--bg);
+}
+.section-header {
+  padding:10px 20px 8px;
+  display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid var(--border);
+  flex-shrink:0;
+  background:var(--bg2);
+}
+.section-header h2 {
+  font-size:13px; font-weight:600; color:var(--text);
+  letter-spacing:.3px; text-transform:uppercase;
+}
+.section-header .info {
+  font-size:11px; color:var(--muted); margin-left:auto;
+}
+.chain-scroll {
+  flex:1;
+  overflow-x:auto; overflow-y:hidden;
+  display:flex; align-items:center;
+  padding:18px 24px;
+  gap:0;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
+}
+.chain-scroll::-webkit-scrollbar { height:6px; }
+.chain-scroll::-webkit-scrollbar-track { background:transparent; }
+.chain-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* ── BLOCK CARD ── */
+.block-card {
+  flex-shrink:0;
+  width:260px;
+  border-radius:10px;
+  border:2px solid var(--border);
+  background:var(--bg2);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+  transition:border-color .3s, box-shadow .3s, background .3s;
+  position:relative;
+}
+.block-card.valid {
+  border-color:var(--green);
+  box-shadow:0 0 18px rgba(34,197,94,.18);
+}
+.block-card.invalid {
+  border-color:var(--red);
+  box-shadow:0 0 18px rgba(239,68,68,.22);
+  background:rgba(239,68,68,.05);
+}
+.block-card.genesis {
+  border-color:transparent;
+  background:linear-gradient(var(--bg2),var(--bg2)) padding-box,
+             linear-gradient(135deg,#f59e0b,#6366f1,#8b5cf6) border-box;
+  box-shadow:0 0 22px rgba(99,102,241,.25);
+}
+
+.block-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px 8px;
+  border-bottom:1px solid var(--border);
+  background:var(--bg3);
+}
+.block-num {
+  font-weight:700; font-size:13px; color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+}
+.block-tag {
+  font-size:10px; font-weight:600; padding:2px 8px; border-radius:10px;
+  background:linear-gradient(135deg,#f59e0b22,#6366f122);
+  color:var(--yellow); border:1px solid var(--yellow);
+  letter-spacing:.5px;
+}
+
+.block-meta {
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  font-size:11px; color:var(--muted);
+  line-height:1.7;
+  font-family:'JetBrains Mono',monospace;
+}
+.block-meta span { color:var(--text); }
+
+.block-data-label {
+  padding:6px 12px 2px;
+  font-size:11px; color:var(--muted); text-transform:uppercase;
+  letter-spacing:.5px; font-weight:600;
+}
+.block-data {
+  margin:0 10px 8px;
+  padding:7px 9px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:var(--text);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  resize:none;
+  line-height:1.5;
+  width:calc(100% - 20px);
+  min-height:52px;
+  outline:none;
+  transition:border-color .2s;
+}
+.block-data:focus { border-color:var(--accent); }
+.block-data:read-only {
+  cursor:default;
+  background:rgba(33,38,45,.7);
+}
+
+.block-hash-section {
+  padding:6px 12px 8px;
+  border-top:1px solid var(--border);
+}
+.block-hash-label {
+  font-size:10px; color:var(--muted); text-transform:uppercase;
+  letter-spacing:.5px; font-weight:600; margin-bottom:3px;
+}
+.block-hash-val {
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; color:var(--accent);
+  word-break:break-all; line-height:1.4;
+}
+
+.block-footer {
+  padding:7px 12px;
+  border-top:1px solid var(--border);
+  font-size:12px; font-weight:600;
+  display:flex; align-items:center; gap:6px;
+}
+.block-footer.valid-footer { color:var(--green); background:rgba(34,197,94,.06); }
+.block-footer.invalid-footer { color:var(--red); background:rgba(239,68,68,.08); }
+
+/* ── ARROW CONNECTOR ── */
+.chain-arrow {
+  flex-shrink:0;
+  display:flex; align-items:center;
+  padding:0 6px;
+}
+.chain-arrow svg { color:var(--muted); }
+
+/* ── BOTTOM PANELS ── */
+.bottom-section {
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 1.4fr 1fr;
+  overflow:hidden;
+}
+.panel {
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column;
+  overflow:hidden;
+}
+.panel:last-child { border-right:none; }
+.panel-body {
+  flex:1; overflow-y:auto; padding:14px 16px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
+}
+.panel-body::-webkit-scrollbar { width:5px; }
+.panel-body::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* ── CONTROLS PANEL ── */
+.field-label {
+  font-size:11px; font-weight:600; color:var(--muted);
+  text-transform:uppercase; letter-spacing:.5px;
+  margin-bottom:5px;
+}
+.text-input {
+  width:100%;
+  padding:8px 10px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  outline:none;
+  transition:border-color .2s;
+}
+.text-input:focus { border-color:var(--accent); }
+
+.btn {
+  padding:8px 14px;
+  border-radius:6px;
+  border:none;
+  cursor:pointer;
+  font-family:'Inter',sans-serif;
+  font-size:12px; font-weight:600;
+  transition:opacity .15s, transform .1s;
+}
+.btn:hover { opacity:.85; }
+.btn:active { transform:scale(.97); }
+.btn-accent {
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+}
+.btn-secondary {
+  background:var(--bg3);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+.btn-red { background:rgba(239,68,68,.15); color:var(--red); border:1px solid rgba(239,68,68,.3); }
+.btn-green { background:rgba(34,197,94,.12); color:var(--green); border:1px solid rgba(34,197,94,.3); }
+.btn-yellow { background:rgba(245,158,11,.12); color:var(--yellow); border:1px solid rgba(245,158,11,.3); }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+
+.btn-row { display:flex; gap:8px; margin-top:8px; }
+.btn-full { width:100%; padding:10px; margin-top:8px; font-size:13px; }
+
+.pending-list {
+  display:flex; flex-wrap:wrap; gap:5px;
+  margin-top:8px; min-height:24px;
+}
+.pending-pill {
+  display:flex; align-items:center; gap:5px;
+  background:rgba(99,102,241,.12);
+  border:1px solid rgba(99,102,241,.3);
+  border-radius:20px;
+  padding:3px 8px 3px 10px;
+  font-size:11px; color:var(--text);
+  max-width:220px;
+}
+.pending-pill span {
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  max-width:170px;
+}
+.pending-pill button {
+  background:none; border:none; cursor:pointer;
+  color:var(--muted); font-size:13px; line-height:1;
+  padding:0; transition:color .15s;
+}
+.pending-pill button:hover { color:var(--red); }
+
+.divider { border:none; border-top:1px solid var(--border); margin:12px 0; }
+
+.difficulty-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:6px;
+}
+.difficulty-label { font-size:12px; color:var(--text); }
+.difficulty-val {
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; color:var(--accent);
+  background:rgba(99,102,241,.1);
+  padding:2px 8px; border-radius:4px;
+}
+input[type=range] {
+  -webkit-appearance:none;
+  width:100%; height:4px;
+  background:var(--border);
+  border-radius:2px; outline:none; cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance:none;
+  width:14px; height:14px;
+  border-radius:50%;
+  background:var(--accent);
+  cursor:pointer;
+}
+
+.mining-status {
+  margin-top:10px;
+  padding:10px 12px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:7px;
+  display:none;
+}
+.mining-status.active { display:block; }
+.mining-label {
+  font-size:12px; font-weight:600; color:var(--yellow);
+  display:flex; align-items:center; gap:6px; margin-bottom:6px;
+}
+.spin {
+  width:13px; height:13px;
+  border:2px solid rgba(245,158,11,.3);
+  border-top-color:var(--yellow);
+  border-radius:50%;
+  animation:spin .6s linear infinite;
+  flex-shrink:0;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.mining-row { font-size:11px; color:var(--muted); margin-top:3px; font-family:'JetBrains Mono',monospace; }
+.mining-row span { color:var(--text); }
+
+/* ── HASH INSPECTOR ── */
+.hash-output {
+  padding:9px 11px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  word-break:break-all;
+  line-height:1.6;
+  min-height:36px;
+  margin-top:6px;
+  letter-spacing:.3px;
+}
+.hash-digit { color:#60a5fa; }
+.hash-letter { color:#a78bfa; }
+.hash-placeholder { color:var(--muted); font-style:italic; }
+
+.avalanche-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:10px; margin-top:10px;
+}
+.av-col label { font-size:11px; color:var(--muted); font-weight:600; display:block; margin-bottom:4px; }
+.av-hash {
+  padding:7px 9px;
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:6px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  word-break:break-all;
+  line-height:1.6;
+  margin-top:4px;
+  min-height:58px;
+  letter-spacing:.2px;
+}
+
+.av-diff {
+  margin-top:10px;
+  padding:9px 11px;
+  background:rgba(239,68,68,.05);
+  border:1px solid rgba(239,68,68,.2);
+  border-radius:7px;
+}
+.av-diff-label {
+  font-size:11px; color:var(--muted); font-weight:600;
+  text-transform:uppercase; letter-spacing:.5px; margin-bottom:6px;
+}
+.av-diff-hash {
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px; line-height:1.8; word-break:break-all;
+  letter-spacing:.2px;
+}
+.av-match { color:var(--green); }
+.av-mismatch { color:var(--red); background:rgba(239,68,68,.15); border-radius:2px; padding:0 1px; }
+
+.av-stats {
+  margin-top:8px;
+  font-size:11.5px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.av-stats span { color:var(--text); font-weight:600; }
+
+/* ── TAMPER PANEL ── */
+.tamper-btns {
+  display:flex; flex-direction:column; gap:8px;
+}
+.edu-box {
+  margin-top:14px;
+  padding:12px 14px;
+  background:rgba(99,102,241,.05);
+  border:1px solid rgba(99,102,241,.2);
+  border-radius:8px;
+}
+.edu-box h4 {
+  font-size:12px; font-weight:700; color:var(--accent);
+  margin-bottom:10px; letter-spacing:.3px;
+}
+.edu-box ol {
+  padding-left:18px;
+  font-size:11.5px; color:var(--muted);
+  line-height:1.9;
+}
+.edu-box ol li { color:var(--muted); }
+.edu-box ol strong { color:var(--text); }
+.edu-box .edu-conclusion {
+  margin-top:10px;
+  font-size:11.5px; font-style:italic;
+  color:var(--accent);
+  padding-top:8px;
+  border-top:1px solid rgba(99,102,241,.2);
+}
+
+/* ── TOAST ── */
+.toast-container {
+  position:fixed; bottom:24px; right:24px; z-index:999;
+  display:flex; flex-direction:column; gap:8px; align-items:flex-end;
+}
+.toast {
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:12px; font-weight:600;
+  max-width:300px;
+  animation:slideIn .25s ease;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+}
+.toast-success { background:rgba(34,197,94,.15); border:1px solid var(--green); color:var(--green); }
+.toast-error   { background:rgba(239,68,68,.15); border:1px solid var(--red);   color:var(--red);   }
+.toast-info    { background:rgba(99,102,241,.15); border:1px solid var(--accent);color:var(--accent);}
+@keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+
+/* ── MISC ── */
+.mt4  { margin-top:4px; }
+.mt8  { margin-top:8px; }
+.mt12 { margin-top:12px; }
+.small-muted { font-size:11px; color:var(--muted); }
+.dot { display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:4px; }
+.dot-green { background:var(--green); box-shadow:0 0 6px var(--green); }
+.dot-red   { background:var(--red);   box-shadow:0 0 6px var(--red); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/index.html">← Everything</a>
+  <span class="sep">/</span>
+  <span class="title">Blockchain Explorer</span>
+  <span class="badge">FinCrime</span>
+</nav>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- CHAIN VISUALIZER -->
+  <div class="chain-section">
+    <div class="section-header">
+      <h2>Chain Visualizer</h2>
+      <span class="info" id="chainInfo">Computing hashes…</span>
+    </div>
+    <div class="chain-scroll" id="chainScroll"></div>
+  </div>
+
+  <!-- BOTTOM THREE PANELS -->
+  <div class="bottom-section">
+
+    <!-- LEFT: CONTROLS -->
+    <div class="panel">
+      <div class="section-header">
+        <h2>Mine a Block</h2>
+      </div>
+      <div class="panel-body">
+        <div class="field-label">Transaction Data</div>
+        <input type="text" class="text-input" id="txInput"
+               placeholder="e.g. Alice → Bob: ₹5,000" />
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="addPendingBtn">Add to Pending</button>
+        </div>
+
+        <div id="pendingList" class="pending-list"></div>
+        <div class="small-muted mt4" id="pendingCount">0 pending transactions</div>
+
+        <hr class="divider" />
+
+        <div class="difficulty-row">
+          <span class="difficulty-label">Difficulty</span>
+          <span class="difficulty-val" id="diffVal">2 — starts with '00'</span>
+        </div>
+        <input type="range" id="diffSlider" min="1" max="4" value="2" />
+        <div class="small-muted mt4">Higher = more nonce iterations required</div>
+
+        <button class="btn btn-accent btn-full" id="mineBtn">⛏ Mine Block →</button>
+
+        <div class="mining-status" id="miningStatus">
+          <div class="mining-label">
+            <div class="spin"></div>
+            <span id="miningLabel">Mining…</span>
+          </div>
+          <div class="mining-row">Nonce: <span id="nonceDisplay">0</span></div>
+          <div class="mining-row">Hash:&nbsp; <span id="hashDisplay" style="color:var(--muted)">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER: HASH INSPECTOR -->
+    <div class="panel">
+      <div class="section-header">
+        <h2>Hash Inspector</h2>
+      </div>
+      <div class="panel-body">
+        <div class="field-label">Live SHA-256 Calculator</div>
+        <textarea class="text-input" id="hashInput" rows="3"
+                  style="resize:none;line-height:1.5"
+                  placeholder="Type anything to see its SHA-256 hash…"></textarea>
+        <div class="hash-output" id="hashLive"><span class="hash-placeholder">Hash will appear here…</span></div>
+
+        <hr class="divider" />
+
+        <div class="field-label">Avalanche Effect Demo</div>
+        <div class="small-muted">Change 1 character → entire hash changes (~50% of bits)</div>
+
+        <div class="avalanche-grid mt8">
+          <div class="av-col">
+            <label>Text A</label>
+            <input type="text" class="text-input" id="avA" value="Hello World" style="font-size:12px" />
+            <div class="av-hash" id="avHashA"></div>
+          </div>
+          <div class="av-col">
+            <label>Text B</label>
+            <input type="text" class="text-input" id="avB" value="Hello world" style="font-size:12px" />
+            <div class="av-hash" id="avHashB"></div>
+          </div>
+        </div>
+
+        <div class="av-diff mt8">
+          <div class="av-diff-label">Character Diff (green = match, red = mismatch)</div>
+          <div class="av-diff-hash" id="avDiff"></div>
+          <div class="av-stats" id="avStats"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: TAMPER DEMO -->
+    <div class="panel">
+      <div class="section-header">
+        <h2>Tamper Demonstration</h2>
+      </div>
+      <div class="panel-body">
+        <div class="tamper-btns">
+          <button class="btn btn-red btn-full" id="tamperBtn">
+            🔴 Tamper Block #1
+          </button>
+          <button class="btn btn-yellow btn-full" id="remineBtn">
+            🔄 Re-mine from Block #1
+          </button>
+          <button class="btn btn-secondary btn-full" id="resetBtn">
+            ↺ Reset Chain
+          </button>
+        </div>
+
+        <div class="edu-box mt12">
+          <h4>Why Can't You Tamper With Blockchain?</h4>
+          <ol>
+            <li>Every block contains the <strong>hash of the previous block</strong>.</li>
+            <li>Changing any data <strong>changes that block's hash</strong>.</li>
+            <li>The next block's <strong>prevHash no longer matches</strong>.</li>
+            <li>You must <strong>re-mine that block AND every block after it</strong>.</li>
+            <li>On Bitcoin, this means <strong>redoing years of work</strong> — before the honest chain grows further.</li>
+          </ol>
+          <p class="edu-conclusion">This is why blockchain is tamper-evident.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /bottom-section -->
+</div><!-- /layout -->
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════════
+   CRYPTO UTILITIES
+══════════════════════════════════════════════ */
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function computeHash(block) {
+  const content = String(block.index) + block.timestamp + block.data + block.previousHash + String(block.nonce);
+  return await sha256(content);
+}
+
+/* ══════════════════════════════════════════════
+   BLOCK CLASS
+══════════════════════════════════════════════ */
+class Block {
+  constructor(index, data, previousHash='') {
+    this.index        = index;
+    this.timestamp    = new Date().toISOString().replace('T',' ').slice(0,19);
+    this.data         = data;
+    this.previousHash = previousHash;
+    this.nonce        = 0;
+    this.hash         = '';
+    this.isValid      = false;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   CHAIN STATE
+══════════════════════════════════════════════ */
+const SEED_DATA = [
+  'Genesis Block — Blockchain Explorer',
+  'Alice → Bob: ₹10,000 (UPI Transfer)',
+  'Bob → Carol: ₹3,500 (NEFT Transfer)'
+];
+
+let chain = [];
+
+async function buildChain(seedData) {
+  const blocks = [];
+  let prevHash = '0'.repeat(64);
+  for (let i = 0; i < seedData.length; i++) {
+    const b = new Block(i, seedData[i], i === 0 ? '0'.repeat(64) : prevHash);
+    b.nonce = 0;
+    b.hash  = await computeHash(b);
+    b.isValid = true;
+    prevHash  = b.hash;
+    blocks.push(b);
+  }
+  return blocks;
+}
+
+async function validateChain(blocks) {
+  if (!blocks.length) return;
+  // Genesis: always valid (we trust its own hash)
+  blocks[0].isValid = true;
+  for (let i = 1; i < blocks.length; i++) {
+    const cur  = blocks[i];
+    const prev = blocks[i-1];
+    const recomputed = await computeHash(cur);
+    cur.isValid = (
+      cur.hash === recomputed &&
+      cur.previousHash === prev.hash
+    );
+  }
+}
+
+/* ══════════════════════════════════════════════
+   RENDER CHAIN
+══════════════════════════════════════════════ */
+function truncateHash(h, n=16) {
+  if (!h) return '—';
+  return h.slice(0,n) + '…';
+}
+
+function renderChain() {
+  const scroll = document.getElementById('chainScroll');
+  scroll.innerHTML = '';
+
+  chain.forEach((block, idx) => {
+    // Arrow (not for first block)
+    if (idx > 0) {
+      const arrow = document.createElement('div');
+      arrow.className = 'chain-arrow';
+      arrow.innerHTML = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="4" y1="16" x2="24" y2="16"/>
+        <polyline points="18,10 24,16 18,22"/>
+      </svg>`;
+      scroll.appendChild(arrow);
+    }
+
+    // Card
+    const card = document.createElement('div');
+    card.className = 'block-card';
+    if (idx === 0) card.classList.add('genesis');
+    else if (block.isValid) card.classList.add('valid');
+    else card.classList.add('invalid');
+
+    card.dataset.index = idx;
+
+    const isGenesis = idx === 0;
+    const validClass   = block.isValid ? 'valid-footer' : 'invalid-footer';
+    const validLabel   = block.isValid
+      ? '<span class="dot dot-green"></span>VALID'
+      : '<span class="dot dot-red"></span>INVALID — CHAIN BROKEN';
+
+    card.innerHTML = `
+      <div class="block-header">
+        <span class="block-num">BLOCK #${block.index}</span>
+        ${isGenesis ? '<span class="block-tag">GENESIS</span>' : ''}
+      </div>
+      <div class="block-meta">
+        Nonce: <span>${block.nonce.toLocaleString()}</span><br/>
+        Time: <span>${block.timestamp}</span><br/>
+        PrevHash: <span style="color:var(--accent2)">${truncateHash(block.previousHash,20)}</span>
+      </div>
+      <div class="block-data-label">Data</div>
+      <textarea class="block-data" rows="3" data-idx="${idx}" ${isGenesis ? 'readonly' : ''}>${block.data}</textarea>
+      <div class="block-hash-section">
+        <div class="block-hash-label">Hash</div>
+        <div class="block-hash-val" id="bHash${idx}">${block.hash}</div>
+      </div>
+      <div class="block-footer ${validClass}">${validLabel}</div>
+    `;
+
+    scroll.appendChild(card);
+  });
+
+  // Update info
+  const allValid = chain.every(b => b.isValid);
+  const info = document.getElementById('chainInfo');
+  info.textContent = allValid
+    ? `${chain.length} blocks · All valid`
+    : `${chain.length} blocks · Chain compromised`;
+  info.style.color = allValid ? 'var(--green)' : 'var(--red)';
+
+  // Attach textarea listeners
+  scroll.querySelectorAll('.block-data').forEach(ta => {
+    ta.addEventListener('input', onDataEdit);
+  });
+}
+
+/* ══════════════════════════════════════════════
+   DATA EDIT HANDLER
+══════════════════════════════════════════════ */
+let editDebounce = null;
+async function onDataEdit(e) {
+  const idx = parseInt(e.target.dataset.idx);
+  chain[idx].data = e.target.value;
+
+  // Recompute from this block onward
+  for (let i = idx; i < chain.length; i++) {
+    if (i > 0) chain[i].previousHash = chain[i-1].hash;
+    chain[i].hash = await computeHash(chain[i]);
+  }
+  await validateChain(chain);
+
+  // Partial re-render: just update card classes, hash displays, and footers
+  // (Full re-render would reset textarea cursor)
+  updateCardVisuals();
+}
+
+function updateCardVisuals() {
+  const scroll = document.getElementById('chainScroll');
+  const cards  = scroll.querySelectorAll('.block-card');
+
+  cards.forEach((card, idx) => {
+    const block = chain[idx];
+
+    card.classList.remove('valid','invalid','genesis');
+    if (idx === 0) card.classList.add('genesis');
+    else if (block.isValid) card.classList.add('valid');
+    else card.classList.add('invalid');
+
+    const hashEl = card.querySelector('.block-hash-val');
+    if (hashEl) hashEl.textContent = block.hash;
+
+    const metaEl = card.querySelector('.block-meta');
+    if (metaEl) {
+      metaEl.innerHTML = `
+        Nonce: <span>${block.nonce.toLocaleString()}</span><br/>
+        Time: <span>${block.timestamp}</span><br/>
+        PrevHash: <span style="color:var(--accent2)">${truncateHash(block.previousHash,20)}</span>
+      `;
+    }
+
+    const footer = card.querySelector('.block-footer');
+    if (footer) {
+      footer.className = 'block-footer ' + (block.isValid ? 'valid-footer' : 'invalid-footer');
+      footer.innerHTML = block.isValid
+        ? '<span class="dot dot-green"></span>VALID'
+        : '<span class="dot dot-red"></span>INVALID — CHAIN BROKEN';
+    }
+  });
+
+  const allValid = chain.every(b => b.isValid);
+  const info = document.getElementById('chainInfo');
+  info.textContent = allValid
+    ? `${chain.length} blocks · All valid`
+    : `${chain.length} blocks · Chain compromised`;
+  info.style.color = allValid ? 'var(--green)' : 'var(--red)';
+}
+
+/* ══════════════════════════════════════════════
+   MINING
+══════════════════════════════════════════════ */
+let pendingTxs = [];
+let isMining   = false;
+
+function updatePendingUI() {
+  const list = document.getElementById('pendingList');
+  const count = document.getElementById('pendingCount');
+
+  list.innerHTML = '';
+  pendingTxs.forEach((tx, i) => {
+    const pill = document.createElement('div');
+    pill.className = 'pending-pill';
+    pill.innerHTML = `<span>${tx}</span><button data-i="${i}" title="Remove">×</button>`;
+    list.appendChild(pill);
+  });
+
+  list.querySelectorAll('button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      pendingTxs.splice(parseInt(btn.dataset.i), 1);
+      updatePendingUI();
+    });
+  });
+
+  count.textContent = `${pendingTxs.length} pending transaction${pendingTxs.length !== 1 ? 's' : ''}`;
+}
+
+document.getElementById('addPendingBtn').addEventListener('click', () => {
+  const inp = document.getElementById('txInput');
+  const val = inp.value.trim();
+  if (!val) { showToast('Enter transaction data first.','error'); return; }
+  if (pendingTxs.length >= 5) { showToast('Max 5 pending transactions.','error'); return; }
+  pendingTxs.push(val);
+  inp.value = '';
+  updatePendingUI();
+});
+
+document.getElementById('txInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') document.getElementById('addPendingBtn').click();
+});
+
+function getDifficulty() {
+  return parseInt(document.getElementById('diffSlider').value);
+}
+
+document.getElementById('diffSlider').addEventListener('input', () => {
+  const d = getDifficulty();
+  const zeros = '0'.repeat(d);
+  document.getElementById('diffVal').textContent = `${d} — starts with '${zeros}'`;
+});
+
+document.getElementById('mineBtn').addEventListener('click', async () => {
+  if (isMining) return;
+  if (pendingTxs.length === 0) {
+    showToast('Add at least one transaction first.','error');
+    return;
+  }
+  const txData = pendingTxs.join(' | ');
+  const prevBlock = chain[chain.length - 1];
+  const newBlock  = new Block(chain.length, txData, prevBlock.hash);
+
+  await startMining(newBlock, getDifficulty());
+});
+
+async function startMining(blockTemplate, difficulty) {
+  isMining = true;
+  const mineBtn = document.getElementById('mineBtn');
+  mineBtn.disabled = true;
+
+  const statusBox  = document.getElementById('miningStatus');
+  const labelEl    = document.getElementById('miningLabel');
+  const nonceEl    = document.getElementById('nonceDisplay');
+  const hashEl     = document.getElementById('hashDisplay');
+
+  statusBox.classList.add('active');
+  labelEl.textContent = 'Mining…';
+
+  const target = '0'.repeat(difficulty);
+  let nonce = 0;
+
+  function onProgress(n, h) {
+    nonceEl.textContent = n.toLocaleString();
+    hashEl.textContent  = h.slice(0,24) + '…';
+  }
+
+  function onComplete(n, h) {
+    blockTemplate.nonce = n;
+    blockTemplate.hash  = h;
+    blockTemplate.isValid = true;
+
+    chain.push(blockTemplate);
+    pendingTxs = [];
+    updatePendingUI();
+    renderChain();
+
+    statusBox.classList.remove('active');
+    mineBtn.disabled = false;
+    isMining = false;
+
+    showToast(`Block #${blockTemplate.index} mined! Nonce: ${n.toLocaleString()}`, 'success');
+  }
+
+  async function tryBatch(count) {
+    for (let i = 0; i < count; i++) {
+      nonce++;
+      const tempBlock = Object.assign({}, blockTemplate, { nonce });
+      const hash = await computeHash(tempBlock);
+
+      if (hash.startsWith(target)) {
+        onComplete(nonce, hash);
+        return;
+      }
+
+      if (i === count - 1) {
+        onProgress(nonce, hash);
+        setTimeout(() => tryBatch(50), 0);
+      }
+    }
+  }
+
+  tryBatch(50);
+}
+
+/* ══════════════════════════════════════════════
+   HASH INSPECTOR — LIVE
+══════════════════════════════════════════════ */
+function colorHash(hash) {
+  if (!hash) return '<span class="hash-placeholder">Hash will appear here…</span>';
+  return hash.split('').map(c => {
+    if (c >= '0' && c <= '9') return `<span class="hash-digit">${c}</span>`;
+    return `<span class="hash-letter">${c}</span>`;
+  }).join('');
+}
+
+let hashDebounce = null;
+document.getElementById('hashInput').addEventListener('input', e => {
+  clearTimeout(hashDebounce);
+  hashDebounce = setTimeout(async () => {
+    const val = e.target.value;
+    if (!val) {
+      document.getElementById('hashLive').innerHTML = '<span class="hash-placeholder">Hash will appear here…</span>';
+      return;
+    }
+    const h = await sha256(val);
+    document.getElementById('hashLive').innerHTML = colorHash(h);
+  }, 300);
+});
+
+/* ══════════════════════════════════════════════
+   AVALANCHE EFFECT
+══════════════════════════════════════════════ */
+async function updateAvalanche() {
+  const a = document.getElementById('avA').value;
+  const b = document.getElementById('avB').value;
+
+  const [ha, hb] = await Promise.all([sha256(a), sha256(b)]);
+
+  document.getElementById('avHashA').innerHTML = colorHash(ha);
+  document.getElementById('avHashB').innerHTML = colorHash(hb);
+
+  // Character diff
+  let diffHTML = '';
+  let mismatches = 0;
+  for (let i = 0; i < 64; i++) {
+    const ca = ha[i] || '';
+    const cb = hb[i] || '';
+    if (ca === cb) {
+      diffHTML += `<span class="av-match">${ca}</span>`;
+    } else {
+      diffHTML += `<span class="av-mismatch">${cb}</span>`;
+      mismatches++;
+    }
+  }
+  document.getElementById('avDiff').innerHTML = diffHTML;
+
+  // Bit count (each hex char = 4 bits)
+  let bitsChanged = 0;
+  for (let i = 0; i < 64; i++) {
+    const na = parseInt(ha[i], 16);
+    const nb = parseInt(hb[i], 16);
+    const xor = na ^ nb;
+    bitsChanged += xor.toString(2).split('1').length - 1;
+  }
+
+  const pct = Math.round((mismatches / 64) * 100);
+  const bpct = Math.round((bitsChanged / 256) * 100);
+  document.getElementById('avStats').innerHTML = `
+    Hex chars changed: <span>${mismatches} of 64 (${pct}%)</span><br/>
+    Bits changed: <span>${bitsChanged} of 256 (${bpct}%)</span><br/>
+    <em style="color:var(--muted)">Changing 1 character changed ${pct}% of the hash.</em>
+  `;
+}
+
+let avDebounce = null;
+function scheduleAvalanche() {
+  clearTimeout(avDebounce);
+  avDebounce = setTimeout(updateAvalanche, 300);
+}
+document.getElementById('avA').addEventListener('input', scheduleAvalanche);
+document.getElementById('avB').addEventListener('input', scheduleAvalanche);
+
+/* ══════════════════════════════════════════════
+   TAMPER DEMO
+══════════════════════════════════════════════ */
+document.getElementById('tamperBtn').addEventListener('click', async () => {
+  if (chain.length < 2) { showToast('Chain too short to tamper.','error'); return; }
+  chain[1].data += ' [TAMPERED]';
+  // Recompute block 1's hash only (don't fix chain)
+  chain[1].hash = await computeHash(chain[1]);
+  // Now validate — downstream should break
+  await validateChain(chain);
+  renderChain();
+  showToast('Block #1 tampered — chain broken!','error');
+});
+
+document.getElementById('resetBtn').addEventListener('click', async () => {
+  chain = await buildChain(SEED_DATA);
+  renderChain();
+  showToast('Chain reset to original state.','info');
+});
+
+let remlining = false;
+document.getElementById('remineBtn').addEventListener('click', async () => {
+  if (remlining) return;
+  remlining = true;
+  const btn = document.getElementById('remineBtn');
+  btn.disabled = true;
+
+  const diff   = getDifficulty();
+  const target = '0'.repeat(diff);
+
+  for (let i = 1; i < chain.length; i++) {
+    const b = chain[i];
+    if (i > 0) b.previousHash = chain[i-1].hash;
+    b.nonce = 0;
+
+    showToast(`Re-mining Block #${i}…`,'info');
+
+    await new Promise(resolve => {
+      let nonce = 0;
+      async function tryBatch(count) {
+        for (let j = 0; j < count; j++) {
+          nonce++;
+          const tempBlock = Object.assign({}, b, { nonce });
+          const hash = await computeHash(tempBlock);
+          if (hash.startsWith(target)) {
+            b.nonce = nonce;
+            b.hash  = hash;
+            b.isValid = true;
+            resolve();
+            return;
+          }
+          if (j === count - 1) {
+            setTimeout(() => tryBatch(50), 0);
+          }
+        }
+      }
+      tryBatch(50);
+    });
+
+    renderChain();
+  }
+
+  remlining = false;
+  btn.disabled = false;
+  showToast('All blocks re-mined. Chain valid again.','success');
+});
+
+/* ══════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════ */
+function showToast(msg, type='info') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity .3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+(async () => {
+  chain = await buildChain(SEED_DATA);
+  renderChain();
+  updateAvalanche();
+})();
+</script>
+</body>
+</html>

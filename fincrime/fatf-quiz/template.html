@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FATF Quiz · FinCrime · Everything</title>
+<style>
+:root{--bg:#fafafa;--bg2:#fff;--border:#e5e7eb;--text1:#111827;--text2:#6b7280;--accent:#1d4ed8;--nav:60px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text2);font-family:'Inter',system-ui,sans-serif;padding-top:var(--nav)}
+a{color:inherit;text-decoration:none}
+
+.tp-nav{position:fixed;top:0;left:0;right:0;height:var(--nav);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;background:rgba(250,250,250,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);z-index:100}
+.tp-nav-back{color:var(--text2);font-size:.85em;transition:color .2s}.tp-nav-back:hover{color:var(--text1)}
+.tp-nav-title{font-weight:700;font-size:1rem;color:var(--text1)}
+.tp-nav-demo{background:var(--accent);color:#fff;padding:.35rem .9rem;border-radius:6px;font-size:.8em;font-weight:700;transition:filter .2s}.tp-nav-demo:hover{filter:brightness(1.1)}
+
+.tp-hero{max-width:1100px;margin:0 auto;padding:4rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+@media(max-width:768px){.tp-hero{grid-template-columns:1fr;gap:2rem}}
+.tp-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(29,78,216,.08);color:var(--accent);font-size:.75em;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .85rem;border-radius:20px;margin-bottom:1rem;border:1px solid rgba(29,78,216,.2)}
+.tp-h1{font-size:clamp(2rem,5vw,3.25rem);font-weight:900;color:var(--text1);line-height:1.1;margin-bottom:1rem;letter-spacing:-.03em}
+.tp-lead{font-size:1.05em;line-height:1.7;margin-bottom:2rem}
+.tp-feats-list{list-style:none;display:flex;flex-direction:column;gap:.6rem;margin-bottom:2rem}
+.tp-feats-list li{display:flex;align-items:flex-start;gap:.5rem;font-size:.9em;color:var(--text1);line-height:1.4}
+.tp-feats-list li::before{content:'✓';color:var(--accent);font-weight:800;flex-shrink:0;margin-top:.05rem}
+.tp-ctas{display:flex;gap:1rem;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff;padding:.7rem 1.5rem;border-radius:8px;font-weight:700;font-size:.9em;transition:all .2s}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-ghost{border:1px solid var(--border);color:var(--text1);padding:.7rem 1.5rem;border-radius:8px;font-weight:600;font-size:.9em;transition:all .2s}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+.tp-preview{border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12);border:1px solid var(--border)}
+
+/* Features section — dark */
+.feats-section{background:linear-gradient(135deg,#0d1117,#0c1a2e);padding:5rem 2rem;color:#e6edf3}
+.feats-inner{max-width:1100px;margin:0 auto}
+.feats-label{font-size:.75em;text-transform:uppercase;letter-spacing:.1em;color:#60a5fa;font-weight:600;margin-bottom:.5rem}
+.feats-title{font-size:clamp(1.5rem,3vw,2.25rem);font-weight:800;margin-bottom:.75rem;letter-spacing:-.02em}
+.feats-sub{color:#8b949e;font-size:.95em;margin-bottom:3rem;line-height:1.6;max-width:540px}
+.feats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.25rem}
+.feat-card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:1.5rem 1.25rem;transition:border-color .2s,transform .2s}
+.feat-card:hover{border-color:#1d4ed8;transform:translateY(-2px)}
+.feat-icon{font-size:2.2em;margin-bottom:.75rem}
+.feat-name{font-size:.95em;font-weight:700;margin-bottom:.4rem;color:#e6edf3}
+.feat-desc{font-size:.83em;color:#8b949e;line-height:1.6}
+
+footer{background:#111827;color:rgba(255,255,255,.45);text-align:center;padding:2rem;font-size:.8em}
+footer a{color:#60a5fa;transition:color .2s}
+footer a:hover{color:#93c5fd}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="tp-nav">
+  <a class="tp-nav-back" href="../../">← Everything</a>
+  <span class="tp-nav-title">FATF Quiz</span>
+  <a class="tp-nav-demo" href="index.html">Demo →</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="tp-hero">
+  <div>
+    <div class="tp-badge">🕵️ FinCrime · Learning</div>
+    <h1 class="tp-h1">40 Recommendations.<br><span style="color:#1d4ed8">Do You Know Them?</span></h1>
+    <p class="tp-lead">Put your FATF knowledge to the test. 60 questions across the 40 Recommendations, Grey &amp; Black Lists, Travel Rule, and Mutual Evaluations — with instant explanations and official citations on every answer.</p>
+    <ul class="tp-feats-list">
+      <li>60 questions across five topic categories</li>
+      <li>Three difficulty levels: Beginner, Intermediate, Expert</li>
+      <li>30-second countdown timer keeps every round sharp</li>
+      <li>Instant explanations with official FATF Recommendation citations</li>
+      <li>Category-by-category score breakdown and competency tier</li>
+      <li>Collapsible review of all questions after each attempt</li>
+    </ul>
+    <div class="tp-ctas">
+      <a class="btn-primary" href="index.html">Start Quiz →</a>
+      <a class="btn-ghost" href="../../">Browse More</a>
+    </div>
+  </div>
+  <div class="tp-preview">
+    <iframe src="index.html" style="width:100%;height:500px;border:none;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.15)" title="FATF Quiz preview"></iframe>
+  </div>
+</section>
+
+<!-- ── FEATURES — dark bg ── -->
+<section class="feats-section">
+  <div class="feats-inner">
+    <div class="feats-label">What You'll Master</div>
+    <h2 class="feats-title">Built for FinCrime Professionals</h2>
+    <p class="feats-sub">Whether you're preparing for a CAMS exam, onboarding to a compliance role, or brushing up on the latest FATF guidance — this quiz drills the knowledge that matters.</p>
+    <div class="feats-grid">
+      <div class="feat-card">
+        <div class="feat-icon">📋</div>
+        <div class="feat-name">60 Questions</div>
+        <div class="feat-desc">Five topic categories, three difficulty levels. Filter by topic or difficulty to focus on your weakest areas, or take a full mixed-mode quiz.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⏱️</div>
+        <div class="feat-name">Timed Rounds</div>
+        <div class="feat-desc">30-second countdown per question keeps you sharp. The animated timer ring shifts from blue to amber to red as the clock runs down.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📖</div>
+        <div class="feat-name">Instant Explanations</div>
+        <div class="feat-desc">Every answer — right or wrong — reveals a detailed explanation and the precise FATF Recommendation citation so you learn as you go.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📊</div>
+        <div class="feat-name">Score Report</div>
+        <div class="feat-desc">Category breakdown bar chart, animated score ring, and a competency tier badge: Expert, Proficient, Developing, or Needs Review.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Part of the <a href="../../">Everything Platform</a> · FinCrime Tools
+</footer>
+</body>
+</html>

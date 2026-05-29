@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regulatory Explorer — FinCrime | Everything</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f9fafb;color:#111827;line-height:1.6;}
+  a{text-decoration:none;color:inherit;}
+
+  /* NAV */
+  nav{background:#fff;border-bottom:1px solid #e5e7eb;padding:0 24px;height:52px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;}
+  nav .back{font-size:13px;color:#6b7280;transition:color .15s;}
+  nav .back:hover{color:#111827;}
+  nav .sep{color:#d1d5db;font-size:16px;}
+  nav .nav-title{font-size:14px;font-weight:600;color:#111827;}
+  nav .nav-demo{margin-left:auto;background:#1d4ed8;color:#fff;padding:6px 16px;border-radius:6px;font-size:13px;font-weight:600;transition:background .15s;}
+  nav .nav-demo:hover{background:#1e40af;}
+
+  /* HERO */
+  .hero{background:#fff;padding:72px 24px 56px;text-align:center;border-bottom:1px solid #e5e7eb;}
+  .hero-badge{display:inline-flex;align-items:center;gap:6px;background:#fef9f0;border:1px solid #f59e0b;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:#b45309;margin-bottom:20px;}
+  .hero h1{font-size:42px;font-weight:800;line-height:1.15;margin-bottom:16px;letter-spacing:-.5px;}
+  .hero .sub{font-size:17px;color:#6b7280;max-width:560px;margin:0 auto 36px;line-height:1.65;}
+  .hero-features{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:36px;}
+  .hero-features li{list-style:none;display:flex;align-items:center;gap:6px;font-size:14px;color:#374151;}
+  .hero-features li::before{content:'✓';display:inline-block;width:18px;height:18px;background:#dcfce7;border-radius:50%;color:#16a34a;font-size:11px;font-weight:700;text-align:center;line-height:18px;flex-shrink:0;}
+  .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:48px;}
+  .btn-primary{background:#1d4ed8;color:#fff;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;transition:background .15s;}
+  .btn-primary:hover{background:#1e40af;}
+  .btn-secondary{background:#fff;color:#374151;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;border:1px solid #d1d5db;transition:border-color .15s;}
+  .btn-secondary:hover{border-color:#9ca3af;}
+  .hero-iframe{max-width:900px;margin:0 auto;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.12);border:1px solid #e5e7eb;}
+  .hero-iframe iframe{width:100%;height:520px;display:block;border:none;}
+
+  /* FEATURES SECTION */
+  .features-dark{background:#0d1117;padding:72px 24px;}
+  .features-dark .section-badge{display:inline-block;background:rgba(88,166,255,.12);border:1px solid rgba(88,166,255,.25);color:#58a6ff;font-size:11px;font-weight:600;padding:3px 12px;border-radius:20px;letter-spacing:.4px;margin-bottom:16px;}
+  .features-dark h2{font-size:32px;font-weight:700;color:#e6edf3;text-align:center;margin-bottom:8px;}
+  .features-dark .section-sub{font-size:15px;color:#8b949e;text-align:center;margin-bottom:48px;}
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1100px;margin:0 auto;}
+  .feature-card{background:#161b22;border:1px solid #30363d;border-radius:12px;padding:28px 24px;transition:border-color .2s,transform .15s;}
+  .feature-card:hover{border-color:#58a6ff;transform:translateY(-3px);}
+  .feature-card .fc-icon{font-size:28px;margin-bottom:14px;}
+  .feature-card h3{font-size:16px;font-weight:700;color:#e6edf3;margin-bottom:8px;}
+  .feature-card p{font-size:13px;color:#8b949e;line-height:1.65;}
+  .feature-card .fc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px;}
+  .feature-card .fc-tag{background:#21262d;border:1px solid #30363d;color:#8b949e;font-size:11px;padding:2px 8px;border-radius:4px;}
+
+  /* HOW IT WORKS */
+  .how-section{background:#fff;padding:72px 24px;border-bottom:1px solid #e5e7eb;}
+  .how-section .section-badge-light{display:inline-block;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;font-size:11px;font-weight:600;padding:3px 12px;border-radius:20px;letter-spacing:.4px;margin-bottom:16px;}
+  .how-section h2{font-size:32px;font-weight:700;text-align:center;margin-bottom:8px;}
+  .how-section .section-sub{font-size:15px;color:#6b7280;text-align:center;margin-bottom:48px;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;max-width:900px;margin:0 auto;}
+  .step{text-align:center;padding:16px;}
+  .step-num{width:40px;height:40px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#1d4ed8;margin:0 auto 14px;}
+  .step h4{font-size:14px;font-weight:600;margin-bottom:6px;}
+  .step p{font-size:13px;color:#6b7280;line-height:1.6;}
+
+  /* FRAMEWORKS STRIP */
+  .frameworks-strip{background:#f9fafb;padding:40px 24px;border-bottom:1px solid #e5e7eb;}
+  .frameworks-strip h3{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:#9ca3af;text-align:center;margin-bottom:20px;}
+  .fw-logos{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;}
+  .fw-logo{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:10px 18px;font-size:13px;font-weight:600;color:#374151;display:flex;align-items:center;gap:7px;}
+
+  /* FOOTER */
+  footer{background:#0d1117;padding:36px 24px;text-align:center;}
+  footer .footer-brand{font-size:16px;font-weight:700;color:#e6edf3;margin-bottom:8px;}
+  footer p{font-size:13px;color:#8b949e;}
+  footer .footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:16px;margin-top:16px;}
+  footer .footer-links a{font-size:12px;color:#8b949e;transition:color .15s;}
+  footer .footer-links a:hover{color:#e6edf3;}
+
+  @media(max-width:640px){
+    .hero h1{font-size:28px;}
+    .hero-iframe iframe{height:340px;}
+    .features-dark h2,.how-section h2{font-size:24px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="back" href="../../index.html">&#8592; Everything</a>
+  <span class="sep">/</span>
+  <span class="nav-title">Regulatory Explorer</span>
+  <a class="nav-demo" href="index.html">Demo &#8594;</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">&#x1F575;&#xFE0F; FinCrime &middot; Regulation</div>
+  <h1>Know the Rules.<br><span style="color:#4b5563">Apply the Rules.</span></h1>
+  <p class="sub">A structured reference tool for financial crime compliance professionals. Navigate five regulatory frameworks, understand obligations in plain English, and sharpen your judgment with real-world scenarios.</p>
+  <ul class="hero-features">
+    <li>5 regulatory frameworks with section-level navigation</li>
+    <li>Plain English summaries alongside regulatory text</li>
+    <li>10 real-world "Which Law Applies?" scenarios</li>
+    <li>Test mode with MCQs or reference mode for direct lookup</li>
+    <li>FATF grey and black list country reference</li>
+    <li>Cross-reference links between related regulations</li>
+  </ul>
+  <div class="hero-ctas">
+    <a class="btn-primary" href="index.html">Open Regulatory Explorer</a>
+    <a class="btn-secondary" href="index.html">Browse Frameworks</a>
+  </div>
+  <div class="hero-iframe">
+    <iframe src="index.html" title="Regulatory Explorer preview"></iframe>
+  </div>
+</section>
+
+<!-- FRAMEWORKS STRIP -->
+<div class="frameworks-strip">
+  <h3>Covered Frameworks</h3>
+  <div class="fw-logos">
+    <div class="fw-logo">&#x1F1EE;&#x1F1F3; PMLA 2002</div>
+    <div class="fw-logo">&#x1F4B1; FEMA 1999</div>
+    <div class="fw-logo">&#x1F3E6; RBI Directions</div>
+    <div class="fw-logo">&#x1F310; FATF 40 Recommendations</div>
+    <div class="fw-logo">&#x1F1FA;&#x1F1F8; BSA / USA PATRIOT Act</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features-dark">
+  <div style="text-align:center;">
+    <span class="section-badge">What's Inside</span>
+    <h2>Everything a Compliance Professional Needs</h2>
+    <p class="section-sub">Built for AML officers, compliance analysts, and FinCrime teams who need fast, accurate regulatory reference.</p>
+  </div>
+  <div class="feature-grid">
+
+    <div class="feature-card">
+      <div class="fc-icon">&#x2696;&#xFE0F;</div>
+      <h3>5 Regulatory Frameworks</h3>
+      <p>PMLA, FEMA, RBI Directions, FATF 40 Recommendations, and the US Bank Secrecy Act — all with section-level granularity. Each framework is fully navigable from a collapsible sidebar tree.</p>
+      <div class="fc-tags">
+        <span class="fc-tag">PMLA 2002</span>
+        <span class="fc-tag">FEMA 1999</span>
+        <span class="fc-tag">FATF 40</span>
+        <span class="fc-tag">BSA / AML Act</span>
+        <span class="fc-tag">RBI Directions</span>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="fc-icon">&#x1F5E3;&#xFE0F;</div>
+      <h3>Plain English Summaries</h3>
+      <p>Every regulation has two modes: the full statutory text for formal reference, and a plain English summary that explains what the obligation actually means in practice. Toggle between them instantly.</p>
+      <div class="fc-tags">
+        <span class="fc-tag">Regulatory text</span>
+        <span class="fc-tag">Plain English</span>
+        <span class="fc-tag">Side-by-side</span>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="fc-icon">&#x1F3AF;</div>
+      <h3>Scenario Testing</h3>
+      <p>Ten real-world scenarios drawn from common FinCrime situations: structuring, PEPs, VASPs, correspondent banking, and more. Test yourself in MCQ mode or use reference mode for direct analysis.</p>
+      <div class="fc-tags">
+        <span class="fc-tag">10 scenarios</span>
+        <span class="fc-tag">MCQ mode</span>
+        <span class="fc-tag">Full analysis</span>
+        <span class="fc-tag">Deadlines</span>
+        <span class="fc-tag">Penalties</span>
+      </div>
+    </div>
+
+    <div class="feature-card">
+      <div class="fc-icon">&#x1F5FA;&#xFE0F;</div>
+      <h3>Jurisdiction Guide</h3>
+      <p>FATF grey and black list country reference, organised by region. Instantly identify high-risk jurisdictions across Africa, Asia-Pacific, the Middle East, Europe, and the Americas.</p>
+      <div class="fc-tags">
+        <span class="fc-tag">Grey list</span>
+        <span class="fc-tag">Black list</span>
+        <span class="fc-tag">By region</span>
+        <span class="fc-tag">2024 data</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div style="text-align:center;">
+    <span class="section-badge-light">How It Works</span>
+    <h2>Three Panels, One Workflow</h2>
+    <p class="section-sub">The tool is structured around three panels designed to support both learning and day-to-day reference work.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Navigate</h4>
+      <p>Use the left sidebar to browse frameworks and sections. Search filters the tree in real time.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Read</h4>
+      <p>The center panel loads a detailed reference card with the obligation, penalty, enforcement body, and related regulations.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Apply</h4>
+      <p>The right panel presents scenarios. Pick a scenario, test your judgment, then reveal the full analysis with applicable laws and deadlines.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Reference</h4>
+      <p>Use the FATF watch list panel to quickly check the jurisdiction risk status of any country involved in a transaction.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Everything</div>
+  <p>A collection of interactive tools for learning and professional development.</p>
+  <div class="footer-links">
+    <a href="../../index.html">Home</a>
+    <a href="index.html">Regulatory Explorer</a>
+    <a href="../fatf-quiz/index.html">FATF Quiz</a>
+    <a href="../aml-case-trainer/index.html">AML Case Trainer</a>
+    <a href="../kyc-onboarding/index.html">KYC Onboarding</a>
+  </div>
+</footer>
+
+</body>
+</html>

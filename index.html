@@ -985,7 +985,7 @@ body {
 
     <!-- Filter tab strip -->
     <div class="ev-filter-bar" role="tablist" aria-label="Filter by industry">
-      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">50</span></button>
+      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">60</span></button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('education',this)">Education</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('automotive',this)">Automotive</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('healthcare',this)">Healthcare</button>
@@ -1000,6 +1000,7 @@ body {
       <button class="ev-filter-tab" role="tab" onclick="setFilter('software',this)">Software</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('games',this)">Games</button>
       <button class="ev-filter-tab" role="tab" onclick="setFilter('kids',this)">Kids</button>
+      <button class="ev-filter-tab" role="tab" onclick="setFilter('fincrime',this)">FinCrime</button>
       <span class="ev-filter-indicator" aria-hidden="true"></span>
     </div>
 
@@ -1112,6 +1113,17 @@ const SOLUTIONS = [
 
   // KIDS
   { category:'kids', icon:'✏️', name:'Simply Draw', path:'kids/simply-draw/index.html', desc:'Draw anything with pencil, marker, brush or Apple Pencil — then watch it transform into clay, watercolor, neon glow, or rainbow art with real shading.', tags:['drawing','art','kids','apple pencil','creative'], color:'#a855f7', color2:'#ec4899', stack:[{icon:'🎨',name:'Canvas API'},{icon:'✏️',name:'Pointer Events'},{icon:'🌐',name:'Vanilla JS'}] },
+  // FINCRIME
+  { category:'fincrime', icon:'⛓️', name:'Blockchain Explorer', path:'fincrime/blockchain-explorer/index.html', desc:'Visualize a live blockchain: add transactions, mine blocks with real SHA-256 proof-of-work, and watch tampering invalidate the entire chain downstream.', tags:['blockchain','crypto','hashing','mining','AML'], color:'#6366f1', color2:'#8b5cf6', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🔐',name:'Web Crypto API'},{icon:'🎨',name:'Canvas API'}] },
+  { category:'fincrime', icon:'🛡️', name:'VASP Compliance Tool', path:'fincrime/vasp-compliance/index.html', desc:'Crypto AML simulator: track blockchain transactions, apply Travel Rule checks, score wallet risk, and flag mixers, darknet wallets, and sanctioned addresses.', tags:['VASP','Travel Rule','crypto','AML','sanctions'], color:'#0891b2', color2:'#6366f1', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'⚡',name:'Risk Engine'},{icon:'🔗',name:'Graph Viz'}] },
+  { category:'fincrime', icon:'🪪', name:'KYC Onboarding Flow', path:'fincrime/kyc-onboarding/index.html', desc:'Step-by-step customer due diligence: ID verification, CDD/EDD decision logic, PEP & sanctions screening, and automated risk rating assignment.', tags:['KYC','CDD','EDD','PEP','onboarding'], color:'#16a34a', color2:'#0891b2', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🧠',name:'Decision Logic'},{icon:'📋',name:'Form Engine'}] },
+  { category:'fincrime', icon:'📡', name:'Transaction Monitor', path:'fincrime/transaction-monitor/index.html', desc:'Live transaction monitoring dashboard: simulated real-time feed, alert queue with risk scores, configurable rule engine (structuring, velocity, geography), analyst actions.', tags:['TM','AML','alerts','STR','monitoring'], color:'#d97706', color2:'#dc2626', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'⏱️',name:'setInterval'},{icon:'📊',name:'Chart Canvas'}] },
+  { category:'fincrime', icon:'🔎', name:'Fraud Investigator', path:'fincrime/fraud-investigator/index.html', desc:'Fraud case simulator: account takeover, card fraud, and identity fraud scenarios. Review evidence, follow decision trees, and reach a resolution verdict.', tags:['fraud','investigation','ATO','case management'], color:'#dc2626', color2:'#d97706', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🌲',name:'Decision Tree'},{icon:'🎭',name:'Scenario Engine'}] },
+  { category:'fincrime', icon:'📤', name:'FIU Reporter', path:'fincrime/fiu-reporter/index.html', desc:'FIU reporting tool: fill STR/CTR forms, auto-populate from a scenario, run validation checks, submit with a reference number, and view report history.', tags:['FIU','STR','CTR','reporting','compliance'], color:'#7c3aed', color2:'#dc2626', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'📋',name:'Form Validation'},{icon:'💾',name:'localStorage'}] },
+  { category:'fincrime', icon:'🌐', name:'FATF Quiz', path:'fincrime/fatf-quiz/index.html', desc:'Test your FATF knowledge: 40 Recommendations, grey & black lists, Travel Rule, Mutual Evaluations. Instant feedback with FATF citations and a final score report.', tags:['FATF','quiz','AML','40 Recommendations','learning'], color:'#1d4ed8', color2:'#0891b2', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🧠',name:'Quiz Engine'},{icon:'📊',name:'Score Tracker'}] },
+  { category:'fincrime', icon:'📚', name:'AML Case Trainer', path:'fincrime/aml-case-trainer/index.html', desc:'AML scenario-based trainer: read 8 real-world case studies, make decisions (escalate / close / file STR), see consequences of each choice, and earn a competency score.', tags:['AML','training','case study','STR','scenario'], color:'#d97706', color2:'#16a34a', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🎭',name:'Scenario Engine'},{icon:'🏆',name:'Score System'}] },
+  { category:'fincrime', icon:'⚖️', name:'Regulatory Explorer', path:'fincrime/regulatory-explorer/index.html', desc:'Interactive guide to PMLA, FEMA, RBI, FATF, and BSA. Scenario-based "which law applies?" questions, jurisdiction mapping, and quick reference regulation cards.', tags:['PMLA','FEMA','RBI','FATF','BSA','regulation'], color:'#4b5563', color2:'#1d4ed8', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'📖',name:'Reference Cards'},{icon:'🗺️',name:'Jurisdiction Map'}] },
+  { category:'fincrime', icon:'🧭', name:'Ethics Simulator', path:'fincrime/ethics-simulator/index.html', desc:'Navigate real-world compliance ethics dilemmas: tipping off, whistleblower protection, conflict of interest. Decision trees with regulatory, career, and ethical consequences.', tags:['ethics','compliance','tipping off','whistleblower','dilemma'], color:'#8b5cf6', color2:'#4b5563', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🌲',name:'Decision Tree'},{icon:'🎭',name:'Consequence Engine'}] },
 ];
 
 const CAT_META = {
@@ -1129,6 +1141,7 @@ const CAT_META = {
   software:     { icon:'💻', label:'Software' },
   games:        { icon:'🎮', label:'Games' },
   kids:         { icon:'🧒', label:'Kids' },
+  fincrime:     { icon:'🕵️', label:'FinCrime' },
 };
 
 /* ── State ────────────────────────────────────────────────── */
@@ -1165,6 +1178,7 @@ const CAT_STACK = {
   software:      [{icon:'⚛️',name:'React'},{icon:'🔷',name:'TypeScript'},{icon:'🐘',name:'PostgreSQL'}],
   games:         [{icon:'🌐',name:'Vanilla JS'},{icon:'🎨',name:'CSS3'},{icon:'🔊',name:'Web Audio'}],
   kids:          [{icon:'🎨',name:'Canvas API'},{icon:'✏️',name:'Pointer Events'},{icon:'🌐',name:'Vanilla JS'}],
+  fincrime:      [{icon:'🌐',name:'Vanilla JS'},{icon:'🔐',name:'Web Crypto API'},{icon:'📊',name:'Risk Engine'}],
 };
 const CAT_DIFF = {
   education:'starter', automotive:'intermediate', healthcare:'intermediate',
@@ -1173,6 +1187,7 @@ const CAT_DIFF = {
   government:'advanced', agriculture:'starter', software:'advanced',
   games:'starter',
   kids:'starter',
+  fincrime:'advanced',
 };
 
 /* ── cardHTML ────────────────────────────────────────────── */
