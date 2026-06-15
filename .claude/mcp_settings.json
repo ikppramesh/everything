@@ -1,0 +1,37 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/rameshinampudi/Documents/Projects/Everything"
+      ],
+      "description": "Read/write files across the Everything project tree. Scoped to project root only."
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub API: PRs, releases, GitHub Pages status, code search. Repo: ikppramesh/everything."
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "description": "Headless browser for screenshots and visual testing of demo pages."
+    }
+  },
+  "_notes": {
+    "slack": "Available from environment as mcp__claude_ai_Slack — use for build/deploy notifications and #sales alerts.",
+    "google_drive": "Available from environment as mcp__claude_ai_Google_Drive — use for uploading pitch documents.",
+    "gmail": "Available from environment as mcp__claude_ai_Gmail — use for drafting client pitch emails."
+  }
+}

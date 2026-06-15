@@ -1,0 +1,14 @@
+# Audit reports are ephemeral — not committed to the repo
+_reports/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Temp files
+/tmp/
+*.tmp
