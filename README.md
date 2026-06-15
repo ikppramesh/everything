@@ -2,8 +2,8 @@
 
 > **One place for all enterprise solutions** — pitch-ready, demo-first templates for every business sector.
 
-[![Solutions](https://img.shields.io/badge/Solutions-46%2B-2563eb?style=flat-square)](./CATALOG.md)
-[![Categories](https://img.shields.io/badge/Industries-12-7c3aed?style=flat-square)](./CATALOG.md)
+[![Solutions](https://img.shields.io/badge/Solutions-62-2563eb?style=flat-square)](./CATALOG.md)
+[![Categories](https://img.shields.io/badge/Industries-15-7c3aed?style=flat-square)](./CATALOG.md)
 [![License](https://img.shields.io/badge/License-MIT-16a34a?style=flat-square)](./LICENSE)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-d97706?style=flat-square)](https://ikppramesh.github.io/everything)
 
@@ -11,7 +11,7 @@
 
 ## What Is This?
 
-**Everything** is an open-source catalog of enterprise-grade solution templates covering **12 industry sectors** and **46+ business use cases**. Each solution includes:
+**Everything** is an open-source catalog of enterprise-grade solution templates covering **15 industry sectors** and **62 business use cases**. Each solution includes:
 
 - **Interactive HTML Demo** — fully functional prototype, no backend required
 - **Template Detail Page** — Vercel-style showcase with live preview, features, and pitch info
@@ -46,6 +46,15 @@ python3 -m http.server 3000
 
 ## What's New
 
+### June 2026
+- **Claude Code agent infrastructure** — 8 specialized agents (Orchestrator, Explore, Builder, Content, Audit, Design, Deploy, Pitch) wired with MCP servers, pre/post hooks, and deny rules. Complex workflows like "add a Banking category with 4 solutions" can now be orchestrated with a single request.
+- **FinCrime category** — 10 interactive financial crime & compliance apps: Blockchain Explorer, VASP Compliance Tool, KYC Onboarding Flow, Transaction Monitor, Fraud Investigator, FIU Reporter, FATF Quiz, AML Case Trainer, Regulatory Explorer, Ethics Simulator
+- **Games category** — 5 fully playable browser games: Tambola (Housie), Chess (vs AI with minimax), Tic-Tac-Toe (unbeatable AI), Snake (canvas + swipe), India Business (Monopoly with Indian cities and ₹)
+- **Kids category** — Simply Draw: full drawing app with Apple Pencil support, pressure sensitivity, 5 AI "Bring to Life" effects (Clay, Watercolor, Neon, Sketch, Rainbow), 40-step undo, and example gallery
+- **India Business enhancements** — Indian sandstone board theme, Ashoka Chakra center, city landmark emojis, CSS 3D houses/hotels, Hyderabad added to Red property group
+- **`CLAUDE.md` project context** — auto-read by Claude Code each session; covers SOLUTIONS schema, Indian mock data rules, git commit format, and agent delegation patterns
+- **`.gitignore`** — audit reports (`_reports/`) and OS files excluded from git
+
 ### May 2026
 - **Software & DevTools category** — 8 new solutions added (Project Management, Bug Tracker, DevOps Dashboard, Code Review Portal, API Developer Portal, QA Test Management, Software License Manager, Tech Docs Wiki)
 - **Vercel-style `template.html` pages** — every solution now has a standalone detail/showcase page with live preview, feature highlights, and pitch data
@@ -62,8 +71,27 @@ Everything/
 ├── index.html                          ← Master catalog portal (search + filter)
 ├── README.md                           ← This file
 ├── CATALOG.md                          ← Full solution index
-├── build.js                            ← Solution file generator
-├── patch-build.js                      ← Patch utility for bulk template updates
+├── CLAUDE.md                           ← Claude Code project context (auto-read)
+├── build.js                            ← Solution file generator (source of truth)
+├── patch-build.js                      ← Patch utility for bulk field injection
+├── .gitignore
+│
+├── .claude/                            ← Claude Code agent infrastructure
+│   ├── agents/                         ← 8 specialist agents
+│   │   ├── orchestrator.md             ← Coordinator (only one with Task tool)
+│   │   ├── explore.md                  ← Read-only codebase analyst
+│   │   ├── builder.md                  ← Runs build.js / patch-build.js
+│   │   ├── content.md                  ← Writes SOLUTIONS entries, updates CATALOG
+│   │   ├── audit.md                    ← Quality validator (returns JSON report)
+│   │   ├── design.md                   ← Manages _shared/css + _shared/js
+│   │   ├── deploy.md                   ← git commit + push to GitHub Pages
+│   │   └── pitch.md                    ← Client pitch customiser + Drive uploader
+│   ├── hooks/
+│   │   ├── post-build.sh               ← Validates HTML after node build.js
+│   │   ├── pre-commit.sh               ← Syntax-checks staged files before commit
+│   │   └── post-deploy.sh              ← Verifies GitHub Pages HTTP 200 after push
+│   ├── mcp_settings.json               ← filesystem, github, puppeteer MCP config
+│   └── settings.local.json             ← Permissions allow/deny + hooks wiring
 │
 ├── _shared/                            ← Shared design system
 │   ├── assets/                         ← Icons, images
@@ -72,7 +100,34 @@ Everything/
 │   └── js/
 │       └── demo-utils.js               ← Shared JS utilities (tabs, modals, charts)
 │
-├── software/                           ← 8 solutions  ← NEW
+├── _pitches/                           ← Client pitch documents
+│   └── README.md                       ← Pitch index
+│
+├── _reports/                           ← Audit JSON reports (gitignored)
+│
+├── fincrime/                           ← 10 solutions  ← NEW
+│   ├── blockchain-explorer/
+│   ├── vasp-compliance/
+│   ├── kyc-onboarding/
+│   ├── transaction-monitor/
+│   ├── fraud-investigator/
+│   ├── fiu-reporter/
+│   ├── fatf-quiz/
+│   ├── aml-case-trainer/
+│   ├── regulatory-explorer/
+│   └── ethics-simulator/
+│
+├── games/                              ← 5 solutions  ← NEW
+│   ├── tambola/
+│   ├── chess/
+│   ├── tictactoe/
+│   ├── snake/
+│   └── monopoly/
+│
+├── kids/                               ← 1 solution  ← NEW
+│   └── simply-draw/
+│
+├── software/                           ← 8 solutions
 │   ├── project-management/
 │   ├── bug-tracker/
 │   ├── devops-dashboard/
@@ -160,7 +215,38 @@ solution-name/
 
 ## Solution Catalog
 
-### 💻 Software & DevTools (8 solutions) — NEW
+### 🕵️ FinCrime & Compliance (10 solutions)
+
+| Solution | Demo | Description |
+|---------|------|-------------|
+| [Blockchain Explorer](fincrime/blockchain-explorer/) | [Demo](fincrime/blockchain-explorer/index.html) | Real SHA-256 mining, tamper detection, chain visualization |
+| [VASP Compliance Tool](fincrime/vasp-compliance/) | [Demo](fincrime/vasp-compliance/index.html) | Travel Rule checker, wallet risk screener, risk dashboard |
+| [KYC Onboarding Flow](fincrime/kyc-onboarding/) | [Demo](fincrime/kyc-onboarding/index.html) | 6-step CDD wizard, PEP screening, EDD auto-decision |
+| [Transaction Monitor](fincrime/transaction-monitor/) | [Demo](fincrime/transaction-monitor/index.html) | Live AML feed, 6-rule engine (structuring, velocity, mule...) |
+| [Fraud Investigator](fincrime/fraud-investigator/) | [Demo](fincrime/fraud-investigator/index.html) | 3 case studies (ATO, CNP, Synthetic ID), evidence room |
+| [FIU Reporter](fincrime/fiu-reporter/) | [Demo](fincrime/fiu-reporter/index.html) | STR/CTR forms (FIU-IND format), auto-populate, history |
+| [FATF Quiz](fincrime/fatf-quiz/) | [Demo](fincrime/fatf-quiz/index.html) | 60 questions, 30s timer, score report with citations |
+| [AML Case Trainer](fincrime/aml-case-trainer/) | [Demo](fincrime/aml-case-trainer/index.html) | 8 typology case studies, competency badge progression |
+| [Regulatory Explorer](fincrime/regulatory-explorer/) | [Demo](fincrime/regulatory-explorer/index.html) | PMLA/FEMA/RBI/FATF/BSA reference browser + quiz |
+| [Ethics Simulator](fincrime/ethics-simulator/) | [Demo](fincrime/ethics-simulator/index.html) | 6 compliance dilemmas, decision trees, radar chart |
+
+### 🎮 Games (5 solutions)
+
+| Solution | Demo | Description |
+|---------|------|-------------|
+| [Tambola](games/tambola/) | [Demo](games/tambola/index.html) | Housie/Bingo — 1–10 players, auto tickets, voice calling |
+| [Chess](games/chess/) | [Demo](games/chess/index.html) | Full rules + minimax AI (depth 3, alpha-beta, piece tables) |
+| [Tic-Tac-Toe](games/tictactoe/) | [Demo](games/tictactoe/index.html) | Unbeatable minimax AI + 2-player mode |
+| [Snake](games/snake/) | [Demo](games/snake/index.html) | Canvas rendering, speed scaling, swipe gestures, high score |
+| [India Business](games/monopoly/) | [Demo](games/monopoly/index.html) | Monopoly with Indian cities, ₹ rupees, and CPU AI opponents |
+
+### 🎨 Kids (1 solution)
+
+| Solution | Demo | Description |
+|---------|------|-------------|
+| [Simply Draw](kids/simply-draw/) | [Demo](kids/simply-draw/index.html) | Drawing app — Apple Pencil, 5 AI effects, examples, camera |
+
+### 💻 Software & DevTools (8 solutions)
 
 | Solution | Demo | Template | Pitch |
 |---------|------|----------|-------|
@@ -372,9 +458,14 @@ This project is intentionally **zero-dependency** for demos:
 - [x] Dark editorial UI redesign with animated dot-field footer
 - [x] Software & DevTools category (8 solutions)
 - [x] GitHub Pages deployment
+- [x] FinCrime & Compliance category (10 solutions)
+- [x] Games category — Tambola, Chess, Tic-Tac-Toe, Snake, India Business (5 games)
+- [x] Kids category — Simply Draw with AI effects
+- [x] Claude Code agent infrastructure — 8 agents, 3 hooks, MCP servers, deny rules
 - [ ] Manufacturing category (ERP, Production Planning, Quality Control)
 - [ ] Legal category (Case Management, Contract Management)
 - [ ] NGO / Social Impact category
+- [ ] Banking & FinTech category (Retail Banking, Loan Management, Trade Finance)
 - [ ] Dark mode screenshots per solution
 - [ ] OpenAPI specification per solution
 - [ ] ERD / database schema per solution
