@@ -346,6 +346,34 @@ body {
   transition: background 200ms ease, transform 200ms ease;
 }
 .hero-search button:hover { background: #e8511f; transform: scale(1.06); }
+.hero-search input[type=search]::-webkit-search-cancel-button { display: none; }
+.hero-search-kbd {
+  font-family: inherit; font-size: .72rem; font-weight: 600; line-height: 1;
+  color: var(--ev-text-3); border: 1px solid var(--ev-border);
+  border-radius: 4px; padding: 3px 6px; flex-shrink: 0;
+}
+.hero-search:focus-within .hero-search-kbd { display: none; }
+.hero-search .hero-search-clear {
+  width: 24px; height: 24px; font-size: .7rem;
+  background: var(--ev-border); color: var(--ev-text-2);
+}
+.hero-search .hero-search-clear[hidden] { display: none; }
+.hero-search .hero-search-clear:hover { background: var(--ev-text-3); color: #fff; transform: none; }
+.search-status {
+  max-width: 500px; min-height: 1.2em; margin: .7rem 0 0;
+  font-size: .85rem; color: var(--ev-text-3);
+}
+.ev-filter-tab.is-empty { opacity: .4; }
+mark.ev-hit {
+  background: var(--ev-accent-dim); color: inherit;
+  border-radius: 2px; padding: 0 1px;
+}
+.no-results .no-results-clear {
+  margin-top: 1rem; padding: .55rem 1.1rem; border-radius: 6px; cursor: pointer;
+  border: 1px solid var(--ev-border); background: var(--ev-bg-3);
+  color: var(--ev-text-1); font: inherit;
+}
+.no-results .no-results-clear:hover { border-color: var(--ev-accent); }
 
 /* Stats */
 .hero-stats {
@@ -921,17 +949,20 @@ body {
     <div class="hero-left">
       <div class="hero-eyebrow">Enterprise Solution Catalog</div>
       <h1 class="hero-title">Every<span>thing</span><br>Platform</h1>
-      <p class="hero-sub">45 enterprise-ready templates across 12 industries. Browse, demo, and pitch — zero dependencies required.</p>
+      <p class="hero-sub">62 enterprise-ready templates across 15 industries. Browse, demo, and pitch — zero dependencies required.</p>
       <div class="hero-search">
         <svg class="hero-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="heroSearch" placeholder="Search solutions, sectors, industries…" oninput="filterCards()"/>
-        <button onclick="filterCards()" aria-label="Search">
+        <input type="search" id="heroSearch" placeholder="Search 62 demos by name, feature, tech or sector…" aria-label="Search all demos" autocomplete="off" spellcheck="false" aria-controls="catalogContainer"/>
+        <kbd class="hero-search-kbd" aria-hidden="true">/</kbd>
+        <button type="button" class="hero-search-clear" id="searchClear" aria-label="Clear search" hidden>✕</button>
+        <button type="button" onclick="filterCards()" aria-label="Search">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
       </div>
+      <div class="search-status" id="searchStatus" role="status" aria-live="polite"></div>
       <div class="hero-stats">
-        <div class="hero-stat"><div class="num">45</div><div class="lbl">Solutions</div></div>
-        <div class="hero-stat"><div class="num">12</div><div class="lbl">Industries</div></div>
+        <div class="hero-stat"><div class="num">62</div><div class="lbl">Solutions</div></div>
+        <div class="hero-stat"><div class="num">15</div><div class="lbl">Industries</div></div>
         <div class="hero-stat"><div class="num">100%</div><div class="lbl">Open Source</div></div>
         <div class="hero-stat"><div class="num">0</div><div class="lbl">Dependencies</div></div>
       </div>
@@ -985,22 +1016,22 @@ body {
 
     <!-- Filter tab strip -->
     <div class="ev-filter-bar" role="tablist" aria-label="Filter by industry">
-      <button class="ev-filter-tab active" role="tab" aria-selected="true"  onclick="setFilter('all',this)">All <span class="ev-filter-count">60</span></button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('education',this)">Education</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('automotive',this)">Automotive</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('healthcare',this)">Healthcare</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('retail',this)">Retail</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('real-estate',this)">Real Estate</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('finance',this)">Finance</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('hospitality',this)">Hospitality</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('logistics',this)">Logistics</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('hr',this)">HR</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('government',this)">Govt</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('agriculture',this)">Agriculture</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('software',this)">Software</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('games',this)">Games</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('kids',this)">Kids</button>
-      <button class="ev-filter-tab" role="tab" onclick="setFilter('fincrime',this)">FinCrime</button>
+      <button class="ev-filter-tab active" role="tab" aria-selected="true" data-cat="all" onclick="setFilter('all',this)">All <span class="ev-filter-count">62</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="education" onclick="setFilter('education',this)">Education <span class="ev-filter-count">4</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="automotive" onclick="setFilter('automotive',this)">Automotive <span class="ev-filter-count">4</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="healthcare" onclick="setFilter('healthcare',this)">Healthcare <span class="ev-filter-count">4</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="retail" onclick="setFilter('retail',this)">Retail <span class="ev-filter-count">4</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="real-estate" onclick="setFilter('real-estate',this)">Real Estate <span class="ev-filter-count">3</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="finance" onclick="setFilter('finance',this)">Finance <span class="ev-filter-count">4</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="hospitality" onclick="setFilter('hospitality',this)">Hospitality <span class="ev-filter-count">3</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="logistics" onclick="setFilter('logistics',this)">Logistics <span class="ev-filter-count">3</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="hr" onclick="setFilter('hr',this)">HR <span class="ev-filter-count">3</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="government" onclick="setFilter('government',this)">Govt <span class="ev-filter-count">3</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="agriculture" onclick="setFilter('agriculture',this)">Agriculture <span class="ev-filter-count">3</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="software" onclick="setFilter('software',this)">Software <span class="ev-filter-count">8</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="games" onclick="setFilter('games',this)">Games <span class="ev-filter-count">5</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="kids" onclick="setFilter('kids',this)">Kids <span class="ev-filter-count">1</span></button>
+      <button class="ev-filter-tab" role="tab" aria-selected="false" data-cat="fincrime" onclick="setFilter('fincrime',this)">FinCrime <span class="ev-filter-count">10</span></button>
       <span class="ev-filter-indicator" aria-hidden="true"></span>
     </div>
 
@@ -1008,7 +1039,8 @@ body {
     <div id="catalogContainer"></div>
     <div id="noResults" class="no-results hidden">
       <div class="big">🔍</div>
-      <p>No solutions match your search. Try a different keyword.</p>
+      <p id="noResultsMsg">No solutions match your search. Try a different keyword.</p>
+      <button type="button" class="no-results-clear" id="noResultsClear">Clear search &amp; filters</button>
     </div>
   </div>
 </section>
@@ -1147,19 +1179,91 @@ const CAT_META = {
 /* ── State ────────────────────────────────────────────────── */
 let activeFilter = 'all';
 let searchQuery  = '';
+let tokens       = [];
+
+/* ── Search helpers ──────────────────────────────────────── */
+const norm = str => str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const words = str => norm(str).split(/[^a-z0-9]+/).filter(Boolean);
+const HTML_ESC = { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' };
+const escapeHTML = str => str.replace(/[&<>"']/g, c => HTML_ESC[c]);
+const escapeRe = str => str.replace(/[.*+?^$(){}|[\]\\]/g, '\\$&');
+
+// field → [word-prefix weight, substring weight]
+const FIELD_WEIGHTS = { name:[10,6], tags:[8,4], sector:[6,3], stack:[4,2], desc:[2,1] };
+
+// Built once at init (needs CAT_STACK / CAT_DIFF, defined below)
+function buildSearchIndex() {
+  SOLUTIONS.forEach(s => {
+    const diff = s.difficulty || CAT_DIFF[s.category] || '';
+    s._idx = {
+      name:   norm(s.name),
+      tags:   norm((s.tags || []).join(' ')),
+      sector: norm(((CAT_META[s.category] || {}).label || '') + ' ' + s.category.replace(/-/g, ' ') + ' ' + diff),
+      stack:  norm((s.stack || CAT_STACK[s.category] || []).map(t => t.name).join(' ')),
+      desc:   norm(s.desc),
+    };
+    s._words = {};
+    Object.keys(s._idx).forEach(k => { s._words[k] = s._idx[k].split(/[^a-z0-9]+/).filter(Boolean); });
+  });
+}
+
+// Score one solution against all tokens (AND semantics). 0 = no match.
+function scoreOf(s) {
+  if (!tokens.length) return 1;
+  let total = 0;
+  for (const t of tokens) {
+    let best = 0;
+    for (const k in FIELD_WEIGHTS) {
+      const [wp, ws] = FIELD_WEIGHTS[k];
+      if (s._words[k].some(w => w.startsWith(t))) best = Math.max(best, wp);
+      else if (t.length > 2 && s._idx[k].includes(t)) best = Math.max(best, ws);
+    }
+    if (!best) return 0;
+    total += best;
+  }
+  return total;
+}
+
+// Escape, then wrap matched tokens in <mark>; entities are skipped so "&amp;" is never split
+function highlight(text) {
+  const safe = escapeHTML(text);
+  if (!tokens.length) return safe;
+  const re = new RegExp('(' + tokens.map(escapeRe).join('|') + ')', 'gi');
+  return safe.replace(/(&[a-z#0-9]+;)|([^&]+|&)/gi, (m, ent, txt) =>
+    ent ? ent : txt.replace(re, '<mark class="ev-hit">$1</mark>'));
+}
+
+/* ── URL sync (?q=…&sector=…) ────────────────────────────── */
+function syncURL() {
+  const p = new URLSearchParams();
+  if (searchQuery) p.set('q', searchQuery);
+  if (activeFilter !== 'all') p.set('sector', activeFilter);
+  const qs = p.toString();
+  history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+}
 
 /* ── setFilter ───────────────────────────────────────────── */
 function setFilter(cat, btn) {
   activeFilter = cat;
-  document.querySelectorAll('.ev-filter-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.ev-filter-tab').forEach(b => {
+    const on = b === btn;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
   render();
 }
 
 /* ── filterCards ─────────────────────────────────────────── */
 function filterCards() {
-  searchQuery = document.getElementById('heroSearch').value.toLowerCase();
+  searchQuery = document.getElementById('heroSearch').value.trim();
+  tokens = words(searchQuery);
   render();
+}
+
+function resetAll() {
+  document.getElementById('heroSearch').value = '';
+  searchQuery = ''; tokens = [];
+  setFilter('all', document.querySelector('.ev-filter-tab[data-cat="all"]'));
 }
 
 /* ── Stack + Difficulty lookup per category ─────────────── */
@@ -1206,10 +1310,10 @@ function cardHTML(s) {
       </div>
       <div class="ev-card-body">
         <div class="ev-card-meta">
-          <span class="ev-card-name">${s.name}</span>
+          <span class="ev-card-name">${highlight(s.name)}</span>
           <span class="ev-card-diff">${diff}</span>
         </div>
-        <div class="ev-card-desc">${s.desc}</div>
+        <div class="ev-card-desc">${highlight(s.desc)}</div>
         <div class="ev-card-stack">${stackPills}</div>
       </div>
       <div class="ev-card-actions">
@@ -1224,14 +1328,28 @@ function render() {
   const container = document.getElementById('catalogContainer');
   const noResults = document.getElementById('noResults');
 
-  const filtered = SOLUTIONS.filter(s => {
-    const matchCat   = activeFilter === 'all' || s.category === activeFilter;
-    const matchQuery = !searchQuery
-      || s.name.toLowerCase().includes(searchQuery)
-      || s.desc.toLowerCase().includes(searchQuery)
-      || s.tags.some(t => t.includes(searchQuery));
-    return matchCat && matchQuery;
+  // Score once; sector counts reflect the current query so every tab shows what it would return
+  const scored = SOLUTIONS.map(s => ({ s, score: scoreOf(s) })).filter(x => x.score > 0);
+  const counts = { all: scored.length };
+  scored.forEach(x => { counts[x.s.category] = (counts[x.s.category] || 0) + 1; });
+  document.querySelectorAll('.ev-filter-tab').forEach(tab => {
+    const n = counts[tab.dataset.cat] || 0;
+    tab.querySelector('.ev-filter-count').textContent = n;
+    tab.classList.toggle('is-empty', n === 0 && tab.dataset.cat !== 'all');
   });
+  const hits = scored.filter(x => activeFilter === 'all' || x.s.category === activeFilter);
+  if (tokens.length) hits.sort((a, b) => b.score - a.score);
+  const filtered = hits.map(x => x.s);
+
+  const sectorLabel = activeFilter === 'all' ? '' : ' in ' + ((CAT_META[activeFilter] || {}).label || activeFilter);
+  document.getElementById('searchStatus').textContent = (tokens.length || activeFilter !== 'all')
+    ? `${filtered.length} of ${SOLUTIONS.length} demos${tokens.length ? ' match “' + searchQuery + '”' : ''}${sectorLabel}`
+    : '';
+  document.getElementById('searchClear').hidden = !searchQuery;
+  document.getElementById('noResultsMsg').textContent = `No demos match “${searchQuery}”${sectorLabel}.`
+    + (counts.all && activeFilter !== 'all' ? ` Try the All tab — ${counts.all} found there.` : ' Try a different keyword.');
+  syncURL();
+  if (window.repositionFilterIndicator) window.repositionFilterIndicator();
 
   if (!filtered.length) {
     container.innerHTML = '';
@@ -1246,6 +1364,19 @@ function render() {
       <div class="cat-section" data-cat="${activeFilter}">
         <div class="cat-header ev-visible" data-n="01">
           <span class="cat-title">${meta.label || activeFilter}</span>
+          <span class="cat-count">${filtered.length} solution${filtered.length > 1 ? 's' : ''}</span>
+        </div>
+        <div class="cat-grid">${filtered.map(cardHTML).join('')}</div>
+      </div>`;
+    return;
+  }
+
+  // Searching across all sectors: one ranked list, best match first
+  if (tokens.length) {
+    container.innerHTML = `
+      <div class="cat-section" data-cat="results">
+        <div class="cat-header ev-visible" data-n="01">
+          <span class="cat-title">Best matches</span>
           <span class="cat-count">${filtered.length} solution${filtered.length > 1 ? 's' : ''}</span>
         </div>
         <div class="cat-grid">${filtered.map(cardHTML).join('')}</div>
@@ -1275,8 +1406,34 @@ function render() {
   container.innerHTML = html;
 }
 
-render();
-document.getElementById('heroSearch').addEventListener('input', filterCards);
+(function initSearch() {
+  const input = document.getElementById('heroSearch');
+  const params = new URLSearchParams(location.search);
+  const sector = params.get('sector');
+  input.value = (params.get('q') || '').slice(0, 100);
+  searchQuery = input.value.trim();
+  tokens = words(searchQuery);
+  if (sector && CAT_META[sector]) activeFilter = sector;
+  document.querySelectorAll('.ev-filter-tab').forEach(b => {
+    const on = b.dataset.cat === activeFilter;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  buildSearchIndex();
+  render();
+
+  input.addEventListener('input', filterCards);
+  input.addEventListener('keydown', e => { if (e.key === 'Escape' && input.value) { input.value = ''; filterCards(); } });
+  document.getElementById('searchClear').addEventListener('click', () => { input.value = ''; filterCards(); input.focus(); });
+  document.getElementById('noResultsClear').addEventListener('click', resetAll);
+  document.addEventListener('keydown', e => {
+    if (e.key !== '/' || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test((document.activeElement || {}).tagName)) return;
+    e.preventDefault();
+    input.focus();
+    input.select();
+  });
+})();
 
 /* ── Hamburger ───────────────────────────────────────────── */
 function toggleNav() {
@@ -1316,9 +1473,10 @@ document.addEventListener('click', e => {
     ind.style.width = tr.width + 'px';
   }
 
-  requestAnimationFrame(function() {
+  window.repositionFilterIndicator = function() {
     move(bar.querySelector('.ev-filter-tab.active'));
-  });
+  };
+  requestAnimationFrame(window.repositionFilterIndicator);
 
   var _setFilter = window.setFilter;
   window.setFilter = function(cat, btn) {
