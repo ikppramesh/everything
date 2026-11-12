@@ -48,6 +48,7 @@ python3 -m http.server 3000
 
 ### November 2026
 - **Full-text search across all 62 demos** — the catalog search now matches names, descriptions, tags, tech stack and sector, supports multi-word queries, ranks best matches first, highlights hits, and shows live per-sector counts on the filter tabs. Press `/` to focus the search; searches and sector filters are shareable via `?q=…&sector=…` URLs.
+- **Demo cards with a consistent preview and one-line pitch** — every catalog card shows the same app-window thumbnail with the solution's icon, and a single-line pitch under its name (full pitch on hover).
 
 ### June 2026
 - **Claude Code agent infrastructure** — 8 specialized agents (Orchestrator, Explore, Builder, Content, Audit, Design, Deploy, Pitch) wired with MCP servers, pre/post hooks, and deny rules. Complex workflows like "add a Banking category with 4 solutions" can now be orchestrated with a single request.

@@ -699,11 +699,59 @@ mark.ev-hit {
     transparent 1px 12px
   );
 }
-.ev-card-preview-emoji {
-  font-size: 2.75rem;
+/* Thumbnail: a fixed-size app window, identical structure on every card */
+.ev-thumb {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,.3));
+  width: 72%;
+  max-width: 260px;
+  height: 78px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255,255,255,.16);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 6px;
+  box-shadow: 0 10px 24px rgba(0,0,0,.28);
+  overflow: hidden;
+}
+.ev-thumb-bar {
+  height: 14px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+  background: rgba(0,0,0,.2);
+}
+.ev-thumb-bar i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.6);
+}
+.ev-thumb-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: 0 .6rem;
+}
+.ev-thumb-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.3));
+}
+.ev-thumb-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 36px;
+}
+.ev-thumb-chart i {
+  width: 6px;
+  background: rgba(255,255,255,.6);
+  border-radius: 2px 2px 0 0;
 }
 .ev-card-cat-badge {
   position: absolute;
@@ -753,14 +801,13 @@ mark.ev-hit {
   white-space: nowrap;
   flex-shrink: 0;
 }
-.ev-card-desc {
+.ev-card-pitch {
   font-size: var(--ev-type-body);
   color: var(--ev-text-2);
-  line-height: 1.55;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  line-height: 1.5;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .ev-card-stack {
   display: flex;
@@ -1078,84 +1125,84 @@ mark.ev-hit {
 /* ── Data ─────────────────────────────────────────────────── */
 const SOLUTIONS = [
   // EDUCATION
-  { category:'education', icon:'📚', name:'Library Management', path:'education/library-management/index.html', desc:'Book inventory, borrow/return tracking, overdue alerts, student portal for any college or school.', tags:['college','books','inventory'], color:'#2563eb', color2:'#0891b2' },
-  { category:'education', icon:'🎯', name:'Student Information System', path:'education/student-information-system/index.html', desc:'Admissions, grades, attendance tracking, timetable, and parent communication portal.', tags:['school','grades','attendance'], color:'#0891b2', color2:'#2563eb' },
-  { category:'education', icon:'📝', name:'Online Exam Portal', path:'education/online-exam-portal/index.html', desc:'MCQ & subjective exams, auto-grading, timer, result publishing, certificate generation.', tags:['exam','quiz','certificate'], color:'#7c3aed', color2:'#2563eb' },
-  { category:'education', icon:'🖥️', name:'Learning Management System', path:'education/learning-management-system/index.html', desc:'Course builder, video lessons, quizzes, progress tracking, instructor dashboard.', tags:['lms','course','elearning'], color:'#16a34a', color2:'#2563eb' },
+  { category:'education', icon:'📚', name:'Library Management', path:'education/library-management/index.html', pitch:'Digitize your library: track books, manage borrowings, and end manual registers.', desc:'Book inventory, borrow/return tracking, overdue alerts, student portal for any college or school.', tags:['college','books','inventory'], color:'#2563eb', color2:'#0891b2' },
+  { category:'education', icon:'🎯', name:'Student Information System', path:'education/student-information-system/index.html', pitch:'Admissions, grades, attendance, and parent updates in one school platform.', desc:'Admissions, grades, attendance tracking, timetable, and parent communication portal.', tags:['school','grades','attendance'], color:'#0891b2', color2:'#2563eb' },
+  { category:'education', icon:'📝', name:'Online Exam Portal', path:'education/online-exam-portal/index.html', pitch:'Run MCQ and subjective exams with auto-grading, timers, and certificates.', desc:'MCQ & subjective exams, auto-grading, timer, result publishing, certificate generation.', tags:['exam','quiz','certificate'], color:'#7c3aed', color2:'#2563eb' },
+  { category:'education', icon:'🖥️', name:'Learning Management System', path:'education/learning-management-system/index.html', pitch:'Build courses, host video lessons, and track learner progress to completion.', desc:'Course builder, video lessons, quizzes, progress tracking, instructor dashboard.', tags:['lms','course','elearning'], color:'#16a34a', color2:'#2563eb' },
   // AUTOMOTIVE
-  { category:'automotive', icon:'🚗', name:'Car Dealer Service', path:'automotive/car-dealer-service/index.html', desc:'End-to-end dealer process: lead capture → test drive → sale → delivery → post-sale service.', tags:['car','dealer','sales'], color:'#dc2626', color2:'#d97706' },
-  { category:'automotive', icon:'🚛', name:'Fleet Management', path:'automotive/fleet-management/index.html', desc:'Vehicle tracking, maintenance scheduling, fuel logs, driver management, expense reports.', tags:['fleet','vehicles','tracking'], color:'#d97706', color2:'#dc2626' },
-  { category:'automotive', icon:'🔧', name:'Auto Repair Workshop', path:'automotive/auto-repair-workshop/index.html', desc:'Job card management, spare parts inventory, mechanic assignment, billing, customer SMS.', tags:['workshop','repair','billing'], color:'#4b5563', color2:'#d97706' },
-  { category:'automotive', icon:'🔑', name:'Vehicle Rental System', path:'automotive/vehicle-rental/index.html', desc:'Booking calendar, contract generation, damage tracking, fleet availability, invoicing.', tags:['rental','booking','contract'], color:'#0891b2', color2:'#7c3aed' },
+  { category:'automotive', icon:'🚗', name:'Car Dealer Service', path:'automotive/car-dealer-service/index.html', pitch:'Run the full dealership journey from lead capture to after-sale service.', desc:'End-to-end dealer process: lead capture → test drive → sale → delivery → post-sale service.', tags:['car','dealer','sales'], color:'#dc2626', color2:'#d97706' },
+  { category:'automotive', icon:'🚛', name:'Fleet Management', path:'automotive/fleet-management/index.html', pitch:'Track vehicles, schedule maintenance, and control fuel and driver costs.', desc:'Vehicle tracking, maintenance scheduling, fuel logs, driver management, expense reports.', tags:['fleet','vehicles','tracking'], color:'#d97706', color2:'#dc2626' },
+  { category:'automotive', icon:'🔧', name:'Auto Repair Workshop', path:'automotive/auto-repair-workshop/index.html', pitch:'Manage job cards, parts stock, and mechanic billing for your workshop.', desc:'Job card management, spare parts inventory, mechanic assignment, billing, customer SMS.', tags:['workshop','repair','billing'], color:'#4b5563', color2:'#d97706' },
+  { category:'automotive', icon:'🔑', name:'Vehicle Rental System', path:'automotive/vehicle-rental/index.html', pitch:'Take bookings, sign contracts, log damage, and invoice rentals in one place.', desc:'Booking calendar, contract generation, damage tracking, fleet availability, invoicing.', tags:['rental','booking','contract'], color:'#0891b2', color2:'#7c3aed' },
   // HEALTHCARE
-  { category:'healthcare', icon:'🏥', name:'Hospital Management', path:'healthcare/hospital-management/index.html', desc:'OPD, IPD, billing, pharmacy integration, lab reports, ward management, doctor schedules.', tags:['hospital','opd','billing'], color:'#dc2626', color2:'#7c3aed' },
-  { category:'healthcare', icon:'📅', name:'Clinic Appointment', path:'healthcare/clinic-appointment/index.html', desc:'Online booking, doctor availability calendar, patient records, SMS reminders, billing.', tags:['clinic','appointment','doctor'], color:'#16a34a', color2:'#0891b2' },
-  { category:'healthcare', icon:'💊', name:'Pharmacy Management', path:'healthcare/pharmacy-management/index.html', desc:'Drug inventory, expiry tracking, prescription management, GST billing, reorder alerts.', tags:['pharmacy','drugs','inventory'], color:'#7c3aed', color2:'#16a34a' },
-  { category:'healthcare', icon:'🧪', name:'Lab Reports Portal', path:'healthcare/lab-reports-portal/index.html', desc:'Sample collection, test assignment, result entry, digital report delivery, billing.', tags:['lab','pathology','reports'], color:'#0891b2', color2:'#dc2626' },
+  { category:'healthcare', icon:'🏥', name:'Hospital Management', path:'healthcare/hospital-management/index.html', pitch:'Run OPD, IPD, billing, and pharmacy across wards from a single system.', desc:'OPD, IPD, billing, pharmacy integration, lab reports, ward management, doctor schedules.', tags:['hospital','opd','billing'], color:'#dc2626', color2:'#7c3aed' },
+  { category:'healthcare', icon:'📅', name:'Clinic Appointment', path:'healthcare/clinic-appointment/index.html', pitch:'Let patients book online while doctors manage schedules and records.', desc:'Online booking, doctor availability calendar, patient records, SMS reminders, billing.', tags:['clinic','appointment','doctor'], color:'#16a34a', color2:'#0891b2' },
+  { category:'healthcare', icon:'💊', name:'Pharmacy Management', path:'healthcare/pharmacy-management/index.html', pitch:'Track drug stock, expiry dates, and prescriptions with GST billing.', desc:'Drug inventory, expiry tracking, prescription management, GST billing, reorder alerts.', tags:['pharmacy','drugs','inventory'], color:'#7c3aed', color2:'#16a34a' },
+  { category:'healthcare', icon:'🧪', name:'Lab Reports Portal', path:'healthcare/lab-reports-portal/index.html', pitch:'Take samples, enter results, and deliver digital lab reports faster.', desc:'Sample collection, test assignment, result entry, digital report delivery, billing.', tags:['lab','pathology','reports'], color:'#0891b2', color2:'#dc2626' },
   // RETAIL
-  { category:'retail', icon:'🛒', name:'Inventory & POS', path:'retail/inventory-pos/index.html', desc:'Multi-store inventory, barcode scanning, point-of-sale billing, daily sales reports.', tags:['pos','inventory','barcode'], color:'#d97706', color2:'#16a34a' },
-  { category:'retail', icon:'🏪', name:'E-Commerce Dashboard', path:'retail/ecommerce-dashboard/index.html', desc:'Product catalogue, orders, returns management, seller analytics, coupon engine.', tags:['ecommerce','orders','sellers'], color:'#2563eb', color2:'#d97706' },
-  { category:'retail', icon:'🎁', name:'Loyalty Program', path:'retail/loyalty-program/index.html', desc:'Points engine, tier management, reward redemption, customer segments, campaign builder.', tags:['loyalty','rewards','crm'], color:'#7c3aed', color2:'#dc2626' },
-  { category:'retail', icon:'📦', name:'Supplier Portal', path:'retail/supplier-portal/index.html', desc:'Purchase orders, goods receipt, vendor management, payment tracking, quality checks.', tags:['supplier','purchase','vendor'], color:'#16a34a', color2:'#2563eb' },
+  { category:'retail', icon:'🛒', name:'Inventory & POS', path:'retail/inventory-pos/index.html', pitch:'Keep stock in sync across stores with barcode billing at the counter.', desc:'Multi-store inventory, barcode scanning, point-of-sale billing, daily sales reports.', tags:['pos','inventory','barcode'], color:'#d97706', color2:'#16a34a' },
+  { category:'retail', icon:'🏪', name:'E-Commerce Dashboard', path:'retail/ecommerce-dashboard/index.html', pitch:'See orders, returns, seller performance, and coupons in one dashboard.', desc:'Product catalogue, orders, returns management, seller analytics, coupon engine.', tags:['ecommerce','orders','sellers'], color:'#2563eb', color2:'#d97706' },
+  { category:'retail', icon:'🎁', name:'Loyalty Program', path:'retail/loyalty-program/index.html', pitch:'Reward repeat customers with points, tiers, and targeted campaigns.', desc:'Points engine, tier management, reward redemption, customer segments, campaign builder.', tags:['loyalty','rewards','crm'], color:'#7c3aed', color2:'#dc2626' },
+  { category:'retail', icon:'📦', name:'Supplier Portal', path:'retail/supplier-portal/index.html', pitch:'Handle purchase orders, goods receipts, and vendor payments end to end.', desc:'Purchase orders, goods receipt, vendor management, payment tracking, quality checks.', tags:['supplier','purchase','vendor'], color:'#16a34a', color2:'#2563eb' },
   // REAL ESTATE
-  { category:'real-estate', icon:'🏠', name:'Property Management', path:'real-estate/property-management/index.html', desc:'Property listings, tenant management, rent collection, maintenance requests, lease tracking.', tags:['property','tenant','rent'], color:'#d97706', color2:'#0891b2' },
-  { category:'real-estate', icon:'🏗️', name:'Construction Tracker', path:'real-estate/construction-tracker/index.html', desc:'Project milestones, BOQ management, contractor payments, material tracking, site reports.', tags:['construction','boq','contractor'], color:'#4b5563', color2:'#d97706' },
-  { category:'real-estate', icon:'🔑', name:'Rental Portal', path:'real-estate/rental-portal/index.html', desc:'Owner & tenant portals, online agreement, maintenance tickets, payment history.', tags:['rental','tenant','agreement'], color:'#2563eb', color2:'#16a34a' },
+  { category:'real-estate', icon:'🏠', name:'Property Management', path:'real-estate/property-management/index.html', pitch:'Manage listings, tenants, rent collection, and maintenance requests together.', desc:'Property listings, tenant management, rent collection, maintenance requests, lease tracking.', tags:['property','tenant','rent'], color:'#d97706', color2:'#0891b2' },
+  { category:'real-estate', icon:'🏗️', name:'Construction Tracker', path:'real-estate/construction-tracker/index.html', pitch:'Track milestones, BOQ, contractor payments, and site reports on one dashboard.', desc:'Project milestones, BOQ management, contractor payments, material tracking, site reports.', tags:['construction','boq','contractor'], color:'#4b5563', color2:'#d97706' },
+  { category:'real-estate', icon:'🔑', name:'Rental Portal', path:'real-estate/rental-portal/index.html', pitch:'Give owners and tenants a shared portal for agreements, tickets, and payments.', desc:'Owner & tenant portals, online agreement, maintenance tickets, payment history.', tags:['rental','tenant','agreement'], color:'#2563eb', color2:'#16a34a' },
   // FINANCE
-  { category:'finance', icon:'🧾', name:'Invoice & Billing', path:'finance/invoice-billing/index.html', desc:'Quotation to invoice workflow, GST computation, payment tracking, aging reports, PDF export.', tags:['invoice','billing','gst'], color:'#16a34a', color2:'#2563eb' },
-  { category:'finance', icon:'💳', name:'Expense Tracker', path:'finance/expense-tracker/index.html', desc:'Employee expense claims, approval workflow, budget vs actual, category analysis, export.', tags:['expense','budget','claims'], color:'#d97706', color2:'#dc2626' },
-  { category:'finance', icon:'👔', name:'Payroll Management', path:'finance/payroll-management/index.html', desc:'Salary computation, PF/ESI/TDS, payslip generation, bank transfer file, Form 16.', tags:['payroll','salary','tax'], color:'#2563eb', color2:'#7c3aed' },
-  { category:'finance', icon:'📊', name:'Budget Planner', path:'finance/budget-planner/index.html', desc:'Annual budget creation, department allocation, variance tracking, forecast, approval workflow.', tags:['budget','forecast','planning'], color:'#7c3aed', color2:'#16a34a' },
+  { category:'finance', icon:'🧾', name:'Invoice & Billing', path:'finance/invoice-billing/index.html', pitch:'Turn quotations into GST invoices, track payments, and export clean PDFs.', desc:'Quotation to invoice workflow, GST computation, payment tracking, aging reports, PDF export.', tags:['invoice','billing','gst'], color:'#16a34a', color2:'#2563eb' },
+  { category:'finance', icon:'💳', name:'Expense Tracker', path:'finance/expense-tracker/index.html', pitch:'Approve employee claims fast and compare budget against actual spend.', desc:'Employee expense claims, approval workflow, budget vs actual, category analysis, export.', tags:['expense','budget','claims'], color:'#d97706', color2:'#dc2626' },
+  { category:'finance', icon:'👔', name:'Payroll Management', path:'finance/payroll-management/index.html', pitch:'Compute salaries, PF, ESI, and TDS, then generate payslips and Form 16.', desc:'Salary computation, PF/ESI/TDS, payslip generation, bank transfer file, Form 16.', tags:['payroll','salary','tax'], color:'#2563eb', color2:'#7c3aed' },
+  { category:'finance', icon:'📊', name:'Budget Planner', path:'finance/budget-planner/index.html', pitch:'Plan department budgets, track variance, and forecast with approvals built in.', desc:'Annual budget creation, department allocation, variance tracking, forecast, approval workflow.', tags:['budget','forecast','planning'], color:'#7c3aed', color2:'#16a34a' },
   // HOSPITALITY
-  { category:'hospitality', icon:'🏨', name:'Hotel Management', path:'hospitality/hotel-management/index.html', desc:'Reservations, check-in/out, housekeeping, F&B, front desk dashboard, billing, night audit.', tags:['hotel','reservation','rooms'], color:'#d97706', color2:'#7c3aed' },
-  { category:'hospitality', icon:'🍽️', name:'Restaurant POS', path:'hospitality/restaurant-pos/index.html', desc:'Table management, KOT, menu builder, billing, daily reports, kitchen display.', tags:['restaurant','kot','billing'], color:'#dc2626', color2:'#d97706' },
-  { category:'hospitality', icon:'🎉', name:'Event Management', path:'hospitality/event-management/index.html', desc:'Venue booking, catering management, guest lists, vendor coordination, budget tracking.', tags:['events','venue','catering'], color:'#7c3aed', color2:'#dc2626' },
+  { category:'hospitality', icon:'🏨', name:'Hotel Management', path:'hospitality/hotel-management/index.html', pitch:'Handle reservations, check-ins, housekeeping, and billing from the front desk.', desc:'Reservations, check-in/out, housekeeping, F&B, front desk dashboard, billing, night audit.', tags:['hotel','reservation','rooms'], color:'#d97706', color2:'#7c3aed' },
+  { category:'hospitality', icon:'🍽️', name:'Restaurant POS', path:'hospitality/restaurant-pos/index.html', pitch:'Run tables, kitchen tickets, and billing from one fast point-of-sale.', desc:'Table management, KOT, menu builder, billing, daily reports, kitchen display.', tags:['restaurant','kot','billing'], color:'#dc2626', color2:'#d97706' },
+  { category:'hospitality', icon:'🎉', name:'Event Management', path:'hospitality/event-management/index.html', pitch:'Plan venues, catering, guest lists, and vendor budgets for every event.', desc:'Venue booking, catering management, guest lists, vendor coordination, budget tracking.', tags:['events','venue','catering'], color:'#7c3aed', color2:'#dc2626' },
   // LOGISTICS
-  { category:'logistics', icon:'🚚', name:'Delivery Tracker', path:'logistics/delivery-tracker/index.html', desc:'Order to delivery workflow, driver assignment, GPS status, POD capture, customer notifications.', tags:['delivery','tracking','logistics'], color:'#0891b2', color2:'#2563eb' },
-  { category:'logistics', icon:'🏭', name:'Warehouse Management', path:'logistics/warehouse-management/index.html', desc:'Bin locations, inbound/outbound, pick-pack-ship, cycle count, putaway rules.', tags:['warehouse','wms','inventory'], color:'#4b5563', color2:'#0891b2' },
-  { category:'logistics', icon:'🔗', name:'Supply Chain Portal', path:'logistics/supply-chain-portal/index.html', desc:'Vendor onboarding, PO lifecycle, shipment tracking, compliance docs, analytics dashboard.', tags:['supply chain','vendor','procurement'], color:'#2563eb', color2:'#4b5563' },
+  { category:'logistics', icon:'🚚', name:'Delivery Tracker', path:'logistics/delivery-tracker/index.html', pitch:'Follow each order from dispatch to proof of delivery with live status updates.', desc:'Order to delivery workflow, driver assignment, GPS status, POD capture, customer notifications.', tags:['delivery','tracking','logistics'], color:'#0891b2', color2:'#2563eb' },
+  { category:'logistics', icon:'🏭', name:'Warehouse Management', path:'logistics/warehouse-management/index.html', pitch:'Control bin locations, inbound and outbound stock, and pick-pack-ship flow.', desc:'Bin locations, inbound/outbound, pick-pack-ship, cycle count, putaway rules.', tags:['warehouse','wms','inventory'], color:'#4b5563', color2:'#0891b2' },
+  { category:'logistics', icon:'🔗', name:'Supply Chain Portal', path:'logistics/supply-chain-portal/index.html', pitch:'Onboard vendors and track purchase orders, shipments, and compliance documents.', desc:'Vendor onboarding, PO lifecycle, shipment tracking, compliance docs, analytics dashboard.', tags:['supply chain','vendor','procurement'], color:'#2563eb', color2:'#4b5563' },
   // HR
-  { category:'hr', icon:'🤝', name:'Recruitment ATS', path:'hr/recruitment-ats/index.html', desc:'Job postings, applicant tracking, interview scheduling, offer letters, onboarding pipeline.', tags:['recruitment','ats','hiring'], color:'#7c3aed', color2:'#2563eb' },
-  { category:'hr', icon:'📅', name:'Leave Management', path:'hr/leave-management/index.html', desc:'Leave policy engine, approval workflow, balance tracking, team calendar, compliance reports.', tags:['leave','attendance','hr'], color:'#16a34a', color2:'#0891b2' },
-  { category:'hr', icon:'⭐', name:'Performance Review', path:'hr/performance-review/index.html', desc:'Goal setting, 360° feedback, appraisal cycles, rating normalization, increment planning.', tags:['performance','appraisal','goals'], color:'#d97706', color2:'#7c3aed' },
+  { category:'hr', icon:'🤝', name:'Recruitment ATS', path:'hr/recruitment-ats/index.html', pitch:'Post jobs, track applicants, schedule interviews, and move hires to onboarding.', desc:'Job postings, applicant tracking, interview scheduling, offer letters, onboarding pipeline.', tags:['recruitment','ats','hiring'], color:'#7c3aed', color2:'#2563eb' },
+  { category:'hr', icon:'📅', name:'Leave Management', path:'hr/leave-management/index.html', pitch:'Apply leave policies, approve requests fast, and keep team calendars clear.', desc:'Leave policy engine, approval workflow, balance tracking, team calendar, compliance reports.', tags:['leave','attendance','hr'], color:'#16a34a', color2:'#0891b2' },
+  { category:'hr', icon:'⭐', name:'Performance Review', path:'hr/performance-review/index.html', pitch:'Run goals, 360 feedback, and appraisal cycles that feed increment planning.', desc:'Goal setting, 360° feedback, appraisal cycles, rating normalization, increment planning.', tags:['performance','appraisal','goals'], color:'#d97706', color2:'#7c3aed' },
   // GOVERNMENT
-  { category:'government', icon:'🏛️', name:'Citizen Services Portal', path:'government/citizen-services/index.html', desc:'Online form submission, document upload, application status tracking, payment gateway.', tags:['government','citizen','services'], color:'#1d4ed8', color2:'#16a34a' },
-  { category:'government', icon:'📋', name:'Document Management', path:'government/document-management/index.html', desc:'Document classification, version control, access permissions, audit trail, search.', tags:['documents','dms','records'], color:'#4b5563', color2:'#1d4ed8' },
-  { category:'government', icon:'📢', name:'Municipal Grievance', path:'government/municipal-grievance/index.html', desc:'Citizen complaint submission, department routing, SLA tracking, escalation, resolution.', tags:['grievance','complaint','municipal'], color:'#dc2626', color2:'#1d4ed8' },
+  { category:'government', icon:'🏛️', name:'Citizen Services Portal', path:'government/citizen-services/index.html', pitch:'Let citizens apply, upload documents, pay fees, and track status online.', desc:'Online form submission, document upload, application status tracking, payment gateway.', tags:['government','citizen','services'], color:'#1d4ed8', color2:'#16a34a' },
+  { category:'government', icon:'📋', name:'Document Management', path:'government/document-management/index.html', pitch:'Store, version, and permission official documents with a full audit trail.', desc:'Document classification, version control, access permissions, audit trail, search.', tags:['documents','dms','records'], color:'#4b5563', color2:'#1d4ed8' },
+  { category:'government', icon:'📢', name:'Municipal Grievance', path:'government/municipal-grievance/index.html', pitch:'Route citizen complaints to departments and track them to SLA resolution.', desc:'Citizen complaint submission, department routing, SLA tracking, escalation, resolution.', tags:['grievance','complaint','municipal'], color:'#dc2626', color2:'#1d4ed8' },
   // AGRICULTURE
-  { category:'agriculture', icon:'🌾', name:'Farm Management', path:'agriculture/farm-management/index.html', desc:'Plot tracking, crop cycle management, input cost logging, yield recording, soil health.', tags:['farm','crops','agriculture'], color:'#16a34a', color2:'#d97706' },
-  { category:'agriculture', icon:'📈', name:'Agri Market Portal', path:'agriculture/agri-market-portal/index.html', desc:'Farmer listings, buyer discovery, mandi rates, trade matching, payment settlement.', tags:['market','mandi','farmer'], color:'#d97706', color2:'#16a34a' },
-  { category:'agriculture', icon:'💧', name:'Crop Tracking', path:'agriculture/crop-tracking/index.html', desc:'Season-wise tracking, pesticide schedules, irrigation logs, harvest prediction, alerts.', tags:['crops','irrigation','harvest'], color:'#0891b2', color2:'#16a34a' },
+  { category:'agriculture', icon:'🌾', name:'Farm Management', path:'agriculture/farm-management/index.html', pitch:'Track plots, crop cycles, input costs, yields, and soil health for every season.', desc:'Plot tracking, crop cycle management, input cost logging, yield recording, soil health.', tags:['farm','crops','agriculture'], color:'#16a34a', color2:'#d97706' },
+  { category:'agriculture', icon:'📈', name:'Agri Market Portal', path:'agriculture/agri-market-portal/index.html', pitch:'Connect farmers and buyers with live mandi rates and settled trades.', desc:'Farmer listings, buyer discovery, mandi rates, trade matching, payment settlement.', tags:['market','mandi','farmer'], color:'#d97706', color2:'#16a34a' },
+  { category:'agriculture', icon:'💧', name:'Crop Tracking', path:'agriculture/crop-tracking/index.html', pitch:'Log irrigation, spraying, and harvests, and get alerts before crops suffer.', desc:'Season-wise tracking, pesticide schedules, irrigation logs, harvest prediction, alerts.', tags:['crops','irrigation','harvest'], color:'#0891b2', color2:'#16a34a' },
   // SOFTWARE
-  { category:'software', icon:'📋', name:'Project Management', path:'software/project-management/index.html', desc:'Agile boards, sprint planning, milestone tracking, and team velocity — all in one workspace.', tags:['agile','sprint','roadmap'], color:'#6366f1', color2:'#8b5cf6' },
-  { category:'software', icon:'🐛', name:'Bug & Issue Tracker', path:'software/bug-tracker/index.html', desc:'Triage, assign, and resolve issues with priority queues, status workflows, and release linking.', tags:['bugs','issues','qa'], color:'#dc2626', color2:'#f97316' },
-  { category:'software', icon:'🔌', name:'API Developer Portal', path:'software/api-developer-portal/index.html', desc:'API key management, interactive docs, rate limit monitoring, sandbox testing, and webhook logs.', tags:['api','developers','sdk'], color:'#0891b2', color2:'#6366f1' },
-  { category:'software', icon:'🧪', name:'QA Test Management', path:'software/qa-test-management/index.html', desc:'Test case library, execution runs, defect linking, coverage reports, and regression suite tracking.', tags:['testing','qa','coverage'], color:'#16a34a', color2:'#0891b2' },
-  { category:'software', icon:'🚀', name:'DevOps Release Dashboard', path:'software/devops-dashboard/index.html', desc:'CI/CD pipeline status, environment deployments, rollback controls, incident alerts, and uptime.', tags:['devops','cicd','deployments'], color:'#f97316', color2:'#6366f1' },
-  { category:'software', icon:'📖', name:'Tech Documentation Wiki', path:'software/tech-docs-wiki/index.html', desc:'Markdown wiki, versioned pages, full-text search, team spaces, API reference, and changelogs.', tags:['docs','wiki','knowledge'], color:'#7c3aed', color2:'#6366f1' },
-  { category:'software', icon:'🔍', name:'Code Review Portal', path:'software/code-review-portal/index.html', desc:'Pull request workflows, inline comments, approval gates, code quality metrics, and merge controls.', tags:['code review','pr','quality'], color:'#8b5cf6', color2:'#0891b2' },
-  { category:'software', icon:'🔐', name:'Software License Manager', path:'software/software-license-manager/index.html', desc:'Track SaaS subscriptions, seat allocations, renewal alerts, vendor contracts, and spend analytics.', tags:['licenses','saas','spend'], color:'#6366f1', color2:'#dc2626' },
+  { category:'software', icon:'📋', name:'Project Management', path:'software/project-management/index.html', pitch:'Plan sprints, milestones, and team velocity in a single agile workspace.', desc:'Agile boards, sprint planning, milestone tracking, and team velocity — all in one workspace.', tags:['agile','sprint','roadmap'], color:'#6366f1', color2:'#8b5cf6' },
+  { category:'software', icon:'🐛', name:'Bug & Issue Tracker', path:'software/bug-tracker/index.html', pitch:'Triage, assign, and ship fixes through priority queues and release links.', desc:'Triage, assign, and resolve issues with priority queues, status workflows, and release linking.', tags:['bugs','issues','qa'], color:'#dc2626', color2:'#f97316' },
+  { category:'software', icon:'🔌', name:'API Developer Portal', path:'software/api-developer-portal/index.html', pitch:'Issue API keys, publish interactive docs, and monitor rate limits and webhooks.', desc:'API key management, interactive docs, rate limit monitoring, sandbox testing, and webhook logs.', tags:['api','developers','sdk'], color:'#0891b2', color2:'#6366f1' },
+  { category:'software', icon:'🧪', name:'QA Test Management', path:'software/qa-test-management/index.html', pitch:'Manage test cases, execution runs, defect links, and coverage in one place.', desc:'Test case library, execution runs, defect linking, coverage reports, and regression suite tracking.', tags:['testing','qa','coverage'], color:'#16a34a', color2:'#0891b2' },
+  { category:'software', icon:'🚀', name:'DevOps Release Dashboard', path:'software/devops-dashboard/index.html', pitch:'Watch pipelines, deployments, and incidents, and roll back with one click.', desc:'CI/CD pipeline status, environment deployments, rollback controls, incident alerts, and uptime.', tags:['devops','cicd','deployments'], color:'#f97316', color2:'#6366f1' },
+  { category:'software', icon:'📖', name:'Tech Documentation Wiki', path:'software/tech-docs-wiki/index.html', pitch:'Publish versioned docs with full-text search, team spaces, and changelogs.', desc:'Markdown wiki, versioned pages, full-text search, team spaces, API reference, and changelogs.', tags:['docs','wiki','knowledge'], color:'#7c3aed', color2:'#6366f1' },
+  { category:'software', icon:'🔍', name:'Code Review Portal', path:'software/code-review-portal/index.html', pitch:'Review pull requests with inline comments, approval gates, and quality metrics.', desc:'Pull request workflows, inline comments, approval gates, code quality metrics, and merge controls.', tags:['code review','pr','quality'], color:'#8b5cf6', color2:'#0891b2' },
+  { category:'software', icon:'🔐', name:'Software License Manager', path:'software/software-license-manager/index.html', pitch:'Track SaaS seats, renewals, contracts, and spend before invoices surprise you.', desc:'Track SaaS subscriptions, seat allocations, renewal alerts, vendor contracts, and spend analytics.', tags:['licenses','saas','spend'], color:'#6366f1', color2:'#dc2626' },
 
   // GAMES
-  { category:'games', icon:'🇮🇳', name:'India Business', path:'games/monopoly/index.html', desc:'Monopoly-style property trading across Indian states & cities — buy Mumbai, Delhi, Bengaluru; build houses & hotels; Indian Rupees; up to 4 players with CPU opponents.', tags:['monopoly','business','india','board game','strategy'], color:'#f59e0b', color2:'#ef4444', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🏙️',name:'Board Game'},{icon:'🤖',name:'CPU AI'}] },
-  { category:'games', icon:'🎲', name:'Tambola – Housie', path:'games/tambola/index.html', desc:'Classic Indian Housie/Bingo for up to 10 players — auto-generated tickets, voice number calling, prizes, and confetti celebrations.', tags:['housie','bingo','party'], color:'#f0c040', color2:'#e03020', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🔊',name:'Web Audio'},{icon:'🗣️',name:'Speech API'}] },
-  { category:'games', icon:'♟️', name:'Chess', path:'games/chess/index.html', desc:'Two-player chess with full rule enforcement — castling, en passant, pawn promotion, check/checkmate detection, and move history.', tags:['chess','strategy','board game'], color:'#a855f7', color2:'#6366f1', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🎨',name:'CSS Grid'},{icon:'♟️',name:'Chess Engine'}] },
-  { category:'games', icon:'❌', name:'Tic-Tac-Toe', path:'games/tictactoe/index.html', desc:'Classic 3×3 strategy game with an unbeatable AI (minimax), two-player mode, score tracking, and win-line highlighting.', tags:['tictactoe','strategy','puzzle'], color:'#60a5fa', color2:'#818cf8', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🤖',name:'Minimax AI'},{icon:'🎨',name:'CSS3'}] },
-  { category:'games', icon:'🐍', name:'Snake', path:'games/snake/index.html', desc:'The timeless arcade classic — canvas-rendered with speed scaling, persistent high score, touch/swipe controls, and D-pad for mobile.', tags:['snake','arcade','canvas'], color:'#4ade80', color2:'#22c55e', stack:[{icon:'🎨',name:'Canvas API'},{icon:'🌐',name:'Vanilla JS'},{icon:'📱',name:'Touch Events'}] },
+  { category:'games', icon:'🇮🇳', name:'India Business', path:'games/monopoly/index.html', pitch:'Buy and build across Indian cities in a Monopoly-style game for up to four players.', desc:'Monopoly-style property trading across Indian states & cities — buy Mumbai, Delhi, Bengaluru; build houses & hotels; Indian Rupees; up to 4 players with CPU opponents.', tags:['monopoly','business','india','board game','strategy'], color:'#f59e0b', color2:'#ef4444', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🏙️',name:'Board Game'},{icon:'🤖',name:'CPU AI'}] },
+  { category:'games', icon:'🎲', name:'Tambola – Housie', path:'games/tambola/index.html', pitch:'Classic Indian Housie for up to 10 players with auto tickets and voice calling.', desc:'Classic Indian Housie/Bingo for up to 10 players — auto-generated tickets, voice number calling, prizes, and confetti celebrations.', tags:['housie','bingo','party'], color:'#f0c040', color2:'#e03020', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🔊',name:'Web Audio'},{icon:'🗣️',name:'Speech API'}] },
+  { category:'games', icon:'♟️', name:'Chess', path:'games/chess/index.html', pitch:'Full-rule two-player chess with castling, en passant, and checkmate detection.', desc:'Two-player chess with full rule enforcement — castling, en passant, pawn promotion, check/checkmate detection, and move history.', tags:['chess','strategy','board game'], color:'#a855f7', color2:'#6366f1', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🎨',name:'CSS Grid'},{icon:'♟️',name:'Chess Engine'}] },
+  { category:'games', icon:'❌', name:'Tic-Tac-Toe', path:'games/tictactoe/index.html', pitch:'Classic 3×3 game with an unbeatable minimax AI and two-player mode.', desc:'Classic 3×3 strategy game with an unbeatable AI (minimax), two-player mode, score tracking, and win-line highlighting.', tags:['tictactoe','strategy','puzzle'], color:'#60a5fa', color2:'#818cf8', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🤖',name:'Minimax AI'},{icon:'🎨',name:'CSS3'}] },
+  { category:'games', icon:'🐍', name:'Snake', path:'games/snake/index.html', pitch:'The arcade classic on canvas, with speed scaling, high scores, and touch controls.', desc:'The timeless arcade classic — canvas-rendered with speed scaling, persistent high score, touch/swipe controls, and D-pad for mobile.', tags:['snake','arcade','canvas'], color:'#4ade80', color2:'#22c55e', stack:[{icon:'🎨',name:'Canvas API'},{icon:'🌐',name:'Vanilla JS'},{icon:'📱',name:'Touch Events'}] },
 
   // KIDS
-  { category:'kids', icon:'✏️', name:'Simply Draw', path:'kids/simply-draw/index.html', desc:'Draw anything with pencil, marker, brush or Apple Pencil — then watch it transform into clay, watercolor, neon glow, or rainbow art with real shading.', tags:['drawing','art','kids','apple pencil','creative'], color:'#a855f7', color2:'#ec4899', stack:[{icon:'🎨',name:'Canvas API'},{icon:'✏️',name:'Pointer Events'},{icon:'🌐',name:'Vanilla JS'}] },
+  { category:'kids', icon:'✏️', name:'Simply Draw', path:'kids/simply-draw/index.html', pitch:'Draw with pencil, marker, or brush, then turn it into clay, neon, or watercolor art.', desc:'Draw anything with pencil, marker, brush or Apple Pencil — then watch it transform into clay, watercolor, neon glow, or rainbow art with real shading.', tags:['drawing','art','kids','apple pencil','creative'], color:'#a855f7', color2:'#ec4899', stack:[{icon:'🎨',name:'Canvas API'},{icon:'✏️',name:'Pointer Events'},{icon:'🌐',name:'Vanilla JS'}] },
   // FINCRIME
-  { category:'fincrime', icon:'⛓️', name:'Blockchain Explorer', path:'fincrime/blockchain-explorer/index.html', desc:'Visualize a live blockchain: add transactions, mine blocks with real SHA-256 proof-of-work, and watch tampering invalidate the entire chain downstream.', tags:['blockchain','crypto','hashing','mining','AML'], color:'#6366f1', color2:'#8b5cf6', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🔐',name:'Web Crypto API'},{icon:'🎨',name:'Canvas API'}] },
-  { category:'fincrime', icon:'🛡️', name:'VASP Compliance Tool', path:'fincrime/vasp-compliance/index.html', desc:'Crypto AML simulator: track blockchain transactions, apply Travel Rule checks, score wallet risk, and flag mixers, darknet wallets, and sanctioned addresses.', tags:['VASP','Travel Rule','crypto','AML','sanctions'], color:'#0891b2', color2:'#6366f1', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'⚡',name:'Risk Engine'},{icon:'🔗',name:'Graph Viz'}] },
-  { category:'fincrime', icon:'🪪', name:'KYC Onboarding Flow', path:'fincrime/kyc-onboarding/index.html', desc:'Step-by-step customer due diligence: ID verification, CDD/EDD decision logic, PEP & sanctions screening, and automated risk rating assignment.', tags:['KYC','CDD','EDD','PEP','onboarding'], color:'#16a34a', color2:'#0891b2', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🧠',name:'Decision Logic'},{icon:'📋',name:'Form Engine'}] },
-  { category:'fincrime', icon:'📡', name:'Transaction Monitor', path:'fincrime/transaction-monitor/index.html', desc:'Live transaction monitoring dashboard: simulated real-time feed, alert queue with risk scores, configurable rule engine (structuring, velocity, geography), analyst actions.', tags:['TM','AML','alerts','STR','monitoring'], color:'#d97706', color2:'#dc2626', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'⏱️',name:'setInterval'},{icon:'📊',name:'Chart Canvas'}] },
-  { category:'fincrime', icon:'🔎', name:'Fraud Investigator', path:'fincrime/fraud-investigator/index.html', desc:'Fraud case simulator: account takeover, card fraud, and identity fraud scenarios. Review evidence, follow decision trees, and reach a resolution verdict.', tags:['fraud','investigation','ATO','case management'], color:'#dc2626', color2:'#d97706', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🌲',name:'Decision Tree'},{icon:'🎭',name:'Scenario Engine'}] },
-  { category:'fincrime', icon:'📤', name:'FIU Reporter', path:'fincrime/fiu-reporter/index.html', desc:'FIU reporting tool: fill STR/CTR forms, auto-populate from a scenario, run validation checks, submit with a reference number, and view report history.', tags:['FIU','STR','CTR','reporting','compliance'], color:'#7c3aed', color2:'#dc2626', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'📋',name:'Form Validation'},{icon:'💾',name:'localStorage'}] },
-  { category:'fincrime', icon:'🌐', name:'FATF Quiz', path:'fincrime/fatf-quiz/index.html', desc:'Test your FATF knowledge: 40 Recommendations, grey & black lists, Travel Rule, Mutual Evaluations. Instant feedback with FATF citations and a final score report.', tags:['FATF','quiz','AML','40 Recommendations','learning'], color:'#1d4ed8', color2:'#0891b2', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🧠',name:'Quiz Engine'},{icon:'📊',name:'Score Tracker'}] },
-  { category:'fincrime', icon:'📚', name:'AML Case Trainer', path:'fincrime/aml-case-trainer/index.html', desc:'AML scenario-based trainer: read 8 real-world case studies, make decisions (escalate / close / file STR), see consequences of each choice, and earn a competency score.', tags:['AML','training','case study','STR','scenario'], color:'#d97706', color2:'#16a34a', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🎭',name:'Scenario Engine'},{icon:'🏆',name:'Score System'}] },
-  { category:'fincrime', icon:'⚖️', name:'Regulatory Explorer', path:'fincrime/regulatory-explorer/index.html', desc:'Interactive guide to PMLA, FEMA, RBI, FATF, and BSA. Scenario-based "which law applies?" questions, jurisdiction mapping, and quick reference regulation cards.', tags:['PMLA','FEMA','RBI','FATF','BSA','regulation'], color:'#4b5563', color2:'#1d4ed8', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'📖',name:'Reference Cards'},{icon:'🗺️',name:'Jurisdiction Map'}] },
-  { category:'fincrime', icon:'🧭', name:'Ethics Simulator', path:'fincrime/ethics-simulator/index.html', desc:'Navigate real-world compliance ethics dilemmas: tipping off, whistleblower protection, conflict of interest. Decision trees with regulatory, career, and ethical consequences.', tags:['ethics','compliance','tipping off','whistleblower','dilemma'], color:'#8b5cf6', color2:'#4b5563', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🌲',name:'Decision Tree'},{icon:'🎭',name:'Consequence Engine'}] },
+  { category:'fincrime', icon:'⛓️', name:'Blockchain Explorer', path:'fincrime/blockchain-explorer/index.html', pitch:'Mine a live blockchain with real SHA-256 proof-of-work and watch tampering break it.', desc:'Visualize a live blockchain: add transactions, mine blocks with real SHA-256 proof-of-work, and watch tampering invalidate the entire chain downstream.', tags:['blockchain','crypto','hashing','mining','AML'], color:'#6366f1', color2:'#8b5cf6', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🔐',name:'Web Crypto API'},{icon:'🎨',name:'Canvas API'}] },
+  { category:'fincrime', icon:'🛡️', name:'VASP Compliance Tool', path:'fincrime/vasp-compliance/index.html', pitch:'Simulate crypto AML checks: Travel Rule, wallet risk scoring, and mixer flags.', desc:'Crypto AML simulator: track blockchain transactions, apply Travel Rule checks, score wallet risk, and flag mixers, darknet wallets, and sanctioned addresses.', tags:['VASP','Travel Rule','crypto','AML','sanctions'], color:'#0891b2', color2:'#6366f1', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'⚡',name:'Risk Engine'},{icon:'🔗',name:'Graph Viz'}] },
+  { category:'fincrime', icon:'🪪', name:'KYC Onboarding Flow', path:'fincrime/kyc-onboarding/index.html', pitch:'Walk through customer due diligence with ID checks, PEP screening, and risk rating.', desc:'Step-by-step customer due diligence: ID verification, CDD/EDD decision logic, PEP & sanctions screening, and automated risk rating assignment.', tags:['KYC','CDD','EDD','PEP','onboarding'], color:'#16a34a', color2:'#0891b2', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🧠',name:'Decision Logic'},{icon:'📋',name:'Form Engine'}] },
+  { category:'fincrime', icon:'📡', name:'Transaction Monitor', path:'fincrime/transaction-monitor/index.html', pitch:'Watch a simulated transaction feed raise scored alerts from configurable rules.', desc:'Live transaction monitoring dashboard: simulated real-time feed, alert queue with risk scores, configurable rule engine (structuring, velocity, geography), analyst actions.', tags:['TM','AML','alerts','STR','monitoring'], color:'#d97706', color2:'#dc2626', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'⏱️',name:'setInterval'},{icon:'📊',name:'Chart Canvas'}] },
+  { category:'fincrime', icon:'🔎', name:'Fraud Investigator', path:'fincrime/fraud-investigator/index.html', pitch:'Investigate account takeover, card, and identity fraud cases to a resolution.', desc:'Fraud case simulator: account takeover, card fraud, and identity fraud scenarios. Review evidence, follow decision trees, and reach a resolution verdict.', tags:['fraud','investigation','ATO','case management'], color:'#dc2626', color2:'#d97706', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🌲',name:'Decision Tree'},{icon:'🎭',name:'Scenario Engine'}] },
+  { category:'fincrime', icon:'📤', name:'FIU Reporter', path:'fincrime/fiu-reporter/index.html', pitch:'Fill, validate, and submit STR and CTR reports with reference numbers.', desc:'FIU reporting tool: fill STR/CTR forms, auto-populate from a scenario, run validation checks, submit with a reference number, and view report history.', tags:['FIU','STR','CTR','reporting','compliance'], color:'#7c3aed', color2:'#dc2626', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'📋',name:'Form Validation'},{icon:'💾',name:'localStorage'}] },
+  { category:'fincrime', icon:'🌐', name:'FATF Quiz', path:'fincrime/fatf-quiz/index.html', pitch:'Test your FATF knowledge with instant feedback and cited answers.', desc:'Test your FATF knowledge: 40 Recommendations, grey & black lists, Travel Rule, Mutual Evaluations. Instant feedback with FATF citations and a final score report.', tags:['FATF','quiz','AML','40 Recommendations','learning'], color:'#1d4ed8', color2:'#0891b2', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🧠',name:'Quiz Engine'},{icon:'📊',name:'Score Tracker'}] },
+  { category:'fincrime', icon:'📚', name:'AML Case Trainer', path:'fincrime/aml-case-trainer/index.html', pitch:'Make escalate, close, or file-STR decisions on eight real case studies.', desc:'AML scenario-based trainer: read 8 real-world case studies, make decisions (escalate / close / file STR), see consequences of each choice, and earn a competency score.', tags:['AML','training','case study','STR','scenario'], color:'#d97706', color2:'#16a34a', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🎭',name:'Scenario Engine'},{icon:'🏆',name:'Score System'}] },
+  { category:'fincrime', icon:'⚖️', name:'Regulatory Explorer', path:'fincrime/regulatory-explorer/index.html', pitch:'Find which law applies, from PMLA and FEMA to RBI, FATF, and BSA.', desc:'Interactive guide to PMLA, FEMA, RBI, FATF, and BSA. Scenario-based "which law applies?" questions, jurisdiction mapping, and quick reference regulation cards.', tags:['PMLA','FEMA','RBI','FATF','BSA','regulation'], color:'#4b5563', color2:'#1d4ed8', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'📖',name:'Reference Cards'},{icon:'🗺️',name:'Jurisdiction Map'}] },
+  { category:'fincrime', icon:'🧭', name:'Ethics Simulator', path:'fincrime/ethics-simulator/index.html', pitch:'Work through compliance dilemmas like tipping off and whistleblowing, with consequences.', desc:'Navigate real-world compliance ethics dilemmas: tipping off, whistleblower protection, conflict of interest. Decision trees with regulatory, career, and ethical consequences.', tags:['ethics','compliance','tipping off','whistleblower','dilemma'], color:'#8b5cf6', color2:'#4b5563', stack:[{icon:'🌐',name:'Vanilla JS'},{icon:'🌲',name:'Decision Tree'},{icon:'🎭',name:'Consequence Engine'}] },
 ];
 
 const CAT_META = {
@@ -1301,11 +1348,19 @@ function cardHTML(s) {
   const stackItems = s.stack || CAT_STACK[s.category] || [];
   const diff = s.difficulty || CAT_DIFF[s.category] || 'intermediate';
   const stackPills = stackItems.slice(0,3).map(t=>`<span class="ev-stack-pill">${t.icon} ${t.name}</span>`).join('');
+  const pitch = s.pitch || s.desc;
+  const thumbBars = [40,70,52,88,62,78].map(h=>`<i style="height:${h}%"></i>`).join('');
   return `
     <article class="ev-card" data-category="${s.category}" style="--c:${s.color};--c2:${s.color2}">
       <div class="ev-card-preview">
         <div class="ev-card-preview-bg"></div>
-        <div class="ev-card-preview-emoji">${s.icon}</div>
+        <div class="ev-thumb" aria-hidden="true">
+          <div class="ev-thumb-bar"><i></i><i></i><i></i></div>
+          <div class="ev-thumb-body">
+            <span class="ev-thumb-emoji">${s.icon}</span>
+            <div class="ev-thumb-chart">${thumbBars}</div>
+          </div>
+        </div>
         <span class="ev-card-cat-badge">${catLabel}</span>
       </div>
       <div class="ev-card-body">
@@ -1313,7 +1368,7 @@ function cardHTML(s) {
           <span class="ev-card-name">${highlight(s.name)}</span>
           <span class="ev-card-diff">${diff}</span>
         </div>
-        <div class="ev-card-desc">${highlight(s.desc)}</div>
+        <div class="ev-card-pitch" title="${escapeHTML(pitch)}">${highlight(pitch)}</div>
         <div class="ev-card-stack">${stackPills}</div>
       </div>
       <div class="ev-card-actions">
